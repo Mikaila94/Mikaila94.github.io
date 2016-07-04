@@ -1,0 +1,15 @@
+<div class="container-fluid" align="center">
+    <div class="row" style="width: 50%">
+        <div class="col-lg-2">
+            Fagkode:
+        </div>
+        <div class="col-lg-2">
+            <input class="form-control" style="width: 200px">
+        </div>
+    </div>
+    <h1>Anbefalte fag</h1>
+    <div class="container-fluid" ng-repeat="item in items">
+        <button class="btn btn-default">{{item.code}}</button>
+    </div>
+
+</div>
