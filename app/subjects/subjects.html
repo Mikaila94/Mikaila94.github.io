@@ -1,14 +1,23 @@
-<div class="container-fluid">
+<div class="container-fluid" align="center">
     <a href="#/add" >
-        <button class="btn btn-default">
-            New subject
+        <button class="btn btn-default" style="width: 60%;height: 50px;" >
+            + Legg til fag
         </button>
     </a>
 </div>
 
 <div class="container-fluid" ng-repeat="item in items" align="center">
-    <button class="btn btn-default" >
-        {{ item.name }}
-    </button>
+    <a href="#/subjects/{{targetSubject}}">
+        <button class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)">
+            {{ item.name }}
+            <br>
+            {{item.code}}
+        </button>
+    </a>
+</div>
 
+<div class="container-fluid" style="position: fixed; bottom: 20px; right: 20px">
+    <button class="btn btn-default">
+        <span class="glyphicon glyphicon-trash"></span>
+    </button>
 </div>

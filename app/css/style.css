@@ -1,0 +1,13 @@
+.btn-subjects{
+    width:60%;
+    height:100px;
+    margin:5px;
+    font-size: 25px;
+}
+
+.aligner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}

@@ -1,0 +1,18 @@
+<div class="container-fluid" style="background-color: white;width:960px;">
+   <a href="#/subjects/:subjectId/collections/new">
+       <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:50%;">+ Nytt sett</button>
+   </a>
+    <table class="table">
+        <tbody>
+        <tr ng-repeat="coll in collections">
+            <td ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
+            <td><Button>        <span class="glyphicon glyphicon-trash"></span>
+            </Button></td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
