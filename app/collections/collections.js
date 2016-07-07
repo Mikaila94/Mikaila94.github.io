@@ -43,22 +43,17 @@ angular.module('myApp.collections', ['ngRoute'])
     })
 
     .controller('editCtrl', function ($scope, $http,$routeParams, collectionService, subjectService, apiUrl) {
-    //    var initExercises = function (){
-    //        $http({
-    //            url: apiUrl + '/' + $scope.subject._id,
-    //            method: "GET",
-    //            params: {"environment":"production"}
-    //        }
-    //        ).success(function(response){
-    //            $scope.collections = response.collections
-    //        })
-    //}
 
         $scope.collection = collectionService.getCollection();
         if(!$scope.collection) {
             window.history.back()
         }
+        console.log($scope.collection);
         $scope.exercises = $scope.collection.exercises;
+
+
+
+
         $scope.updateAlternative = function(exercise, index, alternative) {
             exercise.alternatives[index] = alternative
         }
@@ -72,8 +67,45 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
+        var list = [];
+
+        for (i = 0; i < $scope.exercises.length; i++) {
+            console.log($scope.exercises[i]);
+            var len = $scope.exercises[i].tags.length;
+            for(j = 0;j<len;j++){
+                var tag = $scope.exercises[i].tags[j];
+                if(list.indexOf(tag) == -1){
+                    list.push(tag);
+                }
+            }
+        }
+
+        alert(list.length);
+
+        angular.forEach($scope.exercises,function(value,key){
+            alert((value,key));
+            //angular.forEach(value[key].tags,function(tag){
+            //    alert(tag.val());
+
+            //})
+
+        });
+
+        alert(list.length);
+
+        $scope.getTagSuggestions = function(){
 
 
 
+            return list;
+        };
+
+
+
+
+
+        //$scope.getTags = function(exercise){
+        //    $scope.tags = exercise.tags;
+        //}
 
     });

@@ -36,7 +36,29 @@
                 </div>
 
             </div>
+            <div class="row">
+                <div class="col-lg-2">
+
+
+                </div>
+                <div class="col-lg-10">
+                    <tags-input class="bootstrap"
+                                placeholder="Add a tag"
+                                ng-model="exercise.tags"
+                                min-length="1"
+                                addOnEnter="true">
+                        <auto-complete source="getTagSuggestions()"
+                                       minLength="2"
+                                       maxResultsToShow="5"
+                                       max-results-to-show="32"
+                                       load-on-focus="true"></auto-complete>
+                    </tags-input>
+                </div>
+            </div>
+            {{exercise.tags}}
+
         </div>
+
         <div ng-if="type == 'mc' " class="container-fluid">
             <div class="row">
                 <div class="col-lg-2">
@@ -79,7 +101,6 @@
                     </div>
                 </div>
             </div>
-        {{exercise.alternatives}}
         </div>
         <div ng-if="type == 'tf'" class="container-fluid">
             <div class="row">
@@ -110,6 +131,8 @@
 
         </div>
     </div>
+
+
 
     <button class="btn btn-default" style="width:100%;">+ Ny oppgave</button>
 

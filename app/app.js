@@ -10,7 +10,8 @@ angular.module('myApp', [
     'myApp.login',
     'myApp.collections',
     'ngAnimate',
-    'ui.bootstrap'])
+    'ui.bootstrap',
+    'ngTagsInput'])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
     $routeProvider
