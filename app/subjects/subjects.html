@@ -1,4 +1,4 @@
-<div class="container-fluid" align="center">
+<div ng-if="!deleteMode" class="container-fluid" align="center">
     <a href="#/add" >
         <button class="btn btn-default" style="width: 60%;height: 50px;" >
             + Legg til fag
@@ -7,17 +7,39 @@
 </div>
 
 <div class="container-fluid" ng-repeat="item in items" align="center">
-    <a href="#/subjects/{{targetSubject}}">
+    <a ng-if="!deleteMode" href="#/subjects/{{targetSubject}}">
         <button class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)">
-            {{ item.name }}
-            <br>
-            {{item.code}}
+            <p ng-if="item.name != ''">{{ item.name }}</p>
+            <p>{{item.code}}</p>
         </button>
     </a>
+    <div ng-if="deleteMode" class="container-fluid" style="width: 60%">
+        <div class="col-lg-11">
+            <label class="btn btn-default btn-subjects" ng-click="deleteElements[item._id] = !deleteElements[item._id]" style="width: 100%">
+                <p ng-if="item.name != ''">{{ item.name }}</p>
+                <p>{{item.code}}</p>
+            </label>
+        </div>
+        <div class="col-lg-1">
+            <checkbox large ng-model="deleteElements[item._id]" style="margin-top: 35px">
+        </div>
+    </div>
 </div>
+{{deleteElements}}
 
-<div class="container-fluid" style="position: fixed; bottom: 20px; right: 20px">
-    <button class="btn btn-default">
+<div ng-show="!deleteMode" class="container-fluid" style="position: fixed; bottom: 80px; right: 10%">
+    <button class="btn btn-default" ng-click="deleteMode = true">
         <span class="glyphicon glyphicon-trash"></span>
+    </button>
+    <button class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span>
+    </button>
+</div>
+<div ng-show="deleteMode" class="container-fluid" style="position: fixed; bottom: 80px; right: 10%">
+    <button class="btn btn-default" ng-click="deleteMode = false">
+        <span class="glyphicon glyphicon-remove"></span>
+    </button>
+    <button class="btn btn-default" ng-click="deleteSubjects()">
+        <span class="glyphicon glyphicon-ok"></span>
     </button>
 </div>

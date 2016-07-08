@@ -10,6 +10,7 @@ angular.module('myApp', [
     'myApp.login',
     'myApp.collections',
     'ngAnimate',
+    'ngCookies',
     'ui.bootstrap'])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
@@ -47,10 +48,11 @@ angular.module('myApp', [
         $scope.isCollapsed = true;
     })
 
-    .constant("apiUrl", "https://acepi.herokuapp.com/subjects")
-
+    //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
+    .constant("apiUrl", "http://192.168.24.174:3000")
     .service("subjectService", function() {
         var subject;
+        var userSubjects;
 
         var setSubject= function(targetSubject) {
             subject = targetSubject
@@ -58,10 +60,17 @@ angular.module('myApp', [
         var getSubject = function() {
             return subject
         };
-
+        var setUserSubjects = function (subjects) {
+            userSubjects = subjects;
+        };
+        var getUserSubjects = function () {
+            return userSubjects;
+        };
         return {
             setSubject: setSubject,
-            getSubject: getSubject
+            getSubject: getSubject,
+            setUserSubjects: setUserSubjects,
+            getUserSubjects: getUserSubjects
         }
 
     })
