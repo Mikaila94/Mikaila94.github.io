@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-lg-2">
+        <h4>Oppgave:</h4>
+    </div>
+    <div class="col-lg-10">
+        <input class="form-control" style="margin-top: 2px" ng-model="exercise.question">
+
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <h4>Svar:</h4>
+    </div>
+    <div class="col-lg-10">
+        <div class="btn-group" style="margin:5px;">
+            <label class="btn btn-default" ng-model="exercise.correctAnswer" uib-btn-radio="true" style="margin-top: 2px;" >
+                True
+            </label>
+            <label class="btn btn-default" ng-model="exercise.correctAnswer" uib-btn-radio="false" style="margin-top: 2px;">
+                False
+            </label>
+        </div>
+    </div>
+</div>

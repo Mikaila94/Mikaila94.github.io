@@ -1,144 +1,76 @@
-<div class="container-fluid" style="width:960px">
+<div id="editArea" ng-controller="editCtrl" class="container-fluid" style="width:960px">
     <div class="container-fluid" style="margin: 20px;">
 
     </div>
+
+
+
     <div class="container-fluid" style="width: 60%">
+
         <div class="row">
-            <div class="col-md-2">
-                <p style="margin:11px;font-size: 20px;margin-right: 5px">Navn:</p>
+            <div class="col-lg-2">
+                <p style="font-size: 20px">Navn:</p>
             </div>
-            <div class="col-md-10">
-                <input ng-model="collection.name" type="text" class="form-control" style="margin-top: 10px;margin-bottom: 50px">
-
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid" ng-repeat="exercise in collection.exercises" ng-init="type = exercise.type" style="background-color: white; margin-bottom: 10px">
-        <div ng-if="type == 'pd' " class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Phrase:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <input class="form-control" style="margin-top: 2px" ng-model="exercise.question">
-
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Definition:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <textarea class="form-control" style="margin-top: 2px; resize: none" rows="2" ng-model="exercise.correctAnswer">
-                    </textarea>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-2">
-
-
-                </div>
-                <div class="col-lg-10">
-                    <tags-input class="bootstrap"
-                                placeholder="Add a tag"
-                                ng-model="exercise.tags"
-                                min-length="1"
-                                addOnEnter="true">
-                        <auto-complete source="getTagSuggestions()"
-                                       minLength="2"
-                                       maxResultsToShow="5"
-                                       max-results-to-show="32"
-                                       load-on-focus="true"></auto-complete>
-                    </tags-input>
-                </div>
-            </div>
-            {{exercise.tags}}
-
-        </div>
-
-        <div ng-if="type == 'mc' " class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Oppgave:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <input class="form-control" style="margin-top: 5px;margin-bottom:5px;" ng-model="exercise.question">
-
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Svar:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <textarea class="form-control" style="margin-top: 15px;margin-bottom:15px; resize: none" rows="2" ng-model="exercise.correctAnswer">
-                    </textarea>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Alternativer:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
-                        <div class="row">
-                            <div class="col-lg-11">
-                                <textarea ng-keyup="updateAlternative(exercise, $index, alternative)" class="form-control" style="margin-top: 2px;resize: none; rows="2" ng-model="alternative">
-                                </textarea>
-                            </div>
-                            <div class="col-lg-1"">
-                                <span ng-click="deleteAlternative(exercise,$index)" class="glyphicon glyphicon-remove" style="margin-top: 15px;font-size: 20px;height: 50px;cursor: pointer;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container-fluid" style="width: 100%; margin-top: 10px">
-                        <a href="" ng-click="addAlternative(exercise)">+ Legg til alternativ</a>
-                    </div>
-                </div>
+            <div class="col-lg-10">
+                <input ng-model="collection.name" type="text" class="form-control" style="margin-bottom: 60px;margin-left: -25px;">
             </div>
         </div>
-        <div ng-if="type == 'tf'" class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Oppgave:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <input class="form-control" style="margin-top: 2px" ng-model="exercise.question">
 
-                </div>
+        <div class="row">
+            <div class="btn-group" style="margin-top:-75px;" align="center">
+                <label class="btn btn-primary" ng-model="collectionPublic" uib-btn-radio="true" style="margin-top: 2px;" >
+                    Public
+                </label>
 
-            </div>
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Svar:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <div class="btn-group" style="margin:5px;">
-                        <label class="btn btn-default" ng-model="exercise.correctAnswer" uib-btn-radio="true" style="margin-top: 2px;" >
-                            True
-                        </label>
-                        <label class="btn btn-default" ng-model="exercise.correctAnswer" uib-btn-radio="false" style="margin-top: 2px;">
-                            False
-                        </label>
-                    </div>
-                </div>
+                <label class="btn btn-primary" ng-model="collectionPrivate" uib-btn-radio="false" style="margin-top: 2px;">
+                    Private
+                </label>
             </div>
 
         </div>
     </div>
 
+    <div class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
+
+        <div class="row">
+            <div class="col-lg-2">
+                <h4>Spørsmålstype:</h4>
+            </div>
+            <div class="col-lg-10">
+                <select id="typeBox" ng-model="exercise.type" align="left" style="margin-bottom:10px">
+                    <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
+                </select>
+
+            </div>
 
 
-    <button class="btn btn-default" style="width:100%;">+ Ny oppgave</button>
+        </div>
+
+
+        <div ng-if="exercise.type == 'pd' " ng-include src="'collections/pd.html'"></div>
+        <div ng-if="exercise.type == 'mc' " ng-include src="'collections/mc.html'"></div>
+        <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
+
+        <div class="container-fluid">
+            <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
+        </div>
+
+    </div>
+
+    <button class="btn btn-default" ng-click="addExercise()" style="width:100%;">+ Ny oppgave</button>
+
+    <button class="btn btn-default" style="background-color:white;position:fixed;bottom:200px;right:60px;cursor:pointer;">
+        <span class="glyphicon glyphicon-floppy-disk" ></span>
+    </button>
+    <button ng-click="addExercise()" class="btn btn-default" style="background-color:white;position:fixed;bottom:150px;right:60px;cursor:pointer;">
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+
+
 
     <div class="container-fluid" style="margin: 30px;">
 
-    </div>
 
+    </div>
 
 </div>

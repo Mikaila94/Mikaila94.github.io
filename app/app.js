@@ -11,7 +11,8 @@ angular.module('myApp', [
     'myApp.collections',
     'ngAnimate',
     'ui.bootstrap',
-    'ngTagsInput'])
+    'ngTagsInput',
+    'ng-mfb'])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
     $routeProvider

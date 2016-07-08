@@ -42,9 +42,20 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $http,$routeParams, collectionService, subjectService, apiUrl) {
+    .controller('editCtrl', function ($scope, $http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
+
+        $scope.gotoBottom = function () {
+            // set the location.hash to the id of
+            // the element you wish to scroll to.
+            $location.hash('bottom');
+
+            // call $anchorScroll()
+            $anchorScroll();
+        };
 
         $scope.collection = collectionService.getCollection();
+        $scope.collectionPrivate="";
+        $scope.collectionPublic="";
         if(!$scope.collection) {
             window.history.back()
         }
@@ -53,11 +64,17 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
 
+        $scope.types=[{desc:"Phrase & Definition", type: "pd"},
+            {desc:"Multiple Choice", type: "mc"},
+            {desc:"True/False", type: "tf"}];
 
         $scope.updateAlternative = function(exercise, index, alternative) {
             exercise.alternatives[index] = alternative
         }
         $scope.addAlternative = function(exercise){
+            if(!exercise.alternatives) {
+                exercise.alternatives=[];
+            }
             exercise.alternatives.push("")
         };
 
@@ -67,38 +84,64 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        var list = [];
+        $scope.addExercise = function ($location){
+            var exercise = {
+                    "subjectId": subjectService.getSubject()._id,
+                    "question": "",
+                    "correctAnswer": "",
+                    "type": "pd",
+                    "tags": [],
+                    "collectionId": collectionService.getCollection()._id,
+                    "relatedAlternatives": []
+            }
+            collectionService.getCollection().exercises.push(exercise)
+            $scope.gotoBottom();
+        };
+
+        $scope.deleteExercise = function(index){
+            if(index > -1){
+                collectionService.getCollection().exercises.splice(index,1);
+            }
+        };
+
+        $scope.list = [];
 
         for (i = 0; i < $scope.exercises.length; i++) {
-            console.log($scope.exercises[i]);
-            var len = $scope.exercises[i].tags.length;
-            for(j = 0;j<len;j++){
-                var tag = $scope.exercises[i].tags[j];
-                if(list.indexOf(tag) == -1){
-                    list.push(tag);
+            if($scope.exercises[i].type == "pd") {
+
+                console.log($scope.exercises[i]);
+                var len = $scope.exercises[i].tags.length;
+                for (j = 0; j < len; j++) {
+                    var tag = $scope.exercises[i].tags[j];
+                    if ($scope.list.indexOf(tag) == -1) {
+                        $scope.list.push(tag);
+                    }
                 }
             }
-        }
+        };
 
-        alert(list.length);
-
-        angular.forEach($scope.exercises,function(value,key){
-            alert((value,key));
-            //angular.forEach(value[key].tags,function(tag){
-            //    alert(tag.val());
-
-            //})
-
-        });
-
-        alert(list.length);
 
         $scope.getTagSuggestions = function(){
-
-
-
-            return list;
+            return $scope.list;
         };
+
+
+        var typeBox = document.getElementById("typeBox");
+
+
+        //$scope.updateExerciseType = function(exerise){
+        //    type = typeBox.options[typeBox.$selectedIndex].value;
+        //    if(type == 'pd'){
+        //    }
+        //    else if(type == 'mc'){
+        //
+        //    }
+        //    else if(type == 'tf'){
+        //
+        //    }
+        //
+        //};
+
 
 
 
@@ -108,4 +151,19 @@ angular.module('myApp.collections', ['ngRoute'])
         //    $scope.tags = exercise.tags;
         //}
 
-    });
+    }).directive('scrollBottom', function () {
+    return {
+        scope: {
+            scrollBottom: "="
+        },
+        link: function (scope, element) {
+            scope.$watchCollection('scrollBottom', function (newValue) {
+                if (newValue)
+                {
+                    $(element).scrollTop($(element)[0].scrollHeight);
+                }
+            });
+        }
+    }
+})
+;

@@ -1,0 +1,42 @@
+
+<div class="row">
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <h4>Phrase:</h4>
+    </div>
+    <div class="col-lg-10">
+        <input class="form-control" style="margin-top: 2px" ng-model="exercise.question">
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <h4>Definition:</h4>
+    </div>
+    <div class="col-lg-10">
+                    <textarea class="form-control" style="margin-top: 2px; resize: none" rows="2" ng-model="exercise.correctAnswer">
+                    </textarea>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-2">
+
+
+    </div>
+    <div class="col-lg-10">
+        <tags-input class="bootstrap"
+                    placeholder="Add a tag"
+                    ng-model="exercise.tags"
+                    min-length="1"
+                    addOnEnter="true">
+            <!--<auto-complete source="getTagSuggestions()"-->
+            <!--minLength="2"-->
+            <!--maxResultsToShow="5"-->
+            <!--max-results-to-show="32"-->
+            <!--&gt;</auto-complete>-->
+        </tags-input>
+    </div>
+</div>
+
