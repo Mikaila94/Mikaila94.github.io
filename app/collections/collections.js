@@ -8,6 +8,8 @@ angular.module('myApp.collections', ['ngRoute'])
 
         };
         $scope.subject = subjectService.getSubject();
+        $scope.defaultValue = "pd";
+
         if(!$scope.subject) {
             $http({
                 url: apiUrl + "/" + $routeParams.subjectId,
@@ -73,7 +75,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.updateAlternative = function(exercise, index, alternative) {
             exercise.alternatives[index] = alternative
-        }
+        };
         $scope.addAlternative = function(exercise){
             if(!exercise.alternatives) {
                 exercise.alternatives=[];
@@ -87,16 +89,31 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
+        var defaultType = "pd";
+
+        if($scope.exercises.length > 0){
+            var index = parseInt($scope.exercises.length) - 1;
+            defaultType =  $scope.exercises[index].type;
+        }
+
+
+        $scope.changeDefault = function(exercise,index){
+              defaultType = exercise.type;
+        };
+
+        var typeBox = document.getElementById("typeBox");
         $scope.addExercise = function ($location){
+
             var exercise = {
                     "subjectId": subjectService.getSubject()._id,
                     "question": "",
                     "correctAnswer": "",
-                    "type": "pd",
+                    "type": defaultType,
                     "tags": [],
                     "collectionId": collectionService.getCollection()._id,
                     "relatedAlternatives": []
-            }
+            };
+
             collectionService.getCollection().exercises.push(exercise);
             $scope.gotoBottom();
         };
@@ -128,22 +145,6 @@ angular.module('myApp.collections', ['ngRoute'])
             return $scope.list;
         };
 
-
-        var typeBox = document.getElementById("typeBox");
-
-
-        //$scope.updateExerciseType = function(exerise){
-        //    type = typeBox.options[typeBox.$selectedIndex].value;
-        //    if(type == 'pd'){
-        //    }
-        //    else if(type == 'mc'){
-        //
-        //    }
-        //    else if(type == 'tf'){
-        //
-        //    }
-        //
-        //};
 
 
     })

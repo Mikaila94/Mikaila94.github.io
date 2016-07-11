@@ -2,9 +2,7 @@
     <div class="container-fluid" style="margin: 20px;">
 
     </div>
-
     <div class="container-fluid" style="width: 60%">
-
         <div class="row">
             <div class="col-lg-2">
                 <p style="font-size: 20px">Navn:</p>
@@ -35,7 +33,7 @@
                 <h4>Spørsmålstype:</h4>
             </div>
             <div class="col-lg-10">
-                <select id="typeBox" ng-model="exercise.type" align="left" style="margin-top:10px">
+                <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
                     <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
                 </select>
 
