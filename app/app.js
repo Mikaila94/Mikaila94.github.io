@@ -32,7 +32,7 @@ angular.module('myApp', [
             templateUrl: "collections/collections.html",
             controller: "collectionsCtrl"
         })
-      .when("/subjects/:subjectId/collections/:collectionsId", {
+      .when("/subjects/:subjectId/collections/:collectionId", {
           templateUrl: "collections/edit.html",
           controller: "editCtrl"
       })

@@ -2,7 +2,7 @@
 angular.module('myApp.collections', ['ngRoute'])
 
 
-    .controller('collectionsCtrl', function ($scope, $http, $routeParams, subjectService, collectionService, apiUrl) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, apiUrl) {
         var initCollections = function(collections) {
             $scope.collections = collections
 
@@ -40,11 +40,32 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
 
+        $scope.deleteCollection = function(coll,index){
+            $http({
+                url:  apiUrl + '/subjects/' + subjectService.getSubject()._id +  "/collections/" + coll._id,
+                method: 'DELETE',
+                headers: {'x-access-token': $cookies.getObject("token")}
+            }).success(function(response,status){
+                console.log("response" + response + "\n\n\n\nstatus" + status);
+                if(index > -1){
+                    $scope.collections.splice(index,1)
+                }
+            }).error(function(data,status,header,config){
+                $scope.ServerResponse =  htmlDecode("Data: " + data +
+                    "\n\n\n\nstatus: " + status +
+                    "\n\n\n\nheaders: " + header +
+                    "\n\n\n\nconfig: " + config);
+            });
+
+        };
+
+
 
 
     })
 
-    .controller('editCtrl', function ($scope, $timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
+
 
         $scope.gotoBottom = function () {
             // set the location.hash to the id of
@@ -52,75 +73,149 @@ angular.module('myApp.collections', ['ngRoute'])
             $location.hash("bottom");
 
             // call $anchorScroll()
-            $timeout(function(){
+            $timeout(function () {
                 $anchorScroll();
 
-            },5);
+            }, 5);
         };
-
+        $scope.privacy = false;
         $scope.collection = collectionService.getCollection();
-        $scope.collectionPrivate="";
-        $scope.collectionPublic="";
-        if(!$scope.collection) {
+
+        if (!subjectService.getSubject()) {
             window.history.back()
+        }
+        if (!$scope.collection) {
+            if ($routeParams.collectionId == 'new') {
+                $scope.collection = {
+                    name: '',
+                    exercises: []
+                }
+            } else {
+                window.history.back()
+            }
         }
         console.log($scope.collection);
         $scope.exercises = $scope.collection.exercises;
 
 
+        $scope.types = [{desc: "Phrase & Definition", type: "pd"},
+            {desc: "Multiple Choice", type: "mc"},
+            {desc: "True/False", type: "tf"}];
 
-        $scope.types=[{desc:"Phrase & Definition", type: "pd"},
-            {desc:"Multiple Choice", type: "mc"},
-            {desc:"True/False", type: "tf"}];
-
-        $scope.updateAlternative = function(exercise, index, alternative) {
+        $scope.updateAlternative = function (exercise, index, alternative) {
             exercise.alternatives[index] = alternative
         };
-        $scope.addAlternative = function(exercise){
-            if(!exercise.alternatives) {
-                exercise.alternatives=[];
+        $scope.addAlternative = function (exercise) {
+            if (!exercise.alternatives) {
+                exercise.alternatives = [];
             }
             exercise.alternatives.push("")
         };
 
-        $scope.deleteAlternative = function(exercise,index){
-            if(index > -1){
-                exercise.alternatives.splice(index,1);
+        $scope.deleteAlternative = function (exercise, index) {
+            if (index > -1) {
+                exercise.alternatives.splice(index, 1);
             }
         };
 
         var defaultType = "pd";
-
-        if($scope.exercises.length > 0){
+        if ($scope.exercises.length) {
             var index = parseInt($scope.exercises.length) - 1;
-            defaultType =  $scope.exercises[index].type;
+            defaultType = $scope.exercises[index].type;
         }
 
 
-        $scope.changeDefault = function(exercise,index){
-              defaultType = exercise.type;
+        $scope.changeDefault = function (exercise, index) {
+            defaultType = exercise.type;
         };
 
         var typeBox = document.getElementById("typeBox");
-        $scope.addExercise = function ($location){
+
+        $scope.addExercise = function () {
 
             var exercise = {
-                    "subjectId": subjectService.getSubject()._id,
-                    "question": "",
-                    "correctAnswer": "",
-                    "type": defaultType,
-                    "tags": [],
-                    "collectionId": collectionService.getCollection()._id,
-                    "relatedAlternatives": []
+                "subjectId": subjectService.getSubject()._id,
+                "question": "",
+                "correctAnswer": "",
+                "type": defaultType,
+                "tags": [],
+                "collectionId": collectionService.getCollection() ? collectionService.getCollection()._id : "",
+                "relatedAlternatives": []
             };
 
-            collectionService.getCollection().exercises.push(exercise);
+            $scope.collection.exercises.push(exercise);
             $scope.gotoBottom();
         };
 
-        $scope.deleteExercise = function(index){
-            if(index > -1){
-                collectionService.getCollection().exercises.splice(index,1);
+        $scope.deleteExercise = function (index) {
+            if (index > -1) {
+                collectionService.getCollection().exercises.splice(index, 1);
+            }
+        };
+
+        $scope.postCollection = function () {
+            var data = {
+                collection: {
+                    name: $scope.collection.name,
+                    exercises: $scope.exercises,
+                    privacy: $scope.privacy
+
+                }
+            };
+
+
+            $http({
+                url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections/",
+                method: 'POST',
+                headers: {'x-access-token': $cookies.getObject("token")},
+                data: data
+            }).success(function (response, status) {
+                $scope.collection._id = response.insertedId;
+                collectionService.setCollection($scope.collection);
+                for (var i = 0; i < $scope.exercises.length; i++) {
+                    $scope.exercises[i].collectionId = $scope.collection._id;
+                }
+                console.log(response + "\n\n\n\n\n\status" + status);
+            }).error(function (data, status, header, config) {
+                $scope.ServerResponse = htmlDecode("Data: " + data +
+                    "\n\n\n\nstatus: " + status +
+                    "\n\n\n\nheaders: " + header +
+                    "\n\n\n\nconfig: " + config);
+            });
+        };
+
+
+        $scope.putCollection = function(){
+            var data = {collection:
+                {
+                _id: collectionService.getCollection()._id,
+                name: collectionService.getCollection().name,
+                exercises: $scope.exercises,
+                privacy: $scope.privacy
+                }
+            };
+
+            $http({
+                url:  apiUrl + '/subjects/' + subjectService.getSubject()._id +  "/collections/" + collectionService.getCollection()._id,
+                method: 'PUT',
+                headers: {'x-access-token': $cookies.getObject("token")},
+                data: data
+            }).success(function(response,status){
+                console.log("heihheihieiheresponse:"+ response + "\n\n\n\nstatus:");
+            }).error(function(data,status,header,config){
+                $scope.ServerResponse =  htmlDecode("Data: " + data +
+                    "\n\n\n\nstatus: " + status +
+                    "\n\n\n\nheaders: " + header +
+                    "\n\n\n\nconfig: " + config);
+            })
+        };
+
+        $scope.saveCollection = function(){
+            if($routeParams.collectionId == "new"){
+                $scope.postCollection();
+            }
+            else{
+                $scope.putCollection();
             }
         };
 
@@ -128,7 +223,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
         for (i = 0; i < $scope.exercises.length; i++) {
             if($scope.exercises[i].type == "pd") {
-
                 console.log($scope.exercises[i]);
                 var len = $scope.exercises[i].tags.length;
                 for (j = 0; j < len; j++) {
