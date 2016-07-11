@@ -51,12 +51,16 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             $scope.targetSubject = target._id;
             subjectService.setSubject(target)
         };
+        $scope.closeFilter = function () {
+            $scope.filterMode = false;
+            $scope.filterSubjects = "";
+        }
 
 
     })
 
 
-    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, apiUrl) {
+    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, apiUrl, focus, shuffle) {
         if(!subjectService.getUserSubjects()) {
             $location.path("/subjects")
         } else {
@@ -69,10 +73,9 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             }).success(function (response) {
                 $scope.items = [];
                 for(var subject in response) {
-                    if(subjectService.getUserSubjects().indexOf(response[subject]._id) == -1) {
-                        $scope.items.push(response[subject])
-                    }
+                    $scope.items.push(response[subject]);
                 }
+                shuffle($scope.items)
 
             });
             $scope.addSubject = function (subject) {
@@ -98,12 +101,19 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
 
                 }).then(function (response) {
                     var resultList = [];
-                    var resultIds = [];
+                    var resultInfoAdded = {};
                     angular.forEach(response.data, function (subject) {
-                        if(subjectService.getUserSubjects().indexOf(subject._id) == -1 && resultIds.indexOf(subject._id) == -1) {
+                        if(!resultInfoAdded[subject.code]) {
                             resultList.push(subject);
-                            resultIds.push(subject._id)
-                        }
+                            resultInfoAdded[subject.code] = [subject.name]
+                        } else {
+                            if(resultInfoAdded[subject.code].indexOf(subject.name) == -1) {
+                                console.log(resultInfoAdded[subject.code]);
+                                console.log(subject.name);
+                                resultList.push(subject);
+                                resultInfoAdded[subject.code].push(subject.name)
+                            }
+                        };
                     });
                     resultList.push({
                         code: val.toUpperCase(),
@@ -118,6 +128,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                     $scope.editNew = true;
                     $scope.newCode = item.code;
                     $scope.newName = "";
+                    focus('newName')
 
                 }
                 else {

@@ -6,7 +6,7 @@
     </a>
 </div>
 
-<div class="container-fluid" ng-repeat="item in items" align="center">
+<div class="container-fluid" ng-repeat="item in items | filter: filterSubjects" align="center">
     <a ng-if="!deleteMode" href="#/subjects/{{targetSubject}}">
         <button class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)">
             <p ng-if="item.name != ''">{{ item.name }}</p>
@@ -25,21 +25,26 @@
         </div>
     </div>
 </div>
-{{deleteElements}}
 
 <div ng-show="!deleteMode" class="container-fluid" style="position: fixed; bottom: 80px; right: 10%">
-    <button class="btn btn-default" ng-click="deleteMode = true">
+    <button ng-hide="filterMode" class="btn btn-default" ng-click="deleteMode = true">
         <span class="glyphicon glyphicon-trash"></span>
     </button>
-    <button class="btn btn-default">
+    <button ng-hide="filterMode" class="btn btn-default" ng-click="filterMode = true">
         <span class="glyphicon glyphicon-search"></span>
     </button>
+    <div ng-show="filterMode" class="form-inline">
+        <input id="searchBar" ng-model="filterSubjects" class="form-control" style="width: 100px">
+        <button class="btn btn-default" ng-click="closeFilter()">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+    </div>
 </div>
 <div ng-show="deleteMode" class="container-fluid" style="position: fixed; bottom: 80px; right: 10%">
-    <button class="btn btn-default" ng-click="deleteMode = false">
-        <span class="glyphicon glyphicon-remove"></span>
-    </button>
     <button class="btn btn-default" ng-click="deleteSubjects()">
         <span class="glyphicon glyphicon-ok"></span>
+    </button>
+    <button class="btn btn-default" ng-click="deleteMode = false">
+        <span class="glyphicon glyphicon-remove"></span>
     </button>
 </div>

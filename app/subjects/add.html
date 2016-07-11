@@ -4,16 +4,16 @@
 
     <div class="col-lg-6">
         <div ng-hide="editNew" class="container-fluid" align="left">
-            <h2>Fagkode:</h2>
+            <h2>Søk:</h2>
             <input class="form-control" type="text" ng-model="searchTerm" uib-typeahead="subject as subject.code+', '+subject.name for subject in searchSubjects($viewValue)"
-                   typeahead-popup-template-url="subjectSearchResult.html" typeahead-on-select="selectedSubject($item)" placeholder="Finn fag..." >
+                   typeahead-popup-template-url="subjectSearchResult.html" typeahead-on-select="selectedSubject($item)" placeholder="Skriv inn fagkode..." >
         </div>
         <div ng-show="editNew" class="container-fluid" align="left">
             <h2>Opprett ny</h2>
             <h4>Fagkode:</h4>
             <input ng-model="newCode" class="form-control">
             <h4>Fagnavn:</h4>
-            <input ng-model="newName" class="form-control">
+            <input id="newName" ng-model="newName" class="form-control" ng-keypress="$event.keyCode == 13 && saveNew()">
             <div class="btn-group" style="margin-top: 30px; float:right;">
                 <button class="btn btn-default" ng-click="saveNew()">
                     <span class="glyphicon glyphicon-floppy-disk"></span>

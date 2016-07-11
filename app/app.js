@@ -49,7 +49,7 @@ angular.module('myApp', [
     })
 
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
-    .constant("apiUrl", "http://192.168.24.174:3000")
+    .constant("apiUrl", "http://192.168.10.207:3000")
     .service("subjectService", function() {
         var subject;
         var userSubjects;
@@ -92,6 +92,35 @@ angular.module('myApp', [
         }
 
 
+    })
+    .factory('focus', function ($timeout, $window) {
+        return function (id) { {
+            $timeout(function () {
+                var element = $window.document.getElementById(id);
+                if(element) {
+                    element.focus()
+                }
+            })
+        }
+
+        }
+    })
+    .factory('shuffle', function () {
+        return function (array) {
+            var m = array.length, t, i;
+
+            while (m) {
+                // Pick a remaining element…
+                i = Math.floor(Math.random() * m--);
+
+                // And swap it with the current element.
+                t = array[m];
+                array[m] = array[i];
+                array[i] = t;
+            }
+
+            return array;
+        }
     })
     ;
 
