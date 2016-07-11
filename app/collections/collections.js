@@ -12,7 +12,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         if(!$scope.subject) {
             $http({
-                url: apiUrl + "/" + $routeParams.subjectId,
+                url: apiUrl + "/subjects/" + $routeParams.subjectId,
                 method: "GET",
                 params: {"environment": "production"}
             }).success(function(response){
@@ -26,7 +26,7 @@ angular.module('myApp.collections', ['ngRoute'])
             })
         } else {
             $http({
-                url: apiUrl + "/" + $scope.subject._id,
+                url: apiUrl + "/subjects/" + $scope.subject._id,
                 method: "GET",
                 params: {"environment": "production"}
             }).success(function (response) {

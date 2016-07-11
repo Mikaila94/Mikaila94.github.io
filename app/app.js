@@ -12,7 +12,8 @@ angular.module('myApp', [
     'ngAnimate',
     'ui.bootstrap',
     'ngTagsInput',
-    'ng-mfb'])
+    'ng-mfb',
+    'ngCookies'])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
     $routeProvider
@@ -50,10 +51,11 @@ angular.module('myApp', [
 
     })
 
-    .constant("apiUrl", "https://acepi.herokuapp.com/subjects")
-
+    //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
+    .constant("apiUrl", "http://192.168.10.207:3000")
     .service("subjectService", function() {
         var subject;
+        var userSubjects;
 
         var setSubject= function(targetSubject) {
             subject = targetSubject
@@ -61,10 +63,17 @@ angular.module('myApp', [
         var getSubject = function() {
             return subject
         };
-
+        var setUserSubjects = function (subjects) {
+            userSubjects = subjects;
+        };
+        var getUserSubjects = function () {
+            return userSubjects;
+        };
         return {
             setSubject: setSubject,
-            getSubject: getSubject
+            getSubject: getSubject,
+            setUserSubjects: setUserSubjects,
+            getUserSubjects: getUserSubjects
         }
 
     })
@@ -86,6 +95,35 @@ angular.module('myApp', [
         }
 
 
+    })
+    .factory('focus', function ($timeout, $window) {
+        return function (id) { {
+            $timeout(function () {
+                var element = $window.document.getElementById(id);
+                if(element) {
+                    element.focus()
+                }
+            })
+        }
+
+        }
+    })
+    .factory('shuffle', function () {
+        return function (array) {
+            var m = array.length, t, i;
+
+            while (m) {
+                // Pick a remaining element…
+                i = Math.floor(Math.random() * m--);
+
+                // And swap it with the current element.
+                t = array[m];
+                array[m] = array[i];
+                array[i] = t;
+            }
+
+            return array;
+        }
     })
     ;
 
