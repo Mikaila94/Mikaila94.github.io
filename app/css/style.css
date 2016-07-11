@@ -76,12 +76,12 @@
 
 }
 
-#bottom {
-    display: block;
-    margin-top: 2000px;
+#editArea {
+    overflow: auto;
 }
 
-
-
+#bottom {
+    display: block;
+}
 
 

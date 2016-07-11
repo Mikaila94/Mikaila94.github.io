@@ -47,6 +47,7 @@ angular.module('myApp', [
 }])
     .controller('mainController', function($scope, $window,$location, $http) {
         $scope.isCollapsed = true;
+
     })
 
     .constant("apiUrl", "https://acepi.herokuapp.com/subjects")

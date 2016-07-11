@@ -1,9 +1,7 @@
-<div id="editArea" ng-controller="editCtrl" class="container-fluid" style="width:960px">
+<div ng-controller="editCtrl" class="container-fluid" style="width:960px">
     <div class="container-fluid" style="margin: 20px;">
 
     </div>
-
-
 
     <div class="container-fluid" style="width: 60%">
 
@@ -16,8 +14,8 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="btn-group" style="margin-top:-75px;" align="center">
+        <div class="row" align="center">
+            <div class="btn-group" style="margin-top:-75px;">
                 <label class="btn btn-primary" ng-model="collectionPublic" uib-btn-radio="true" style="margin-top: 2px;" >
                     Public
                 </label>
@@ -30,14 +28,14 @@
         </div>
     </div>
 
-    <div class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
+    <div id="editArea" class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
 
         <div class="row">
             <div class="col-lg-2">
                 <h4>Spørsmålstype:</h4>
             </div>
             <div class="col-lg-10">
-                <select id="typeBox" ng-model="exercise.type" align="left" style="margin-bottom:10px">
+                <select id="typeBox" ng-model="exercise.type" align="left" style="margin-top:10px">
                     <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
                 </select>
 
@@ -68,7 +66,7 @@
 
 
 
-    <div class="container-fluid" style="margin: 30px;">
+    <div id="bottom" class="container-fluid" style="margin: 30px;">
 
 
     </div>

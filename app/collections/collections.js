@@ -42,15 +42,18 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
+    .controller('editCtrl', function ($scope, $timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
 
         $scope.gotoBottom = function () {
             // set the location.hash to the id of
             // the element you wish to scroll to.
-            $location.hash('bottom');
+            $location.hash("bottom");
 
             // call $anchorScroll()
-            $anchorScroll();
+            $timeout(function(){
+                $anchorScroll();
+
+            },5);
         };
 
         $scope.collection = collectionService.getCollection();
@@ -94,7 +97,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     "collectionId": collectionService.getCollection()._id,
                     "relatedAlternatives": []
             }
-            collectionService.getCollection().exercises.push(exercise)
+            collectionService.getCollection().exercises.push(exercise);
             $scope.gotoBottom();
         };
 
@@ -143,27 +146,5 @@ angular.module('myApp.collections', ['ngRoute'])
         //};
 
 
-
-
-
-
-        //$scope.getTags = function(exercise){
-        //    $scope.tags = exercise.tags;
-        //}
-
-    }).directive('scrollBottom', function () {
-    return {
-        scope: {
-            scrollBottom: "="
-        },
-        link: function (scope, element) {
-            scope.$watchCollection('scrollBottom', function (newValue) {
-                if (newValue)
-                {
-                    $(element).scrollTop($(element)[0].scrollHeight);
-                }
-            });
-        }
-    }
-})
+    })
 ;
