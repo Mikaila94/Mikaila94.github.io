@@ -78,7 +78,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
             }, 5);
         };
-        $scope.privacy = false;
+        $scope.public = false;
         $scope.collection = collectionService.getCollection();
 
         if (!subjectService.getSubject()) {
@@ -158,14 +158,14 @@ angular.module('myApp.collections', ['ngRoute'])
                 collection: {
                     name: $scope.collection.name,
                     exercises: $scope.exercises,
-                    privacy: $scope.privacy
+                    public: $scope.public
 
                 }
             };
 
 
             $http({
-                url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections/",
+                url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections",
                 method: 'POST',
                 headers: {'x-access-token': $cookies.getObject("token")},
                 data: data
@@ -177,7 +177,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
                 console.log(response + "\n\n\n\n\n\status" + status);
             }).error(function (data, status, header, config) {
-                $scope.ServerResponse = htmlDecode("Data: " + data +
+                console.log("Data: " + data +
                     "\n\n\n\nstatus: " + status +
                     "\n\n\n\nheaders: " + header +
                     "\n\n\n\nconfig: " + config);
@@ -191,7 +191,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 _id: collectionService.getCollection()._id,
                 name: collectionService.getCollection().name,
                 exercises: $scope.exercises,
-                privacy: $scope.privacy
+                public: $scope.public
                 }
             };
 
@@ -203,7 +203,7 @@ angular.module('myApp.collections', ['ngRoute'])
             }).success(function(response,status){
                 console.log("heihheihieiheresponse:"+ response + "\n\n\n\nstatus:");
             }).error(function(data,status,header,config){
-                $scope.ServerResponse =  htmlDecode("Data: " + data +
+                console.log("Data: " + data +
                     "\n\n\n\nstatus: " + status +
                     "\n\n\n\nheaders: " + header +
                     "\n\n\n\nconfig: " + config);
@@ -211,6 +211,7 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.saveCollection = function(){
+            console.log("hei " + $routeParams.collectionId);
             if($routeParams.collectionId == "new"){
                 $scope.postCollection();
             }
