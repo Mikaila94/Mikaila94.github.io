@@ -7,12 +7,16 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
         $scope.authenticate =function () {
             $http({
                 url: apiUrl + '/authentication',
-                method: "GET",
-                headers: {
-                    Authorization: 'Basic ' +  $base64.encode($scope.username + ":" + $scope.password)
+                method: "POST",
+                data: {
+                    user: {
+                        username: $scope.username,
+                        password: $scope.password
+                    }
                 }
 
             }).success(function (response) {
+                console.log(response)
                 $cookies.putObject('token', response.token);
                 $cookies.putObject('username', $scope.username);
                 $cookies.putObject('password', $scope.password);
@@ -24,4 +28,30 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
             })
         }
 
+    })
+    .controller('registerCtrl', function ($scope, $http, $location, apiUrl) {
+        $scope.user = {};
+        $scope.completeRegister = function () {
+            if($scope.user.email && $scope.user.username && $scope.user.password) {
+                if($scope.user.password != $scope.controlPassword ) {
+                    alert("feil")
+                } else {
+                    $http({
+                        url: apiUrl + "/users",
+                        method: "POST",
+                        data: {
+                            user: $scope.user
+                        }
+                    }).success(function (response) {
+                        $location.path('/login')
+                    }).error(function (response, status) {
+                        console.log(response, status)
+                    })
+                }
+
+
+            } else {
+                alert("du må fylle ut alle, din tulling")
+            }
+        }
     });
