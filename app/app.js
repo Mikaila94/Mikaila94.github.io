@@ -36,7 +36,7 @@ angular.module('myApp', [
         templateUrl: "collections/collections.html",
         controller: "collectionsCtrl"
         })
-        .when("/subjects/:subjectId/collections/:collectionsId", {
+        .when("/subjects/:subjectId/collections/:collectionId", {
         templateUrl: "collections/edit.html",
         controller: "editCtrl"
         })
@@ -45,17 +45,8 @@ angular.module('myApp', [
         controller: "View1Ctrl"
         })
         .when("/view2", {
-      .when("/subjects/:subjectId/collections/:collectionId", {
-          templateUrl: "collections/edit.html",
-          controller: "editCtrl"
-      })
-      .when("/view1", {
-          templateUrl: "view1/view1.html",
-          controller: "View1Ctrl"
-      })
-      .when("/view2", {
-        templateUrl: "view2/view2.html",
-        controller: "View2Ctrl"
+            templateUrl: "view2/view2.html",
+            controller: "View2Ctrl"
         })
         .otherwise({redirectTo: '/login'});
 }])
@@ -119,6 +110,20 @@ angular.module('myApp', [
             })
         }
 
+        }
+    })
+    .directive('scrollBottom', function () {
+        return {
+            scope: {
+                scrollBottom: "="
+            },
+            link: function ($scope, $element) {
+                $scope.$watchCollection('scrollBottom', function (newValue) {
+                    if(newValue) {
+                        $element[0].scrollTop = $element[0].scrollHeight;
+                    }
+                })
+            }
         }
     })
     .factory('shuffle', function () {

@@ -13,22 +13,20 @@ angular.module('myApp.collections', ['ngRoute'])
         if(!$scope.subject) {
             $http({
                 url: apiUrl + "/subjects/" + $routeParams.subjectId,
-                method: "GET",
-                params: {"environment": "production"}
+                method: "GET"
             }).success(function(response){
                 $scope.subject = {
                     _id: response._id,
                     code: response.code,
                     name: response.name
                 };
-                subjectService.setSubject($scope.subject)
+                subjectService.setSubject($scope.subject);
                 initCollections(response.collections);
             })
         } else {
             $http({
                 url: apiUrl + "/subjects/" + $scope.subject._id,
-                method: "GET",
-                params: {"environment": "production"}
+                method: "GET"
             }).success(function (response) {
                 initCollections(response.collections);
             })
@@ -65,24 +63,12 @@ angular.module('myApp.collections', ['ngRoute'])
     })
 
     .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
-
-
-        $scope.gotoBottom = function () {
-            // set the location.hash to the id of
-            // the element you wish to scroll to.
-            $location.hash("bottom");
-
-            // call $anchorScroll()
-            $timeout(function () {
-                $anchorScroll();
-
-            }, 5);
-        };
+        
         $scope.public = false;
         $scope.collection = collectionService.getCollection();
 
         if (!subjectService.getSubject()) {
-            window.history.back()
+            $location.path("/subjects/" + $routeParams.subjectId)
         }
         if (!$scope.collection) {
             if ($routeParams.collectionId == 'new') {
@@ -91,10 +77,9 @@ angular.module('myApp.collections', ['ngRoute'])
                     exercises: []
                 }
             } else {
-                window.history.back()
+                $location.path("/subjects/" + $routeParams.subjectId)
             }
         }
-        console.log($scope.collection);
         $scope.exercises = $scope.collection.exercises;
 
 
@@ -144,7 +129,6 @@ angular.module('myApp.collections', ['ngRoute'])
             };
 
             $scope.collection.exercises.push(exercise);
-            $scope.gotoBottom();
         };
 
         $scope.deleteExercise = function (index) {
