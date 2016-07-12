@@ -17,34 +17,38 @@ angular.module('myApp', [
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
     $routeProvider
-      .when("/login", {
-          templateUrl: "login/login.html",
-          controller: "loginCtrl"
-      })
-      .when("/subjects", {
+        .when("/login", {
+        templateUrl: "login/login.html",
+        controller: "loginCtrl"
+        })
+        .when("/register", {
+            templateUrl: "login/register.html",
+            controller: "registerCtrl"
+        })
+        .when("/subjects", {
         templateUrl: "subjects/subjects.html",
         controller: "subjectsCtrl"
-      })
-      .when("/add", {
-            templateUrl: "subjects/add.html",
-            controller: "addCtrl"
-      }).when("/subjects/:subjectId", {
-            templateUrl: "collections/collections.html",
-            controller: "collectionsCtrl"
         })
-      .when("/subjects/:subjectId/collections/:collectionId", {
-          templateUrl: "collections/edit.html",
-          controller: "editCtrl"
-      })
-      .when("/view1", {
-          templateUrl: "view1/view1.html",
-          controller: "View1Ctrl"
-      })
-      .when("/view2", {
-        templateUrl: "view2/view2.html",
-        controller: "View2Ctrl"
-      })
-      .otherwise({redirectTo: '/login'});
+        .when("/add", {
+        templateUrl: "subjects/add.html",
+        controller: "addCtrl"
+        }).when("/subjects/:subjectId", {
+        templateUrl: "collections/collections.html",
+        controller: "collectionsCtrl"
+        })
+        .when("/subjects/:subjectId/collections/:collectionId", {
+        templateUrl: "collections/edit.html",
+        controller: "editCtrl"
+        })
+        .when("/view1", {
+        templateUrl: "view1/view1.html",
+        controller: "View1Ctrl"
+        })
+        .when("/view2", {
+            templateUrl: "view2/view2.html",
+            controller: "View2Ctrl"
+        })
+        .otherwise({redirectTo: '/login'});
 }])
     .controller('mainController', function($scope, $window,$location, $http) {
         $scope.isCollapsed = true;
@@ -106,6 +110,20 @@ angular.module('myApp', [
             })
         }
 
+        }
+    })
+    .directive('scrollBottom', function () {
+        return {
+            scope: {
+                scrollBottom: "="
+            },
+            link: function ($scope, $element) {
+                $scope.$watchCollection('scrollBottom', function (newValue) {
+                    if(newValue) {
+                        $element[0].scrollTop = $element[0].scrollHeight;
+                    }
+                })
+            }
         }
     })
     .factory('shuffle', function () {

@@ -11,13 +11,14 @@
     </div>
 
 
-   <a href="#/subjects/:subjectId/collections/new">
+
+   <a href="#/subjects/{{subject._id}}/collections/new">
        <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:50%;">+ Nytt sett</button>
    </a>
     <table class="table">
         <tbody>
         <tr ng-repeat="coll in collections track by $index">
-            <td ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
+            <td ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subjectService.getSubject()._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
             <td><Button ng-click="deleteCollection(coll,$index)">
                 <span class="glyphicon glyphicon-trash"></span>
                 </Button>
