@@ -17,7 +17,8 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.subject = {
                     _id: response._id,
                     code: response.code,
-                    name: response.name
+                    name: response.name,
+                    collections: response.collections
                 };
                 subjectService.setSubject($scope.subject);
                 initCollections(response.collections);
@@ -61,7 +62,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, focus, apiUrl) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $q, collectionService, subjectService, focus, apiUrl) {
 
         $scope.public = true;
         $scope.collection = collectionService.getCollection();
@@ -74,7 +75,8 @@ angular.module('myApp.collections', ['ngRoute'])
             if ($routeParams.collectionId == 'new') {
                 $scope.collection = {
                     name: '',
-                    exercises: []
+                    exercises: [],
+                    public: $scope.public
                 }
             } else {
                 $location.path("/subjects/" + $routeParams.subjectId)
@@ -120,13 +122,9 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.addExercise = function () {
 
             var exercise = {
-                "subjectId": subjectService.getSubject()._id,
                 "question": "",
                 "correctAnswer": "",
-                "type": $scope.defaultType,
-                "tags": [],
-                "collectionId": collectionService.getCollection() ? collectionService.getCollection()._id : "",
-                "relatedAlternatives": []
+                "type": $scope.defaultType
             };
             console.log(exercise.type)
             $scope.collection.exercises.push(exercise);
@@ -142,49 +140,81 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.postCollection = function () {
-            var data = {
-                collection: {
-                    name: $scope.collection.name,
-                    exercises: $scope.exercises,
-                    public: $scope.public
+            return $q(function(resolve, reject) {
+                var data = {
+                    collection: {
+                        name: $scope.collection.name,
+                        exercises: $scope.exercises,
+                        public: $scope.public
 
-                }
-            };
+                    }
+                };
 
 
-            $http({
-                url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections",
-                method: 'POST',
-                headers: {'x-access-token': $cookies.getObject("token")},
-                data: data
-            }).success(function (response, status) {
-                $scope.collection._id = response.insertedId;
-                collectionService.setCollection($scope.collection);
-                for (var i = 0; i < $scope.exercises.length; i++) {
-                    $scope.exercises[i].collectionId = $scope.collection._id;
-                }
-            }).error(function (data, status, header, config) {
-                console.log("Data: " + data +
-                    "\n\n\n\nstatus: " + status +
-                    "\n\n\n\nheaders: " + header +
-                    "\n\n\n\nconfig: " + config);
-            });
+                $http({
+                    url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections",
+                    method: 'POST',
+                    headers: {'x-access-token': $cookies.getObject("token")},
+                    data: data
+                }).success(function (response, status) {
+                    $scope.collection._id = response.insertedId;
+                    collectionService.setCollection($scope.collection);
+                    resolve(true);
+                    for (var i = 0; i < $scope.exercises.length; i++) {
+                        $scope.exercises[i].collectionId = $scope.collection._id;
+                    }
+                }).error(function (data, status, header, config) {
+                    console.log("Data: " + data +
+                        "\n\n\n\nstatus: " + status +
+                        "\n\n\n\nheaders: " + header +
+                        "\n\n\n\nconfig: " + config);
+                });
+            }
+
+            )
         };
 
 
         $scope.putCollection = function(){
-            
-            var data = {collection:
-                {
-                _id: collectionService.getCollection()._id,
-                name: collectionService.getCollection().name,
-                exercises: $scope.exercises,
-                public: $scope.public
-                }
+            var exerciseList = [];
+            angular.forEach($scope.exercises, function (exercise) {
+                var newExercise = {};
+                if(exercise.type == "mc") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type,
+                        alternatives: exercise.alternatives
+                    }
+                    console.log("mc")
+                } else if (exercise.type == "pd") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type,
+                        tags: exercise.tags.map(function (tag) {
+                            return tag.text
+                        })
+                    };
+                    console.log("pd")
+                } else if(exercise.type == "tf") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type
+                    }
+                };
+                exerciseList.push(newExercise)
+            });
+            $scope.collection.exercises = exerciseList;
+            $scope.exercises = $scope.collection.exercises;
+            console.log(exerciseList)
+            var data = {
+                subject: subjectService.getSubject()
             };
 
             $http({
-                url:  apiUrl + '/subjects/' + subjectService.getSubject()._id +  "/collections/" + collectionService.getCollection()._id,
+                url:  apiUrl + '/subjects/' + subjectService.getSubject()._id,
                 method: 'PUT',
                 headers: {'x-access-token': $cookies.getObject("token")},
                 data: data
@@ -195,6 +225,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 console.log(status)
                 console.log(header)
                 console.log(config)
+                console.log(subjectService.getSubject())
 
             })
         };
@@ -202,7 +233,8 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.saveCollection = function(){
             console.log("hei " + $routeParams.collectionId);
             if($routeParams.collectionId == "new"){
-                $scope.postCollection();
+                subjectService.getSubject().collections.push($scope.collection);
+                $scope.putCollection();
             }
             else{
                 $scope.putCollection();
