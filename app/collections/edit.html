@@ -14,11 +14,11 @@
 
         <div class="row" align="center">
             <div class="btn-group" style="margin-top:-75px;">
-                <label class="btn btn-primary" ng-model="collectionPublic" uib-btn-radio="true" style="margin-top: 2px;" >
+                <label class="btn btn-default" ng-model="privacy" uib-btn-radio="false" style="margin-top: 2px;" >
                     Public
                 </label>
 
-                <label class="btn btn-primary" ng-model="collectionPrivate" uib-btn-radio="false" style="margin-top: 2px;">
+                <label class="btn btn-default" ng-model="privacy" uib-btn-radio="true" style="margin-top: 2px;">
                     Private
                 </label>
             </div>
@@ -53,7 +53,7 @@
 
     <button class="btn btn-default" ng-click="addExercise()" style="width:100%;">+ Ny oppgave</button>
 
-    <button class="btn btn-default" style="background-color:white;position:fixed;bottom:200px;right:60px;cursor:pointer;">
+    <button ng-click="saveCollection()" class="btn btn-default" style="background-color:white;position:fixed;bottom:200px;right:60px;cursor:pointer;">
         <span class="glyphicon glyphicon-floppy-disk" ></span>
     </button>
     <button ng-click="addExercise()" class="btn btn-default" style="background-color:white;position:fixed;bottom:150px;right:60px;cursor:pointer;">

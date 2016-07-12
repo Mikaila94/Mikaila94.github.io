@@ -4,10 +4,12 @@
    </a>
     <table class="table">
         <tbody>
-        <tr ng-repeat="coll in collections">
-            <td ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
-            <td><Button>        <span class="glyphicon glyphicon-trash"></span>
-            </Button></td>
+        <tr ng-repeat="coll in collections track by $index">
+            <td ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
+            <td><Button ng-click="deleteCollection(coll,$index)">
+                <span class="glyphicon glyphicon-trash"></span>
+                </Button>
+            </td>
 
         </tr>
 
