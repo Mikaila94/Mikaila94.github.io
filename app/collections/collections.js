@@ -8,7 +8,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
         };
         $scope.subject = subjectService.getSubject();
-        $scope.defaultValue = "pd";
 
         if(!$scope.subject) {
             $http({
@@ -62,13 +61,14 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, apiUrl) {
-        
-        $scope.public = false;
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $anchorScroll, collectionService, subjectService, focus, apiUrl) {
+
+        $scope.public = true;
         $scope.collection = collectionService.getCollection();
 
         if (!subjectService.getSubject()) {
             $location.path("/subjects/" + $routeParams.subjectId)
+
         }
         if (!$scope.collection) {
             if ($routeParams.collectionId == 'new') {
@@ -80,6 +80,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 $location.path("/subjects/" + $routeParams.subjectId)
             }
         }
+
         $scope.exercises = $scope.collection.exercises;
 
 
@@ -103,15 +104,15 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        var defaultType = "pd";
+        $scope.defaultType = "mc";
         if ($scope.exercises.length) {
             var index = parseInt($scope.exercises.length) - 1;
-            defaultType = $scope.exercises[index].type;
+            $scope.defaultType = $scope.exercises[index].type;
         }
 
 
         $scope.changeDefault = function (exercise, index) {
-            defaultType = exercise.type;
+            $scope.defaultType = exercise.type;
         };
 
         var typeBox = document.getElementById("typeBox");
@@ -122,13 +123,16 @@ angular.module('myApp.collections', ['ngRoute'])
                 "subjectId": subjectService.getSubject()._id,
                 "question": "",
                 "correctAnswer": "",
-                "type": defaultType,
+                "type": $scope.defaultType,
                 "tags": [],
                 "collectionId": collectionService.getCollection() ? collectionService.getCollection()._id : "",
                 "relatedAlternatives": []
             };
-
+            console.log(exercise.type)
             $scope.collection.exercises.push(exercise);
+            $timeout(function () {
+                window.scrollTo(0, document.body.scrollHeight)
+            }, 0)
         };
 
         $scope.deleteExercise = function (index) {
@@ -159,7 +163,6 @@ angular.module('myApp.collections', ['ngRoute'])
                 for (var i = 0; i < $scope.exercises.length; i++) {
                     $scope.exercises[i].collectionId = $scope.collection._id;
                 }
-                console.log(response + "\n\n\n\n\n\status" + status);
             }).error(function (data, status, header, config) {
                 console.log("Data: " + data +
                     "\n\n\n\nstatus: " + status +
@@ -170,6 +173,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
         $scope.putCollection = function(){
+            
             var data = {collection:
                 {
                 _id: collectionService.getCollection()._id,
@@ -187,10 +191,11 @@ angular.module('myApp.collections', ['ngRoute'])
             }).success(function(response,status){
                 console.log("heihheihieiheresponse:"+ response + "\n\n\n\nstatus:");
             }).error(function(data,status,header,config){
-                console.log("Data: " + data +
-                    "\n\n\n\nstatus: " + status +
-                    "\n\n\n\nheaders: " + header +
-                    "\n\n\n\nconfig: " + config);
+                console.log(data)
+                console.log(status)
+                console.log(header)
+                console.log(config)
+
             })
         };
 
@@ -206,7 +211,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.list = [];
 
-        for (i = 0; i < $scope.exercises.length; i++) {
+        for (var i = 0; i < $scope.exercises.length; i++) {
             if($scope.exercises[i].type == "pd") {
                 console.log($scope.exercises[i]);
                 var len = $scope.exercises[i].tags.length;
@@ -226,5 +231,4 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
 
-    })
-;
+    });
