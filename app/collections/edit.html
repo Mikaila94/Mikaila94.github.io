@@ -14,18 +14,18 @@
 
         <div class="row" align="center">
             <div class="btn-group" style="margin-top:-75px;">
-                <label class="btn btn-default" ng-model="privacy" uib-btn-radio="false" style="margin-top: 2px;" >
+                <label class="btn btn-default" ng-model="public" uib-btn-radio="true" style="margin-top: 2px;" >
                     Public
                 </label>
 
-                <label class="btn btn-default" ng-model="privacy" uib-btn-radio="true" style="margin-top: 2px;">
+                <label class="btn btn-default" ng-model="public" uib-btn-radio="false" style="margin-top: 2px;">
                     Private
                 </label>
             </div>
 
         </div>
     </div>
-    <div scroll-bottom="collection.exercises">
+    <div scroll-bottom="collection.exercises" id="exercisesDiv">
         <div id="editArea" class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
             <div class="row">
                 <div class="col-lg-2">

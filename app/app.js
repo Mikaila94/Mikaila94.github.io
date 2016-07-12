@@ -112,20 +112,7 @@ angular.module('myApp', [
 
         }
     })
-    .directive('scrollBottom', function () {
-        return {
-            scope: {
-                scrollBottom: "="
-            },
-            link: function ($scope, $element) {
-                $scope.$watchCollection('scrollBottom', function (newValue) {
-                    if(newValue) {
-                        $element[0].scrollTop = $element[0].scrollHeight;
-                    }
-                })
-            }
-        }
-    })
+   
     .factory('shuffle', function () {
         return function (array) {
             var m = array.length, t, i;
