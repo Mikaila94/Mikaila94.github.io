@@ -6,7 +6,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
 
         $scope.authenticate =function () {
             $http({
-                url: apiUrl + '/authentication',
+                url: apiUrl + '/users/authentication',
                 method: "POST",
                 data: {
                     user: {

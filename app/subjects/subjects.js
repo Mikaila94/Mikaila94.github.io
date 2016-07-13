@@ -85,7 +85,8 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                     data: {
                         "subject": {
                             code: subject.code,
-                            name: subject.name
+                            name: subject.name,
+                            public: true
                         }
                     },
                     headers: {
@@ -94,6 +95,8 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                 }).success(function (response, status) {
                     $location.path("/subjects");
                     console.log(status)
+                }).error(function (status) {
+                    console.log({error: status});
                 })
             };
             $scope.searchSubjects = function (val) {

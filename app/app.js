@@ -13,7 +13,8 @@ angular.module('myApp', [
     'ui.bootstrap',
     'ngTagsInput',
     'ng-mfb',
-    'ngCookies'])
+    'ngCookies']
+)
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
 
     $routeProvider
@@ -50,7 +51,7 @@ angular.module('myApp', [
         })
         .otherwise({redirectTo: '/login'});
 }])
-    .controller('mainController', function($scope, $window,$location, $http) {
+    .controller('mainController', function($scope, $window,$location, $http,$q) {
         $scope.isCollapsed = true;
 
     })
@@ -129,8 +130,99 @@ angular.module('myApp', [
 
             return array;
         }
-    })
-    ;
+    }).service('RestService', function () {
+    this.putSubject = function ($scope,$http) {
+        var exerciseList = [];
+        angular.forEach($scope.exercises, function (exercise) {
+            var newExercise = {};
+            if (exercise.type == "mc") {
+                newExercise = {
+                    question: exercise.question,
+                    correctAnswer: exercise.correctAnswer,
+                    type: exercise.type,
+                    alternatives: exercise.alternatives
+                }
+                console.log("mc")
+            } else if (exercise.type == "pd") {
+                newExercise = {
+                    question: exercise.question,
+                    correctAnswer: exercise.correctAnswer,
+                    type: exercise.type,
+                    tags: exercise.tags.map(function (tag) {
+                        return tag.text
+                    })
+                };
+                console.log("pd")
+            } else if (exercise.type == "tf") {
+                newExercise = {
+                    question: exercise.question,
+                    correctAnswer: exercise.correctAnswer,
+                    type: exercise.type
+                }
+            }
+            ;
+            exerciseList.push(newExercise)
+        });
+        $scope.collection.exercises = exerciseList;
+        $scope.exercises = $scope.collection.exercises;
+        console.log(exerciseList);
+        var data = {
+            subject: subjectService.getSubject()
+        };
+
+        $http({
+            url: apiUrl + '/subjects/' + subjectService.getSubject()._id,
+            method: 'PUT',
+            headers: {'x-access-token': $cookies.getObject("token")},
+            data: data
+        }).success(function (response, status) {
+            console.log("heihheihieiheresponse:" + response + "\n\n\n\nstatus:");
+        }).error(function (data, status, header, config) {
+            console.log(data)
+            console.log(status)
+            console.log(header)
+            console.log(config)
+            console.log(subjectService.getSubject())
+
+        })
+    };
+
+
+    this.postSubject = function ($scope,$http) {
+        return $q(function (resolve, reject) {
+                var data = {
+                    collection: {
+                        name: $scope.collection.name,
+                        exercises: $scope.exercises,
+                        public: $scope.public
+
+                    }
+                };
+
+
+                $http({
+                    url: apiUrl + '/subjects/' + subjectService.getSubject()._id + "/collections",
+                    method: 'POST',
+                    headers: {'x-access-token': $cookies.getObject("token")},
+                    data: data
+                }).success(function (response, status) {
+                    $scope.collection._id = response.insertedId;
+                    collectionService.setCollection($scope.collection);
+                    resolve(true);
+                    for (var i = 0; i < $scope.exercises.length; i++) {
+                        $scope.exercises[i].collectionId = $scope.collection._id;
+                    }
+                }).error(function (data, status, header, config) {
+                    console.log("Data: " + data +
+                        "\n\n\n\nstatus: " + status +
+                        "\n\n\n\nheaders: " + header +
+                        "\n\n\n\nconfig: " + config);
+                });
+            }
+        )
+    };
+});
+
 
 
 
