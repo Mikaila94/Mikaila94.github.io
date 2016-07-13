@@ -4,9 +4,9 @@
 
 'use strict';
 
-beforeEach(module('angularSpinner'));
-
 describe('Provider: usSpinnerConfigProvider', function () {
+	beforeEach(module('angularSpinner'));
+
 	it('should have configurable options', function () {
 		module(function (usSpinnerConfigProvider) {
 			usSpinnerConfigProvider.setDefaults({color: 'black'});
@@ -14,15 +14,6 @@ describe('Provider: usSpinnerConfigProvider', function () {
 
 		inject(function (usSpinnerConfig) {
 			expect(usSpinnerConfig.config.color).toBe('black');
-		});
-	});
-	it('should support themes', function () {
-		module(function (usSpinnerConfigProvider) {
-			usSpinnerConfigProvider.setTheme('bigRed', {color: 'red', size: 20});
-		});
-
-		inject(function (usSpinnerConfig) {
-			expect(usSpinnerConfig.themes.bigRed.color).toBe('red');
 		});
 	});
 });
@@ -35,8 +26,15 @@ describe('Directive: us-spinner', function () {
 		Spinner.prototype.spin = jasmine.createSpy('Spinner.spin');
 		Spinner.prototype.stop = jasmine.createSpy('Spinner.stop');
 
-		$provide.constant('SpinJSSpinner', Spinner);
+		$provide.value('$window', {
+			location: angular.copy(window.location),
+			navigator: angular.copy(window.navigator),
+			document: window.document,
+			Spinner: Spinner
+		});
 	}));
+
+	beforeEach(module('angularSpinner'));
 
 	it('should create a spinner object', inject(function ($rootScope, $compile) {
 		var element = angular.element('<div us-spinner></div>');
@@ -70,39 +68,6 @@ describe('Directive: us-spinner', function () {
 		expect(Spinner).toHaveBeenCalledWith({width: 15});
 	}));
 
-	describe('with default options', function() {
-		beforeEach(module(function(usSpinnerConfigProvider) {
-			usSpinnerConfigProvider.setDefaults({width: 10, color: 'black'});
-		}));
-
-		it('should add spinner default options to options', inject(function ($rootScope, $compile) {
-			var element = angular.element('<div us-spinner="{width:15}"></div>');
-			element = $compile(element)($rootScope);
-			$rootScope.$digest();
-			expect(Spinner).toHaveBeenCalledWith({width: 15, color: 'black'});
-		}));
-
-		describe('and with theme options', function() {
-			beforeEach(module(function(usSpinnerConfigProvider) {
-				usSpinnerConfigProvider.setTheme('bigRed', {size: 20, color: 'red'});
-			}));
-
-			it('should add theme options to options', inject(function ($rootScope, $compile) {
-				var element = angular.element('<div us-spinner="{width:15}" spinner-theme="bigRed"></div>');
-				element = $compile(element)($rootScope);
-				$rootScope.$digest();
-				expect(Spinner).toHaveBeenCalledWith({width: 15, color: 'red', size: 20});
-			}));
-
-			it('should not change default options by spinner options or theme options', inject(function ($rootScope, $compile, usSpinnerConfig) {
-				var element = angular.element('<div us-spinner="{width:15}" spinner-theme="bigRed"></div>');
-				element = $compile(element)($rootScope);
-				$rootScope.$digest();
-				expect(usSpinnerConfig.config).toEqual({width: 10, color: 'black'});
-			}));
-		});
-	});
-
 	it('should update spinner options in response to scope updates', inject(function ($rootScope, $compile) {
 		$rootScope.actualWidth = 25;
 		var element = angular.element('<div us-spinner="{width:actualWidth}"></div>');
@@ -116,19 +81,6 @@ describe('Directive: us-spinner', function () {
 		expect(Spinner).toHaveBeenCalledWith({width: 72});
 		expect(Spinner.prototype.stop).toHaveBeenCalled();
 		expect(Spinner.prototype.spin.calls.count()).toBe(2);
-	}));
-
-	it('should spin in response to scope updates', inject(function ($rootScope, $compile) {
-		$rootScope.shouldSpin = false;
-		var element = angular.element('<div us-spinner spinner-on="shouldSpin"></div>');
-		element = $compile(element)($rootScope);
-		$rootScope.$digest();
-		expect(Spinner).toHaveBeenCalled();
-		expect(Spinner.prototype.spin).not.toHaveBeenCalled();
-
-		$rootScope.shouldSpin = true;
-		$rootScope.$digest();
-		expect(Spinner.prototype.spin).toHaveBeenCalled();
 	}));
 
 	it('should stop the spinner when the scope is destroyed', inject(function ($rootScope, $compile) {

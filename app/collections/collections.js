@@ -9,22 +9,18 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.subject = subjectService.getSubject();
 
         if(!$scope.subject) {
+
+            console.log("hei jonas");
             $http({
                 url: apiUrl + "/subjects/" + $routeParams.subjectId,
                 method: "GET"
             }).success(function(response){
                 console.log(response);
 
-                //$scope.subject = {
-                //    _id: response._id,
-                //    code: response.code,
-                //    name: response.name,
-                //    collections: response.collections
-                //};
-                //console.log({"moren din":$scope.subject});
-                //
-                //subjectService.setSubject($scope.subject);
-                //initCollections(response.collections);
+                $scope.subject = response;
+
+                subjectService.setSubject($scope.subject);
+                initCollections(response.collections);
             })
         } else {
             $http({
@@ -45,7 +41,7 @@ angular.module('myApp.collections', ['ngRoute'])
             $http({
                 url:  apiUrl + '/subjects/' + subjectService.getSubject()._id +  "/collections/" + coll._id,
                 method: 'DELETE',
-                headers: {'x-access-token': $cookies.getObject("token")}
+                headers: {'X-Access-Token': $cookies.getObject("token")}
             }).success(function(response,status){
                 console.log("response" + response + "\n\n\n\nstatus" + status);
                 if(index > -1){
@@ -142,15 +138,73 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
+        $scope.putSubject = function () {
+            var exerciseList = [];
+            angular.forEach($scope.exercises, function (exercise) {
+                var newExercise = {};
+                if (exercise.type == "mc") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type,
+                        alternatives: exercise.alternatives
+                    }
+                    console.log("mc")
+                } else if (exercise.type == "pd") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type,
+                        tags: exercise.tags.map(function (tag) {
+                            return tag.text
+                        })
+                    };
+                    console.log("pd")
+                } else if (exercise.type == "tf") {
+                    newExercise = {
+                        question: exercise.question,
+                        correctAnswer: exercise.correctAnswer,
+                        type: exercise.type
+                    }
+                }
+                ;
+                exerciseList.push(newExercise)
+            });
+
+            $scope.collection.exercises = exerciseList;
+            $scope.exercises = $scope.collection.exercises;
+            console.log(exerciseList);
+            var data = {
+                subject: subjectService.getSubject()
+            };
+            console.log(data);
+
+            $http({
+                url: apiUrl + '/subjects/' + subjectService.getSubject()._id,
+                method: 'PUT',
+                headers: {'X-Access-Token': $cookies.getObject("token")},
+                data: data
+            }).success(function (response, status) {
+                console.log("heihheihieiheresponse:" + response + "\n\n\n\nstatus:");
+            }).error(function (data, status, header, config) {
+                console.log(data)
+                console.log(status)
+                console.log(header)
+                console.log(config)
+                console.log(subjectService.getSubject())
+
+            })
+        };
+
         $scope.saveCollection = function () {
             console.log("hei " + $routeParams.collectionId);
             if ($routeParams.collectionId == "new") {
                 console.log({"sdfdsf": subjectService.getSubject()});
                 subjectService.getSubject().collections.push($scope.collection);
-                RestService.postSubject();
+                $scope.putSubject();
             }
             else {
-                RestService.putSubject();
+                $scope.putSubject();
             }
         };
 

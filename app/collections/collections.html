@@ -31,7 +31,7 @@
     <a href="#/subjects/{{subject._id}}/collections/new">
        <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
    </a>
-    <table class="table">
+    <table class="table" id="loading-bar-container">
         <tbody>
         <tr ng-repeat="coll in collections track by $index">
             <td ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>

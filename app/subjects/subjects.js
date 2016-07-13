@@ -8,7 +8,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             url: apiUrl + '/subjects/mine',
             method: "GET",
             headers: {
-                'x-access-token': $cookies.getObject('token')
+                'X-Access-Token': $cookies.getObject('token')
             }
         }).success(function (response) {
             subjectService.setUserSubjects(response.map(function (subject) {
@@ -25,7 +25,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                         url: apiUrl + '/subjects/' + exercise,
                         method: "DELETE",
                         headers: {
-                            'x-access-token': $cookies.getObject('token')
+                            'X-Access-Token': $cookies.getObject('token')
                         }
                     }).success(function (response, status) {
                         console.log(status);
@@ -33,7 +33,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             url: apiUrl + '/subjects/mine',
                             method: "GET",
                             headers: {
-                                'x-access-token': $cookies.getObject('token')
+                                'X-Access-Token': $cookies.getObject('token')
                             }
                         }).success(function (response) {
                             subjectService.setUserSubjects(response.map(function (subject) {
@@ -68,7 +68,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                 url: apiUrl + '/subjects',
                 method: "GET",
                 headers: {
-                    'x-access-token': $cookies.getObject('token')
+                    'X-Access-Token': $cookies.getObject('token')
                 }
             }).success(function (response) {
                 $scope.items = [];
@@ -86,11 +86,12 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                         "subject": {
                             code: subject.code,
                             name: subject.name,
-                            public: true
+                            public: true,
+                            description: "Laget av ekte tælling " + $cookies.getObject('username')
                         }
                     },
                     headers: {
-                        'x-access-token': $cookies.getObject('token')
+                        'X-Access-Token': $cookies.getObject('token')
                     }
                 }).success(function (response, status) {
                     $location.path("/subjects");

@@ -6,7 +6,7 @@
     </a>
 </div>
 
-<div class="container-fluid" ng-repeat="item in items | filter: filterSubjects" align="center">
+<div class="container-fluid" id="loading-bar-container" ng-repeat="item in items | filter: filterSubjects" align="center">
     <a ng-if="!deleteMode" href="#/subjects/{{targetSubject}}">
         <button class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)">
             <p ng-if="item.name != ''">{{ item.name }}</p>
