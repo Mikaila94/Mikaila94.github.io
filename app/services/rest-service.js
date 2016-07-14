@@ -52,6 +52,7 @@ angular.module("myApp.services", ['ngRoute'])
                     headers: $cookies.getObject("token"),
                     data: data
                 }).success(function (response, status) {
+                    console.log(data)
                     resolve(response);
                 }).error(function (response, status, header, config) {
                     console.log(response)

@@ -62,7 +62,7 @@ angular.module('myApp', [
     })
 
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
-    .constant("apiUrl", "http://192.168.10.207:3000")
+    .constant("apiUrl", "http://acepi-test.herokuapp.com")
     .factory('focus', function ($timeout, $window) {
         return function (id) { {
             $timeout(function () {

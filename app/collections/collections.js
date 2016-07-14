@@ -169,14 +169,21 @@ angular.module('myApp.collections', ['ngRoute'])
             };
             if ($routeParams.collectionId == "new") {
                 subjectService.getSubject().collections.push($scope.collection);
-                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
+                requestService.httpPut(subjectService.getSubject()._id, data)
+                    .then(function () {
                     $location.path('/subjects/' + subjectService.getSubject()._id)
-                })
+                    }, function () {
+                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length -1, 1)
+                    })
+
             }
             else {
-                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
+                requestService.httpPut(subjectService.getSubject()._id, data)
+                    .then(function () {
                     $location.path('/subjects/' + subjectService.getSubject()._id)
-                })
+                    }, function () {
+                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length -1, 1)
+                    })
             }
         };
 

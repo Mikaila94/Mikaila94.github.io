@@ -53,7 +53,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
 
 
             } else {
-                alert("du må fylle ut alle, din tulling")
+                alert("du må fylle ut alle, din tælling")
             }
         }
     });
