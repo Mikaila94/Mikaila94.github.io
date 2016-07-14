@@ -47,6 +47,7 @@ angular.module("myApp.services", ['ngRoute'])
         this.httpPut = function (subjectId, data) {
             return $q(function (resolve, reject) {
                 $http({
+                    ignoreLoadingBar:true,
                     url: apiUrl + '/subjects/' + subjectId,
                     method: 'PUT',
                     headers: $cookies.getObject("token"),

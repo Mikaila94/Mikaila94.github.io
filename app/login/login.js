@@ -39,6 +39,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                     alert("feil")
                 } else {
                     $http({
+                        ignoreLoadingBar:true,
                         url: apiUrl + "/users",
                         method: "POST",
                         data: {

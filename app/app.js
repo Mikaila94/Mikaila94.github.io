@@ -19,7 +19,7 @@ angular.module('myApp', [
 )
     .config(['$locationProvider', '$routeProvider','cfpLoadingBarProvider', function($locationProvider, $routeProvider,cfpLoadingBarProvider) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'
-        cfpLoadingBarProvider.spinnerTemplate = '<div align="center"><span class="fa fa-spinner"> </span> <label>Loading....</label></div>';
+        cfpLoadingBarProvider.spinnerTemplate = '<div align="center" style="margin-top: 10px"><div id="loading"></div></div>';
 
 
     $routeProvider

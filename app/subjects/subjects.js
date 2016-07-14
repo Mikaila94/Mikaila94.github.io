@@ -72,6 +72,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             });
             $scope.addSubject = function (subject) {
                 $http({
+                    ignoreLoadingBar:true,
                     url: apiUrl +'/subjects',
                     method: "POST",
                     data: {
@@ -92,9 +93,12 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                 })
             };
             $scope.searchSubjects = function (val) {
-                return $http.get(apiUrl + "/subjects?search=" + val, {
-
-                }).then(function (response) {
+                return $http({
+                    url: apiUrl + "/subjects?search=" + val,
+                    method:'GET',
+                    ignoreLoadingBar:true
+                })
+                    .then(function (response) {
                     var resultList = [];
                     var resultInfoAdded = {};
                     angular.forEach(response.data, function (subject) {
