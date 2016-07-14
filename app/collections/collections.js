@@ -56,7 +56,7 @@ angular.module('myApp.collections', ['ngRoute'])
     .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $q, collectionService, subjectService, requestService, apiUrl) {
 
         $scope.public = true;
-        $scope.collection = collectionService.getCollection();
+        $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
 
         if (!subjectService.getSubject()) {
             $location.path("/subjects/" + $routeParams.subjectId)
