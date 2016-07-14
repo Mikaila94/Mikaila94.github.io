@@ -25,28 +25,34 @@
 
         </div>
     </div>
-    <div scroll-bottom="collection.exercises" id="exercisesDiv">
-        <div id="editArea" class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
-            <div class="row">
-                <div class="col-lg-2">
-                    <h4>Spørsmålstype:</h4>
-                </div>
-                <div class="col-lg-10">
-                    <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
-                        <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div ng-if="exercise.type == 'pd' " ng-include src="'collections/pd.html'"></div>
-            <div ng-if="exercise.type == 'mc' " ng-include src="'collections/mc.html'"></div>
-            <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
-
-            <div class="container-fluid">
-                <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
-            </div>
-
+    <div id="editArea" class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
+        <div align="center" ng-mouseenter="move[$index].upBtn = true" ng-mouseleave="move[$index].upBtn = false" class="container-fluid" style="height: 30px;">
+            <span ng-show="move[$index].upBtn && !$first" ng-click="moveExcercise($index, true)" class="glyphicon glyphicon-menu-up" style="font-size: 20px; cursor: pointer"></span>
         </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <h4>Spørsmålstype:</h4>
+            </div>
+            <div class="col-lg-10">
+                <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
+                    <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"></div>
+        <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"></div>
+        <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
+
+        <div class="container-fluid">
+            <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
+        </div>
+
+        <div align="center" ng-mouseenter="move[$index].downBtn = true" ng-mouseleave="move[$index].downBtn = false" class="container-fluid" style="height: 30px;">
+            <span ng-show="move[$index].downBtn && !$last" ng-click="moveExcercise($index, false)"  class="glyphicon glyphicon-menu-down" style="font-size: 20px; cursor: pointer"></span>
+        </div>
+
     </div>
 
     <button class="btn btn-default" ng-click="addExercise()" style="width:100%;">+ Ny oppgave</button>
