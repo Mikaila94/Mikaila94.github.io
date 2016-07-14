@@ -1,7 +1,7 @@
 angular.module('myApp.collections', ['ngRoute'])
 
 
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, apiUrl) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
         var initCollections = function(collections) {
             $scope.collections = collections;
             $scope.subject.collections = collections;
@@ -10,7 +10,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
         if(!$scope.subject) {
 
-            console.log("hei jonas");
             $http({
                 url: apiUrl + "/subjects/" + $routeParams.subjectId,
                 method: "GET"
@@ -38,21 +37,14 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
         $scope.deleteCollection = function(coll,index){
-            $http({
-                url:  apiUrl + '/subjects/' + subjectService.getSubject()._id +  "/collections/" + coll._id,
-                method: 'DELETE',
-                headers: {'X-Access-Token': $cookies.getObject("token")}
-            }).success(function(response,status){
-                console.log("response" + response + "\n\n\n\nstatus" + status);
-                if(index > -1){
-                    $scope.collections.splice(index,1)
-                }
-            }).error(function(data,status,header,config){
-                $scope.ServerResponse =  htmlDecode("Data: " + data +
-                    "\n\n\n\nstatus: " + status +
-                    "\n\n\n\nheaders: " + header +
-                    "\n\n\n\nconfig: " + config);
-            });
+
+            $scope.subject.collections.splice(index, 1);
+
+            var data = {
+                subject: subjectService.getSubject()
+            };
+            requestService.httpPut($scope.subject._id, data);
+
 
         };
 
@@ -61,7 +53,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $q, collectionService, subjectService, focus, apiUrl,RestService) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $q, collectionService, subjectService, requestService, apiUrl) {
 
         $scope.public = true;
         $scope.collection = collectionService.getCollection();
@@ -89,9 +81,7 @@ angular.module('myApp.collections', ['ngRoute'])
             {desc: "Multiple Choice", type: "mc"},
             {desc: "True/False", type: "tf"}];
 
-        $scope.updateAlternative = function (exercise, index, alternative) {
-            exercise.alternatives[index] = alternative
-        };
+        
         $scope.addAlternative = function (exercise) {
             if (!exercise.alternatives) {
                 exercise.alternatives = [];
@@ -138,19 +128,21 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        $scope.putSubject = function () {
+
+        $scope.saveCollection = function () {
             var exerciseList = [];
             angular.forEach($scope.exercises, function (exercise) {
                 var newExercise = {};
                 if (exercise.type == "mc") {
+                    exercise.alternatives = exercise.alternatives.filter(Boolean);
                     newExercise = {
                         question: exercise.question,
                         correctAnswer: exercise.correctAnswer,
                         type: exercise.type,
                         alternatives: exercise.alternatives
-                    }
-                    console.log("mc")
+                    };
                 } else if (exercise.type == "pd") {
+
                     newExercise = {
                         question: exercise.question,
                         correctAnswer: exercise.correctAnswer,
@@ -159,7 +151,6 @@ angular.module('myApp.collections', ['ngRoute'])
                             return tag.text
                         })
                     };
-                    console.log("pd")
                 } else if (exercise.type == "tf") {
                     newExercise = {
                         question: exercise.question,
@@ -170,41 +161,22 @@ angular.module('myApp.collections', ['ngRoute'])
                 ;
                 exerciseList.push(newExercise)
             });
-
             $scope.collection.exercises = exerciseList;
             $scope.exercises = $scope.collection.exercises;
             console.log(exerciseList);
             var data = {
                 subject: subjectService.getSubject()
             };
-            console.log(data);
-
-            $http({
-                url: apiUrl + '/subjects/' + subjectService.getSubject()._id,
-                method: 'PUT',
-                headers: {'X-Access-Token': $cookies.getObject("token")},
-                data: data
-            }).success(function (response, status) {
-                console.log("heihheihieiheresponse:" + response + "\n\n\n\nstatus:");
-            }).error(function (data, status, header, config) {
-                console.log(data)
-                console.log(status)
-                console.log(header)
-                console.log(config)
-                console.log(subjectService.getSubject())
-
-            })
-        };
-
-        $scope.saveCollection = function () {
-            console.log("hei " + $routeParams.collectionId);
             if ($routeParams.collectionId == "new") {
-                console.log({"sdfdsf": subjectService.getSubject()});
                 subjectService.getSubject().collections.push($scope.collection);
-                $scope.putSubject();
+                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
+                    $location.path('/subjects/' + subjectService.getSubject()._id)
+                })
             }
             else {
-                $scope.putSubject();
+                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
+                    $location.path('/subjects/' + subjectService.getSubject()._id)
+                })
             }
         };
 

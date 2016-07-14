@@ -26,7 +26,7 @@
         <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
             <div class="row">
                 <div class="col-lg-11">
-                    <textarea ng-keyup="updateAlternative(exercise, $index, alternative)" class="form-control" style="margin-top: 2px;resize: none;" rows="2" ng-model="alternative"></textarea>
+                    <textarea class="form-control" style="margin-top: 2px;resize: none;" rows="2" ng-model="exercise.alternatives[$index]"></textarea>
                 </div>
                 <div class="col-lg-1">
                     <span ng-click="deleteAlternative(exercise,$index)" class="glyphicon glyphicon-remove" style="margin-top: 15px;font-size: 20px;height: 50px;cursor: pointer;"></span>

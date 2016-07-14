@@ -14,7 +14,8 @@ angular.module('myApp', [
     'ngTagsInput',
     'ng-mfb',
     'ngCookies',
-    'angular-loading-bar']
+    'angular-loading-bar',
+    'myApp.services']
 )
     .config(['$locationProvider', '$routeProvider','cfpLoadingBarProvider', function($locationProvider, $routeProvider,cfpLoadingBarProvider) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'
@@ -62,49 +63,6 @@ angular.module('myApp', [
 
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
     .constant("apiUrl", "http://192.168.10.207:3000")
-    .service("subjectService", function() {
-        var subject;
-        var userSubjects;
-
-        var setSubject= function(targetSubject) {
-            subject = targetSubject
-        };
-        var getSubject = function() {
-            return subject
-        };
-        var setUserSubjects = function (subjects) {
-            userSubjects = subjects;
-        };
-        var getUserSubjects = function () {
-            return userSubjects;
-        };
-        return {
-            setSubject: setSubject,
-            getSubject: getSubject,
-            setUserSubjects: setUserSubjects,
-            getUserSubjects: getUserSubjects
-        }
-
-    })
-
-    .service("collectionService",function(){
-        var collection;
-
-        var setCollection = function(targetCollection){
-            collection = targetCollection
-        };
-        var getCollection = function(){
-            return collection;
-        };
-
-        return{
-            setCollection : setCollection,
-            getCollection : getCollection
-
-        }
-
-
-    })
     .factory('focus', function ($timeout, $window) {
         return function (id) { {
             $timeout(function () {
@@ -117,7 +75,6 @@ angular.module('myApp', [
 
         }
     })
-   
     .factory('shuffle', function () {
         return function (array) {
             var m = array.length, t, i;

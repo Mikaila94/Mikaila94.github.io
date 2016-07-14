@@ -17,7 +17,9 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
 
             }).success(function (response) {
                 console.log(response)
-                $cookies.putObject('token', response.token);
+                $cookies.putObject('token', {
+                    'x-access-token': response.token
+                });
                 $cookies.putObject('username', $scope.username);
                 $cookies.putObject('password', $scope.password);
                 console.log($cookies.getObject('token'));

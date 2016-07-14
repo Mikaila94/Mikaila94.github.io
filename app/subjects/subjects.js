@@ -7,9 +7,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
         $http({
             url: apiUrl + '/subjects/mine',
             method: "GET",
-            headers: {
-                'X-Access-Token': $cookies.getObject('token')
-            }
+            headers: $cookies.getObject('token')
         }).success(function (response) {
             subjectService.setUserSubjects(response.map(function (subject) {
                 return subject._id
@@ -24,17 +22,13 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                     $http({
                         url: apiUrl + '/subjects/' + exercise,
                         method: "DELETE",
-                        headers: {
-                            'X-Access-Token': $cookies.getObject('token')
-                        }
+                        headers: $cookies.getObject('token')
                     }).success(function (response, status) {
                         console.log(status);
                         $http({
                             url: apiUrl + '/subjects/mine',
                             method: "GET",
-                            headers: {
-                                'X-Access-Token': $cookies.getObject('token')
-                            }
+                            headers: $cookies.getObject('token')
                         }).success(function (response) {
                             subjectService.setUserSubjects(response.map(function (subject) {
                                 return subject._id
@@ -67,9 +61,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             $http({
                 url: apiUrl + '/subjects',
                 method: "GET",
-                headers: {
-                    'X-Access-Token': $cookies.getObject('token')
-                }
+                headers: $cookies.getObject('token')
             }).success(function (response) {
                 $scope.items = [];
                 for(var subject in response) {
@@ -90,9 +82,8 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             description: "Laget av ekte tælling " + $cookies.getObject('username')
                         }
                     },
-                    headers: {
-                        'X-Access-Token': $cookies.getObject('token')
-                    }
+                    headers: $cookies.getObject('token')
+                    
                 }).success(function (response, status) {
                     $location.path("/subjects");
                     console.log(status)
