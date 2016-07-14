@@ -129,6 +129,15 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
+        $scope.moveExcercise = function (index, up) {
+            if(up) {
+                $scope.collection.exercises.splice(index-1, 0, $scope.collection.exercises[index]);
+                $scope.collection.exercises.splice(index+1, 1)
+            } else {
+                $scope.collection.exercises.splice(index+2, 0, $scope.collection.exercises[index]);
+                $scope.collection.exercises.splice(index, 1)
+            }
+        };
 
         $scope.saveCollection = function () {
             var exerciseList = [];
@@ -138,7 +147,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     exercise.alternatives = exercise.alternatives.filter(Boolean);
                     newExercise = {
                         question: exercise.question,
-                        correctAnswer: exercise.correctAnswer,
+                        correctAnswer: exercise.correctAnswer.toString(),
                         type: exercise.type,
                         alternatives: exercise.alternatives
                     };
@@ -146,7 +155,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
                     newExercise = {
                         question: exercise.question,
-                        correctAnswer: exercise.correctAnswer,
+                        correctAnswer: exercise.correctAnswer.toString(),
                         type: exercise.type,
                         tags: exercise.tags.map(function (tag) {
                             return tag.text
@@ -165,27 +174,20 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.collection.exercises = exerciseList;
             $scope.exercises = $scope.collection.exercises;
             console.log(exerciseList);
+            if ($routeParams.collectionId == "new") {
+                subjectService.getSubject().collections.push($scope.collection);
+            }
             var data = {
                 subject: subjectService.getSubject()
             };
-            if ($routeParams.collectionId == "new") {
-                subjectService.getSubject().collections.push($scope.collection);
-                requestService.httpPut(subjectService.getSubject()._id, data)
-                    .then(function () {
-                    $location.path('/subjects/' + subjectService.getSubject()._id)
-                    }, function () {
+            requestService.httpPut(subjectService.getSubject()._id, data)
+                .then(function () {
+                $location.path('/subjects/' + subjectService.getSubject()._id)
+                }, function () {
+                    if($routeParams.collectionId == "new") {
                         subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length -1, 1)
-                    })
-
-            }
-            else {
-                requestService.httpPut(subjectService.getSubject()._id, data)
-                    .then(function () {
-                    $location.path('/subjects/' + subjectService.getSubject()._id)
-                    }, function () {
-                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length -1, 1)
-                    })
-            }
+                    }
+                })
         };
 
 

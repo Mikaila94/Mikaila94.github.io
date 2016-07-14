@@ -27,7 +27,7 @@
     </div>
     <div id="editArea" class="container-fluid" ng-repeat="exercise in collection.exercises track by $index"  style="background-color: white; margin-bottom: 10px">
         <div align="center" ng-mouseenter="move[$index].upBtn = true" ng-mouseleave="move[$index].upBtn = false" class="container-fluid" style="height: 30px;">
-            <span ng-show="move[$index].upBtn" class="glyphicon glyphicon-menu-up" style="font-size: 20px; cursor: pointer"></span>
+            <span ng-show="move[$index].upBtn && !$first" ng-click="moveExcercise($index, true)" class="glyphicon glyphicon-menu-up" style="font-size: 20px; cursor: pointer"></span>
         </div>
 
         <div class="row">
@@ -50,7 +50,7 @@
         </div>
 
         <div align="center" ng-mouseenter="move[$index].downBtn = true" ng-mouseleave="move[$index].downBtn = false" class="container-fluid" style="height: 30px;">
-            <span ng-show="move[$index].downBtn" class="glyphicon glyphicon-menu-down" style="font-size: 20px; cursor: pointer"></span>
+            <span ng-show="move[$index].downBtn && !$last" ng-click="moveExcercise($index, false)"  class="glyphicon glyphicon-menu-down" style="font-size: 20px; cursor: pointer"></span>
         </div>
 
     </div>
