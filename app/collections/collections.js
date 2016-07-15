@@ -211,6 +211,12 @@ angular.module('myApp.collections', ['ngRoute'])
             return $scope.list;
         };
 
+        $scope.dragControlListeners = {
+            accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id},
+            containment: "#editArea",
+            allowDuplicate:true
+
+        };
 
 
     });
