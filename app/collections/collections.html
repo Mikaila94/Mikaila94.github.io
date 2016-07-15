@@ -3,22 +3,23 @@
 
 <div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;">
     <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
+    <div class="container-fluid" align="center">
+        <div class="row" style="width: 480px">
+            <div class="col-lg-2">
+                <label style=" margin-top:5px;">Navn:</label>
+            </div>
+            <div class="col-lg-10">
+                <input ng-model="subject.name" class="form-control" style="width:400px;margin-left:10px;" >
+            </div>
+        </div>
 
-    <div class="row">
-        <div class="col-lg-3">
-            <label align="right" style="margin-left:200px; margin-top:5px;">Navn:</label>
-        </div>
-        <div class="col-lg-9">
-            <input align='left' ng-model="subject.name" class="form-control" style="width:400px;margin-left:10px;" >
-        </div>
-    </div>
-
-    <div class="row" style="margin-top:5px;margin-bottom:5px;width:960px;">
-        <div class="col-lg-3">
-            <label align="right" style="margin-left:165px; margin-top:5px;">Beskrivelse:</label>
-        </div>
-        <div class="col-lg-9">
-            <textarea align="left" ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
+        <div class="row" style="margin-top:5px;margin-bottom:5px;width:480px;">
+            <div class="col-lg-2">
+                <label style=" margin-top:5px;">Beskrivelse:</label>
+            </div>
+            <div class="col-lg-10">
+                <textarea ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
+            </div>
         </div>
 
     </div>
