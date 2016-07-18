@@ -2,7 +2,6 @@
     <div class="container-fluid" style="width: 70%">
 
         <h2>Registrering</h2>
-        <p>NB! Alle feltene må fylles</p>
         <form role="form">
             <div class="form-group">
                 <label>E-mail:</label>
@@ -19,6 +18,10 @@
                 <input class="form-control" type="password" ng-model="controlPassword">
             </div>
         </form>
+
+        <div ng-show="error" style="margin-bottom: 5px">
+            <p style="color: red">{{errorMessage}}</p>
+        </div>
 
         <button class="btn btn-primary" style="margin-bottom: 20px" ng-click="completeRegister()">
             Registrer

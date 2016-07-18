@@ -3,16 +3,13 @@
 angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
 
 
-    .controller('subjectsCtrl', function ($scope, $http, $cookies, $base64, subjectService, apiUrl) {
-        $http({
-            url: apiUrl + '/subjects/mine',
-            method: "GET",
-            headers: $cookies.getObject('token')
-        }).success(function (response) {
-            subjectService.setUserSubjects(response.map(function (subject) {
-                return subject._id
-            }));
-            $scope.items = response;
+    .controller('subjectsCtrl', function ($scope, $http, $cookies, $base64, subjectService, requestService, apiUrl) {
+        requestService.httpGet("/subjects/mine")
+            .then(function (response) {
+                subjectService.setUserSubjects(response.map(function (subject) {
+                    return subject._id
+                }));
+                $scope.items = response;
         });
         $scope.deleteMode = false;
         $scope.deleteElements = {};
@@ -25,18 +22,15 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                         headers: $cookies.getObject('token')
                     }).success(function (response, status) {
                         console.log(status);
-                        $http({
-                            url: apiUrl + '/subjects/mine',
-                            method: "GET",
-                            headers: $cookies.getObject('token')
-                        }).success(function (response) {
-                            subjectService.setUserSubjects(response.map(function (subject) {
-                                return subject._id
-                            }));
-                            $scope.items = response;
-                            $scope.deleteMode = false;
-                            $scope.deleteElements = {};
-                        });
+                        requestService.httpGet("/subjects/mine")
+                            .then(function (response) {
+                                subjectService.setUserSubjects(response.map(function (subject) {
+                                    return subject._id
+                                }));
+                                $scope.items = response;
+                                $scope.deleteMode = false;
+                                $scope.deleteElements = {};
+                            });
                     })
                 }
             }
@@ -54,21 +48,17 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
     })
 
 
-    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, apiUrl, focus, shuffle) {
+    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, requestService, apiUrl, focus, shuffle) {
         if(!subjectService.getUserSubjects()) {
             $location.path("/subjects")
         } else {
-            $http({
-                url: apiUrl + '/subjects',
-                method: "GET",
-                headers: $cookies.getObject('token')
-            }).success(function (response) {
-                $scope.items = [];
-                for(var subject in response) {
-                    $scope.items.push(response[subject]);
-                }
-                shuffle($scope.items)
-
+            requestService.httpGet("/subjects")
+                .then(function (response) {
+                    $scope.items = [];
+                    for(var subject in response) {
+                        $scope.items.push(response[subject]);
+                    }
+                    shuffle($scope.items)
             });
             $scope.addSubject = function (subject) {
                 $http({

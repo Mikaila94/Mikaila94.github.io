@@ -36,7 +36,8 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
         $scope.completeRegister = function () {
             if($scope.user.email && $scope.user.username && $scope.user.password) {
                 if($scope.user.password != $scope.controlPassword ) {
-                    alert("feil")
+                    $scope.error = true;
+                    $scope.errorMessage = "*Passord og bekreftelse av passord stemmer ikke overens"
                 } else {
                     $http({
                         ignoreLoadingBar:true,
@@ -49,12 +50,15 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                         $location.path('/login')
                     }).error(function (response, status) {
                         console.log(response, status)
+                        $scope.error = true;
+                        $scope.errorMessage = response.errors ? "*Feil format på utfyllingsskjema" : "*Brukernavn finnes fra før"
                     })
                 }
 
 
             } else {
-                alert("du må fylle ut alle, din tælling")
+                $scope.error = true;
+                $scope.errorMessage = "*Alle feltene må fylles ut"
             }
         }
     });

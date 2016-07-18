@@ -11,7 +11,7 @@ angular.module('myApp.collections', ['ngRoute'])
         if(!$scope.subject) {
 
             $http({
-                url: apiUrl + "/subjects/" + $routeParams.subjectId,
+                url: apiUrl + "/subjects/" + $routeParams.subjectId + "?editor=true",
                 method: "GET"
             }).success(function(response){
                 console.log(response);
@@ -23,7 +23,7 @@ angular.module('myApp.collections', ['ngRoute'])
             })
         } else {
             $http({
-                url: apiUrl + "/subjects/" + $scope.subject._id,
+                url: apiUrl + "/subjects/" + $scope.subject._id + "?editor=true",
                 method: "GET"
             }).success(function (response) {
                 initCollections(response.collections);
@@ -35,18 +35,32 @@ angular.module('myApp.collections', ['ngRoute'])
             collectionService.setCollection(target)
         };
 
-
         $scope.deleteCollection = function(coll,index){
 
             $scope.subject.collections.splice(index, 1);
 
             var data = {
-                subject: subjectService.getSubject()
+                subject: $scope.subject
             };
             requestService.httpPut($scope.subject._id, data);
 
-
         };
+        $scope.saveSubject = function () {
+            var data = {
+                subject: $scope.subject
+            };
+            requestService.httpPut($scope.subject._id, data)
+                .then(function (response) {
+                    alert("lagret   ")
+                })
+        };
+
+        $scope.dragControlListeners = {
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            },
+            containment: '#collectionsTable'
+        }
 
 
 

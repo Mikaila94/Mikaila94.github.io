@@ -53,7 +53,7 @@ angular.module("myApp.services", ['ngRoute'])
                     headers: $cookies.getObject("token"),
                     data: data
                 }).success(function (response, status) {
-                    console.log(data)
+                    console.log(data);
                     resolve(response);
                 }).error(function (response, status, header, config) {
                     console.log(response)
@@ -64,6 +64,24 @@ angular.module("myApp.services", ['ngRoute'])
 
                 })
             })
+        };
+        this.httpGet = function (path) {
+            return $q(function (resolve, reject) {
+                $http({
+                    url: apiUrl + path,
+                    method: "GET",
+                    headers: $cookies.getObject("token")
+                }).success(function (response) {
+                    resolve(response)
+                }).error(function (response, status, header, config) {
+                    console.log(response)
+                    console.log(status)
+                    console.log(header)
+                    console.log(config)
+                    reject(response)
+                })
+            })
+            
         }
         
     });

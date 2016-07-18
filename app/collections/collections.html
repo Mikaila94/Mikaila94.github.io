@@ -1,50 +1,60 @@
 
 
 
-<div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;">
-    <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
-    <div class="container-fluid" align="center">
-        <div class="row" style="width: 480px">
-            <div class="col-lg-2">
-                <label style=" margin-top:5px;">Navn:</label>
+<div class="container-fluid" >
+
+    <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;">
+        <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
+        <hr>
+        <div class="container-fluid" align="center">
+            <div class="row" style="width: 480px">
+                <div class="col-lg-2">
+                    <label style=" margin-top:5px;">Fagnavn:</label>
+                </div>
+                <div class="col-lg-10">
+                    <input ng-model="subject.name" class="form-control" style="width:400px;margin-left:10px;" >
+                </div>
             </div>
-            <div class="col-lg-10">
-                <input ng-model="subject.name" class="form-control" style="width:400px;margin-left:10px;" >
+
+            <div class="row" style="margin-top:5px;margin-bottom:5px;width:480px;">
+                <div class="col-lg-2">
+                    <label style=" margin-top:5px;">Beskrivelse:</label>
+                </div>
+                <div class="col-lg-10">
+                    <textarea ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
+                </div>
             </div>
         </div>
 
-        <div class="row" style="margin-top:5px;margin-bottom:5px;width:480px;">
-            <div class="col-lg-2">
-                <label style=" margin-top:5px;">Beskrivelse:</label>
-            </div>
-            <div class="col-lg-10">
-                <textarea ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
-            </div>
+        <div class="container-fluid" style="position: relative; left: 870px; border-bottom: 10px; margin-bottom: 20px; margin-top: 20px">
+            <label class="btn btn-default" ng-click="saveSubject()">
+                <span class="glyphicon glyphicon-floppy-disk"></span>
+            </label>
         </div>
 
     </div>
 
-    <hr>
 
+    <div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;" id="loading-bar-container">
+        <h2 align="center">Tilhørende sett</h2>
+        <a href="#/subjects/{{subject._id}}/collections/new">
+           <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
+        </a>
+        <table id="collectionsTable" class="table">
+            <tbody ng-model="collections" as-sortable="dragControlListeners">
+            <tr ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
+                <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
+                <td style="width:60px;"><Button style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    </Button>
+                </td>
 
+            </tr>
 
+            </tbody>
 
-    <a href="#/subjects/{{subject._id}}/collections/new">
-       <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
-   </a>
-    <table class="table" id="loading-bar-container">
-        <tbody>
-        <tr ng-repeat="coll in collections track by $index">
-            <td style="width:400px;" ng-model="coll" ng-click="setTargetCollection(coll)"><a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}">{{coll.name}}</a></td>
-            <td style="width:400px;"><Button style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
-                <span class="glyphicon glyphicon-trash"></span>
-                </Button>
-            </td>
+        </table>
 
-        </tr>
-
-        </tbody>
-
-    </table>
+    </div>
 
 </div>
