@@ -6,7 +6,7 @@
     <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;">
         <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
         <hr>
-        <div class="container-fluid" align="center">
+        <div class="container-fluid" align="center" style="margin-bottom: 30px">
             <div class="row" style="width: 480px">
                 <div class="col-lg-2">
                     <label style=" margin-top:5px;">Fagnavn:</label>
@@ -26,11 +26,6 @@
             </div>
         </div>
 
-        <div class="container-fluid" style="position: relative; left: 870px; border-bottom: 10px; margin-bottom: 20px; margin-top: 20px">
-            <label class="btn btn-default" ng-click="saveSubject()">
-                <span class="glyphicon glyphicon-floppy-disk"></span>
-            </label>
-        </div>
 
     </div>
 
@@ -55,6 +50,12 @@
 
         </table>
 
+
+    </div>
+    <div class="container-fluid" style="position: fixed; right: 50px; bottom: 50px;">
+        <label class="btn btn-default" ng-click="saveSubject()">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+        </label>
     </div>
 
 </div>
