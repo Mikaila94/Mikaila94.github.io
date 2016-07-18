@@ -60,9 +60,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
-        $scope.test = function () {
-            alert('ok')
-        }
+        
         if (!subjectService.getSubject()) {
             $location.path("/subjects/" + $routeParams.subjectId)
         }
