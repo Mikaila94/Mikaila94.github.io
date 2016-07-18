@@ -16,7 +16,7 @@ angular.module('myApp', [
     'ngCookies',
     'angular-loading-bar',
     'myApp.services'
-        ,'as.sortable']
+        ,'as.sortable','uiSwitch']
 )
     .config(['$locationProvider', '$routeProvider','cfpLoadingBarProvider', function($locationProvider, $routeProvider,cfpLoadingBarProvider) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'

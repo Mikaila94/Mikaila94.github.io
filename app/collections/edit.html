@@ -1,42 +1,54 @@
 <div ng-controller="editCtrl" class="container-fluid" style="width:960px">
     <div class="container-fluid" style="margin: 20px;">
     </div>
-    <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px" align="center">
-        <div class="row" style="margin-top: 10px; width: 480px">
+    <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
+        <h2 align="center">{{collection.name}}</h2>
+
+
+
+        <hr/>
+        <div class="row">
             <div class="col-lg-2">
-                <p style="font-size: 20px">Navn:</p>
+                <p style="font-size: 20px;margin-left: 10px">Navn:</p>
             </div>
+
             <div class="col-lg-10">
-                <input ng-model="collection.name" type="text" class="form-control" style="margin-bottom: 60px;margin-left: -25px;">
-            </div>
-        </div>
-
-        <div class="row" align="center">
-            <div class="btn-group" style="margin-top:-75px;">
-                <label class="btn btn-default" ng-model="public" uib-btn-radio="true" style="margin-top: 2px;" >
-                    Public
-                </label>
-
-                <label class="btn btn-default" ng-model="public" uib-btn-radio="false" style="margin-top: 2px;">
-                    Private
-                </label>
+                <input style="width:480px;align:left;margin-bottom:13px; margin-left:-75px;" ng-model="collection.name" type="text" class="form-control"
+                       style="margin-bottom: 60px;margin-left: -25px;">
+                <form style="position:absolute;top:0px;right:10px;">
+                    <label>Offentlig:</label>
+                    <switch id="enabled" name="enabled" ng-model="public"></switch>
+                </form>
+                <form style="position: absolute;top:0px;right:150px;">
+                    <label>Tilfeldig rekkefølge:</label>
+                    <switch id="enabled" name="enabled" ng-model="enabled"></switch>
+                </form>
             </div>
 
+
+
         </div>
+
+
+
+
+
     </div>
 
     <div id="editArea">
         <div as-sortable="dragControlListeners" ng-model="collection.exercises">
-            <div class="container-fluid" as-sortable-item ng-repeat="exercise in collection.exercises track by $index" ng-model="exercise" style="background-color: white; margin-bottom: 10px;">
-                <div as-sortable-item-handle ng-style="{'cursor' : 'default'}" ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false">
-                    <div align="center"  class="container-fluid" style="height: 30px;">
-                        <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal" style="font-size: 20px; cursor: all-scroll"></span>
+            <div class="container-fluid" as-sortable-item ng-repeat="exercise in collection.exercises track by $index"
+                 ng-model="exercise" style="background-color: white; margin-bottom: 10px;">
+                <div as-sortable-item-handle ng-style="{'cursor' : 'default'}" ng-mouseenter="focused[$index] = true"
+                     ng-mouseleave="focused[$index] = false">
+                    <div align="center" class="container-fluid" style="height: 30px;">
+                        <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal"
+                              style="font-size: 20px; cursor: all-scroll"></span>
                     </div>
 
                     <div align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                     </div>
-
 
 
                     <div no-drag class="container-fluid">
@@ -45,24 +57,22 @@
                                 <h4>Spørsmålstype:</h4>
                             </div>
                             <div class="col-lg-10">
-                                <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
+                                <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type"
+                                        align="left" style="margin-top:10px">
                                     <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
                                 </select>
                             </div>
                         </div>
 
 
-
-
-
                         <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"></div>
                         <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"></div>
                         <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
 
-                        <div class="container-fluid" ng-show="focused[$index]">
-                            <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
-                        </div>
-                        <div align="center" class="container-fluid" style="height: 30px;">
+                        <div class="container-fluid" style="height: 30px;margin-top: 10px; margin-right: -10px;">
+                            <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
+                                  ng-click="deleteExercise($index)"
+                                  style="cursor:pointer;position: relative; left: 850px "></span>
                         </div>
                     </div>
                 </div>
@@ -74,16 +84,19 @@
 
     <button class="btn btn-default" ng-click="addExercise()" style="width:100%;">+ Ny oppgave</button>
 
-    <button ng-click="saveCollection()" class="btn btn-default" style="background-color:white;position:fixed;bottom:200px;right:60px;cursor:pointer;">
-        <span class="glyphicon glyphicon-floppy-disk" ></span>
+    <button ng-click="saveCollection()" class="btn btn-default"
+            style="background-color:white;position:fixed;bottom:200px;right:60px;cursor:pointer;">
+        <span class="glyphicon glyphicon-floppy-disk"></span>
     </button>
-    <button ng-click="addExercise()" class="btn btn-default" style="background-color:white;position:fixed;bottom:150px;right:60px;cursor:pointer;">
+    <button ng-click="addExercise()" class="btn btn-default"
+            style="background-color:white;position:fixed;bottom:150px;right:60px;cursor:pointer;">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
 
 
-    <uib-alert style="position:fixed; bottom:10px;left:10px;" class="repeat-item" ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
-
+    <uib-alert style="position:fixed; bottom:10px;left:10px;" class="repeat-item" ng-repeat="alert in alerts"
+               type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}
+    </uib-alert>
 
 
     <div class="container-fluid" style="margin: 30px;">
