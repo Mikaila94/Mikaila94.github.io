@@ -28,9 +28,9 @@
     <div id="editArea">
         <div as-sortable="dragControlListeners" ng-model="collection.exercises">
             <div class="container-fluid" as-sortable-item ng-repeat="exercise in collection.exercises track by $index" ng-model="exercise" style="background-color: white; margin-bottom: 10px;">
-                <div as-sortable-item-handle>
-                    <div align="center" ng-mouseenter="move[$index].upBtn = true" ng-mouseleave="move[$index].upBtn = false" class="container-fluid" style="height: 30px;">
-                        <span ng-show="move[$index].upBtn && !$first" ng-click="moveExcercise($index, true)" class="glyphicon glyphicon-menu-up" style="font-size: 20px; cursor: pointer"></span>
+                <div as-sortable-item-handle ng-style="{'cursor' : 'default'}" ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false">
+                    <div align="center"  class="container-fluid" style="height: 30px;">
+                        <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal" style="font-size: 20px; cursor: all-scroll"></span>
                     </div>
 
                     <div align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
@@ -38,31 +38,32 @@
                     </div>
 
 
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <h4>Spørsmålstype:</h4>
+
+                    <div no-drag class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <h4>Spørsmålstype:</h4>
+                            </div>
+                            <div class="col-lg-10">
+                                <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
+                                    <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-lg-10">
-                            <select id="typeBox" ng-change="changeDefault(exercise,$index)" ng-model="exercise.type" align="left" style="margin-top:10px">
-                                <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
-                            </select>
+
+
+
+
+
+                        <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"></div>
+                        <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"></div>
+                        <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
+
+                        <div class="container-fluid" ng-show="focused[$index]">
+                            <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
                         </div>
-                    </div>
-
-
-
-
-                    <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"></div>
-                    <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"></div>
-                    <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
-
-
-                    <div class="container-fluid">
-                        <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
-                    </div>
-
-                    <div align="center" ng-mouseenter="move[$index].downBtn = true" ng-mouseleave="move[$index].downBtn = false" class="container-fluid" style="height: 30px;">
-                        <span ng-show="move[$index].downBtn && !$last" ng-click="moveExcercise($index, false)"  class="glyphicon glyphicon-menu-down" style="font-size: 20px; cursor: pointer"></span>
+                        <div align="center" class="container-fluid" style="height: 30px;">
+                        </div>
                     </div>
                 </div>
 

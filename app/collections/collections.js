@@ -2,34 +2,26 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
     .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
-        var initCollections = function(collections) {
-            $scope.collections = collections;
-            $scope.subject.collections = collections;
+        var initCollections = function(response) {
+            $scope.collections = response.collections;
+            $scope.subject.collections = response.collections;
+            $scope.subject.public = response.public
         };
         $scope.subject = subjectService.getSubject();
 
-        if(!$scope.subject) {
-            $http({
-                url: apiUrl + "/subjects/" + $routeParams.subjectId + "?editor=true",
-                method: "GET"
-            }).success(function(response){
 
-                $scope.subject = response;
+        requestService.httpGet("/subjects/" + $routeParams.subjectId + "?editor=true")
+            .then(function (response) {
+                if(!$scope.subject) {
+                    $scope.subject = response;
+                    subjectService.setSubject($scope.subject);
+                }
+                initCollections(response);
+            });
 
-                subjectService.setSubject($scope.subject);
-                initCollections(response.collections);
-            })
-        } else {
-            $http({
-                url: apiUrl + "/subjects/" + $scope.subject._id + "?editor=true",
-                method: "GET"
-            }).success(function (response) {
-                initCollections(response.collections);
-            })
-        }
 
         $scope.setTargetCollection = function (target) {
-            $scope.targetCollection = target.name.replace(/[^a-zA-Z 0-9]/g, "").replace(/ /g, '');
+            $scope.targetCollection = target._id;
             collectionService.setCollection(target)
         };
 
@@ -87,8 +79,6 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
-
-
 
 
 
@@ -167,6 +157,9 @@ angular.module('myApp.collections', ['ngRoute'])
             angular.forEach($scope.exercises, function (exercise) {
                 var newExercise = {};
                 if (exercise.type == "mc") {
+                    if(!exercise.alternatives) {
+                        exercise.alternatives = [];
+                    }
                     exercise.alternatives = exercise.alternatives.filter(Boolean);
                     newExercise = {
                         question: exercise.question,
@@ -175,7 +168,9 @@ angular.module('myApp.collections', ['ngRoute'])
                         alternatives: exercise.alternatives
                     };
                 } else if (exercise.type == "pd") {
-
+                    if(!exercise.tags) {
+                        exercise.tags = [];
+                    };
                     newExercise = {
                         question: exercise.question,
                         correctAnswer: exercise.correctAnswer.toString(),

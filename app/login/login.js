@@ -24,7 +24,9 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                 $location.path('/subjects')
 
             }).error(function (response, status) {
-                console.log(response, status)
+                console.log(response, status);
+                $scope.error = true;
+                $scope.errorMessage = "*Feil brukernavn eller passord"
             })
         }
 

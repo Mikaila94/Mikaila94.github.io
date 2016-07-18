@@ -22,6 +22,11 @@ border-radius: 3px;background-color: #ECF0F1;width: 300px; margin-top: 10px" ali
 
     </div>
     <br>
+    <div class="container-fluid" ng-show="error">
+        <p style="color: red">{{errorMessage}}</p>
+
+    </div>
+    <br>
     <button class="btn btn-primary" ng-click="authenticate()">
         Sign in
     </button>
