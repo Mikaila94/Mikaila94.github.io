@@ -75,6 +75,22 @@ angular.module('myApp.collections', ['ngRoute'])
             {desc: "True/False", type: "tf"}];
         $scope.defaultType = "mc";
         $scope.move = {};
+        var alertElement = document.getElementById('alertElement');
+
+
+        $scope.alerts = [];
+
+        $scope.addAlert = function(element) {
+            $scope.alerts.push(element);
+        };
+
+        $scope.closeAlert = function(index) {
+            $scope.alerts.splice(index, 1);
+        };
+
+
+
+
 
         if (!subjectService.getSubject()) {
             $location.path("/subjects/" + $routeParams.subjectId)
@@ -188,15 +204,55 @@ angular.module('myApp.collections', ['ngRoute'])
             };
             requestService.httpPut(subjectService.getSubject()._id, data)
                 .then(function () {
-                $location.path('/subjects/' + subjectService.getSubject()._id)
-                }, function () {
-                    if($routeParams.collectionId == "new") {
-                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length -1, 1)
+                    $location.path('/subjects/' + subjectService.getSubject()._id);
+                    $scope.addAlert({ type: 'success', msg: 'Well done! You successfully read this important alert message.'});
+                    $timeout(function(){
+                        if($scope.alerts.length > 0){
+                            $scope.closeAlert(0);
+                        }
+                    },3000);
+                }, function (response) {
+                    if ($routeParams.collectionId == "new") {
+                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
                     }
+
+                    var msg = '';
+                    $scope.errorList = [];
+
+                    for(var j = 0;j<response.errors.length;j++){
+                        var error = response.errors[j].dataPath.split('.');
+                        if (error.length > 0) {
+                            if (error[2] == 'name') {
+                                msg += "\nManglende navn på settet";
+                            }
+                            else{
+                                var index = parseInt(error[2].substr(10,10).substr(0,1)) + parseInt(j);
+                                $scope.errorList.push(index);
+                            }
+                        }
+                    }
+
+                    if(msg.length == 0){
+                        msg = 'Oh snap'
+                    };
+
+
+
+                    $scope.addAlert( { type: 'danger', msg: msg });
+                    $timeout(function(){
+                        if($scope.alerts.length > 0){
+                            $scope.closeAlert(0);
+                        }
+                    },3000);
                 })
         };
 
-
+        $scope.isInErrorList = function(index){
+            if(!$scope.errorList) {
+                return false
+            }
+            return $scope.errorList.indexOf(index) != -1;
+        };
         $scope.list = [];
 
         for (var i = 0; i < $scope.exercises.length; i++) {

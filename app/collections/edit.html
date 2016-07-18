@@ -33,6 +33,11 @@
                         <span ng-show="move[$index].upBtn && !$first" ng-click="moveExcercise($index, true)" class="glyphicon glyphicon-menu-up" style="font-size: 20px; cursor: pointer"></span>
                     </div>
 
+                    <div align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                    </div>
+
+
                     <div class="row">
                         <div class="col-lg-2">
                             <h4>Spørsmålstype:</h4>
@@ -44,9 +49,13 @@
                         </div>
                     </div>
 
+
+
+
                     <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"></div>
                     <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"></div>
                     <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"></div>
+
 
                     <div class="container-fluid">
                         <span class="glyphicon glyphicon-trash" ng-click="deleteExercise($index)" style="cursor:pointer;position: relative; left: 850px "></span>
@@ -70,6 +79,9 @@
     <button ng-click="addExercise()" class="btn btn-default" style="background-color:white;position:fixed;bottom:150px;right:60px;cursor:pointer;">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
+
+
+    <uib-alert style="position:fixed; bottom:10px;left:10px;" class="repeat-item" ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
 
 
 
