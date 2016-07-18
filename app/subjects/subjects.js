@@ -21,7 +21,6 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                         method: "DELETE",
                         headers: $cookies.getObject('token')
                     }).success(function (response, status) {
-                        console.log(status);
                         requestService.httpGet("/subjects/mine")
                             .then(function (response) {
                                 subjectService.setUserSubjects(response.map(function (subject) {
@@ -77,7 +76,6 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                     
                 }).success(function (response, status) {
                     $location.path("/subjects");
-                    console.log(status)
                 }).error(function (status) {
                     console.log({error: status});
                 })
@@ -97,8 +95,6 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             resultInfoAdded[subject.code] = [subject.name]
                         } else {
                             if(resultInfoAdded[subject.code].indexOf(subject.name) == -1) {
-                                console.log(resultInfoAdded[subject.code]);
-                                console.log(subject.name);
                                 resultList.push(subject);
                                 resultInfoAdded[subject.code].push(subject.name)
                             }

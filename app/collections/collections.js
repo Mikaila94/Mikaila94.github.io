@@ -9,12 +9,10 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.subject = subjectService.getSubject();
 
         if(!$scope.subject) {
-
             $http({
                 url: apiUrl + "/subjects/" + $routeParams.subjectId + "?editor=true",
                 method: "GET"
             }).success(function(response){
-                console.log(response);
 
                 $scope.subject = response;
 
@@ -45,6 +43,7 @@ angular.module('myApp.collections', ['ngRoute'])
             requestService.httpPut($scope.subject._id, data);
 
         };
+
         $scope.saveSubject = function () {
             var data = {
                 subject: $scope.subject
@@ -71,6 +70,10 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
+        $scope.types = [{desc: "Phrase & Definition", type: "pd"},
+            {desc: "Multiple Choice", type: "mc"},
+            {desc: "True/False", type: "tf"}];
+        $scope.defaultType = "mc";
         $scope.move = {};
 
         if (!subjectService.getSubject()) {
@@ -91,10 +94,10 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.exercises = $scope.collection.exercises;
 
-
-        $scope.types = [{desc: "Phrase & Definition", type: "pd"},
-            {desc: "Multiple Choice", type: "mc"},
-            {desc: "True/False", type: "tf"}];
+        if ($scope.exercises.length) {
+            var index = parseInt($scope.exercises.length) - 1;
+            $scope.defaultType = $scope.exercises[index].type;
+        }
 
         
         $scope.addAlternative = function (exercise) {
@@ -110,18 +113,9 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        $scope.defaultType = "mc";
-        if ($scope.exercises.length) {
-            var index = parseInt($scope.exercises.length) - 1;
-            $scope.defaultType = $scope.exercises[index].type;
-        }
-
-
         $scope.changeDefault = function (exercise, index) {
             $scope.defaultType = exercise.type;
         };
-
-        var typeBox = document.getElementById("typeBox");
 
         $scope.addExercise = function () {
 
@@ -130,7 +124,6 @@ angular.module('myApp.collections', ['ngRoute'])
                 "correctAnswer": "",
                 "type": $scope.defaultType
             };
-            console.log(exercise.type)
             $scope.collection.exercises.push(exercise);
             $timeout(function () {
                 window.scrollTo(0, document.body.scrollHeight)
@@ -187,7 +180,6 @@ angular.module('myApp.collections', ['ngRoute'])
             });
             $scope.collection.exercises = exerciseList;
             $scope.exercises = $scope.collection.exercises;
-            console.log(exerciseList);
             if ($routeParams.collectionId == "new") {
                 subjectService.getSubject().collections.push($scope.collection);
             }
@@ -209,7 +201,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
         for (var i = 0; i < $scope.exercises.length; i++) {
             if($scope.exercises[i].type == "pd") {
-                console.log($scope.exercises[i]);
                 var len = $scope.exercises[i].tags.length;
                 for (j = 0; j < len; j++) {
                     var tag = $scope.exercises[i].tags[j];
