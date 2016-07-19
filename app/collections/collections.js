@@ -173,14 +173,19 @@ angular.module('myApp.collections', ['ngRoute'])
                 } else if (exercise.type == "pd") {
                     if(!exercise.tags) {
                         exercise.tags = [];
+                    } else {
+                        if(exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
+                            exercise.tags.map(function (tag) {
+                                return tag.text
+                            })
+                        }
                     };
+
                     newExercise = {
                         question: exercise.question,
                         correctAnswer: exercise.correctAnswer.toString(),
                         type: exercise.type,
-                        tags: exercise.tags.map(function (tag) {
-                            return tag.text
-                        })
+                        tags: exercise.tags
                     };
                 } else if (exercise.type == "tf") {
                     newExercise = {
