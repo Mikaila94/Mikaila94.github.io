@@ -1,42 +1,70 @@
 
-<div class="row">
-</div>
-<div class="row">
-    <div class="col-lg-2">
-        <h4>Phrase:</h4>
+<div class="container-fluid" ng-if="exerciseNumber == activeExercise">
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Phrase:</h4>
+        </div>
+        <div class="col-lg-10">
+            <textarea class="form-control" style="margin-top: 2px; resize: none" rows="1" ng-model="exercise.question">
+            </textarea>
+        </div>
     </div>
-    <div class="col-lg-10">
-        <textarea class="form-control" style="margin-top: 2px; resize: none" rows="1" ng-model="exercise.question">
-        </textarea>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-2">
-        <h4>Definition:</h4>
-    </div>
-    <div class="col-lg-10">
-                    <textarea class="form-control" style="margin-top: 2px; resize: none" rows="1" ng-model="exercise.correctAnswer">
-                    </textarea>
-    </div>
-
-</div>
-<div class="row">
-    <div class="col-lg-2">
-        <h4>Tags:</h4>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Definition:</h4>
+        </div>
+        <div class="col-lg-10">
+                        <textarea class="form-control" style="margin-top: 2px; resize: none" rows="1" ng-model="exercise.correctAnswer">
+                        </textarea>
+        </div>
 
     </div>
-    <div class="col-lg-10">
-        <tags-input class="bootstrap"
-                    placeholder="Add a tag"
-                    ng-model="exercise.tags"
-                    min-length="1"
-                    addOnEnter="true">
-            <!--<auto-complete source="getTagSuggestions()"-->
-            <!--minLength="2"-->
-            <!--maxResultsToShow="5"-->
-            <!--max-results-to-show="32"-->
-            <!--&gt;</auto-complete>-->
-        </tags-input>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Tags:</h4>
+
+        </div>
+        <div class="col-lg-10">
+            <tags-input class="bootstrap"
+                        placeholder="Add a tag"
+                        ng-model="exercise.tags"
+                        min-length="1"
+                        addOnEnter="true">
+                <!--<auto-complete source="getTagSuggestions()"-->
+                <!--minLength="2"-->
+                <!--maxResultsToShow="5"-->
+                <!--max-results-to-show="32"-->
+                <!--&gt;</auto-complete>-->
+            </tags-input>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" ng-if="exerciseNumber != activeExercise">
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Phrase:</h4>
+        </div>
+        <div class="col-lg-10">
+            <h4>{{exercise.question}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Definition:</h4>
+        </div>
+        <div class="col-lg-10">
+            <h4>{{exercise.correctAnswer}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Tags:</h4>
+
+        </div>
+        <div class="col-lg-10">
+            <h4>{{getExerciseTags(exercise)}}</h4>
+        </div>
     </div>
 </div>
 

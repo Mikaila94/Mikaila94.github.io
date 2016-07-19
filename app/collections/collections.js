@@ -132,6 +132,7 @@ angular.module('myApp.collections', ['ngRoute'])
             };
 
             $scope.collection.exercises.push(exercise);
+            $scope.activeExercise = $scope.collection.exercises.length-1;
             $timeout(function () {
                 window.scrollTo(0, document.body.scrollHeight)
             }, 0)
@@ -141,6 +142,7 @@ angular.module('myApp.collections', ['ngRoute'])
             if (index > -1) {
                 $scope.exercises.splice(index, 1);
             }
+            $scope.activeExercise = undefined
         };
 
         $scope.moveExcercise = function (index, up) {
@@ -268,10 +270,35 @@ angular.module('myApp.collections', ['ngRoute'])
             return $scope.list;
         };
 
+        $scope.activateEditExercise = function (index) {
+            $scope.activeExercise = index;
+        };
+
+        $scope.getExerciseTags = function (exercise) {
+            if(!exercise.tags || exercise.tags.length == 0) {
+                return
+            }
+
+            if(typeof exercise.tags[0] == "string") {
+                return exercise.tags.toString()
+            } else {
+                return exercise.tags.map(function (tag) {
+                    return tag.text
+                }).toString()
+            }
+        }
+
         $scope.dragControlListeners = {
             accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id},
             containment: "#editArea",
             allowDuplicate:true,
+            orderChanged: function (event) {
+                if(event.source.index == $scope.activeExercise) {
+                    $scope.activeExercise = event.dest.index;
+                } else {
+                    $scope.activeExercise = undefined
+                }
+            },
             dragMove: function (itemPosition, containment, eventObj) {
                 if (eventObj) {
                     var targetY = eventObj.pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
