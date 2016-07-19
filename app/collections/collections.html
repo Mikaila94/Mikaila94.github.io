@@ -3,7 +3,7 @@
 
 <div class="container-fluid" >
 
-    <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;">
+    <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
         <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
         <hr>
         <div class="container-fluid" align="center" style="margin-bottom: 30px">
@@ -25,6 +25,12 @@
                 </div>
             </div>
         </div>
+
+        <label style="position: absolute;top: 25px;right: 70px;">Offentlig:</label>
+        <form style="position:absolute;top:20px;right:10px;">
+            <switch id="enabled" name="enabled" ng-model="subject.public"></switch>
+        </form>
+
 
 
     </div>

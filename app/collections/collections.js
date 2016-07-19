@@ -212,29 +212,30 @@ angular.module('myApp.collections', ['ngRoute'])
                         subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
                     }
 
-                    var msg = '';
                     $scope.errorList = [];
+                    $scope.errorMsg = '';
 
                     for(var j = 0;j<response.errors.length;j++){
                         var error = response.errors[j].dataPath.split('.');
                         if (error.length > 0) {
                             if (error[2] == 'name') {
-                                msg += "\nManglende navn på settet";
+                                $scope.errorMsg += "Manglende navn på settet\n";
+                            }
+                            else if(error[2].indexOf("exercises") > -1){
+                                var index = parseInt(error[2].substr(10,10).substr(0,1)) + parseInt(j);
+                                var realIndex = parseInt(index + 1);
+                                $scope.errorList.push(index);
+                                $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
                             }
                             else{
-                                var index = parseInt(error[2].substr(10,10).substr(0,1)) + parseInt(j);
-                                $scope.errorList.push(index);
+                                $scope.errorMsg += 'En feil oppsto\n'
                             }
                         }
                     }
 
-                    if(msg.length == 0){
-                        msg = 'Oh snap'
-                    };
 
 
-
-                    $scope.addAlert( { type: 'danger', msg: msg });
+                    $scope.addAlert( { type: 'danger', msg: $scope.errorMsg });
                     $timeout(function(){
                         if($scope.alerts.length > 0){
                             $scope.closeAlert(0);
