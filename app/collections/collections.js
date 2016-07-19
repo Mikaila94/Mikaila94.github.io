@@ -58,7 +58,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window,$http,$routeParams,$location, $q, collectionService, subjectService, requestService, apiUrl) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, collectionService, subjectService, requestService, apiUrl) {
 
         $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
@@ -130,6 +130,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 "correctAnswer": "",
                 "type": $scope.defaultType
             };
+
             $scope.collection.exercises.push(exercise);
             $timeout(function () {
                 window.scrollTo(0, document.body.scrollHeight)
@@ -270,7 +271,17 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.dragControlListeners = {
             accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id},
             containment: "#editArea",
-            allowDuplicate:true
+            allowDuplicate:true,
+            dragMove: function (itemPosition, containment, eventObj) {
+                if (eventObj) {
+                    var targetY = eventObj.pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
+                    if (targetY + 200 > $window.innerHeight) {
+                        $window.scrollBy(0, 20);
+                    } else if (targetY < 100) {
+                        $window.scrollBy(0, -20);
+                    }
+                }
+            }
 
         };
 
