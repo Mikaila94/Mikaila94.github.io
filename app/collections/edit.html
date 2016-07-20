@@ -2,6 +2,7 @@
     <div class="container-fluid" style="margin: 20px;">
     </div>
     <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
+        <button class="btn btn-default" ng-click="openExerciseModal()">+ Finn oppgaver</button>
         <h2 align="center">{{collection.name}}</h2>
 
 
@@ -106,3 +107,68 @@
     </div>
 
 </div>
+
+<script type="text/ng-template" id="exerciseModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Legg til oppgaver</h3>
+    </div>
+    <div class="modal-body" style="background-color: #F1F1F2">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>Søk etter oppgaver:</h3>
+                <div class="input-group" style="width: 100%;">
+                    <select class="form-control" ng-model="searchMode" style="width: 20%">
+                        <option value="exercises">Oppgaver</option>
+                        <option value="collections">Sett</option>
+                        <option value="subjects">Fag</option>
+                    </select>
+                    <input class="form-control" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 55%">
+                    <button class="btn btn-primary" ng-click="searchItems()" style="width: 10%">Søk</button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3>Oppgaver som legges til:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="container-fluid" style="height: 500px; overflow-y: scroll; background-color: white;">
+                    <div as-sortable="dragControlListeners" ng-model="resultList" id="loading-bar-container">
+                        <div ng-repeat="result in resultList" as-sortable-item>
+                            <div as-sortable-item-handle>
+                                <label class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                    <h4>{{result.question}}</h4>
+                                    <p>{{result.correctAnswer}}</p>
+                                </label>
+                            </div>
+                        </div>
+                        <div ng-if="noResult" align="center">
+                            <i>Finner ingen oppgaver...</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="container-fluid" style="height: 500px; overflow-y: scroll; overflow-x: hidden; background-color: white;">
+                    <div as-sortable="dragControlListeners2" ng-model="exercises" style="height: 500px">
+                        <div ng-repeat="exercise in exercises track by $index" ng-model="exercise" as-sortable-item>
+                            <div as-sortable-item-handle>
+                                <div no-drag class="btn btn-default" style="white-space: normal; width: 100%; text-align: left; cursor: default">
+                                    <h4>{{exercise.question}}</h4>
+                                    <p>{{exercise.correctAnswer}}</p>
+                                    <div ng-click="removeExercise($index)" class="container-fluid" style="position: relative; bottom: 10px; left: 600px; cursor: pointer">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()">Legg til</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Avbryt</button>
+    </div>
+</script>
