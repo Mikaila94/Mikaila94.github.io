@@ -10,13 +10,13 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.subject = subjectService.getSubject();
 
 
-        requestService.httpGet("/subjects/" + $routeParams.subjectId + "?editor=true")
+        requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 if(!$scope.subject) {
-                    $scope.subject = response;
+                    $scope.subject = response.subject;
                     subjectService.setSubject($scope.subject);
                 }
-                initCollections(response);
+                initCollections(response.subject);
             });
 
 
@@ -40,6 +40,7 @@ angular.module('myApp.collections', ['ngRoute'])
             var data = {
                 subject: $scope.subject
             };
+            console.log(data)
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
                     alert("lagret   ")
@@ -361,7 +362,13 @@ angular.module('myApp.collections', ['ngRoute'])
             })
         };
 
-
+        $scope.addExercises = function () {
+            $uibModalInstance.close($scope.exercises);
+        };
+        
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel')
+        };
 
         $scope.dragControlListeners = {
             accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;},
