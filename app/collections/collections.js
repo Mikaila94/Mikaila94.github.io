@@ -58,7 +58,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, collectionService, subjectService, requestService, apiUrl) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl) {
 
         $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
@@ -175,7 +175,7 @@ angular.module('myApp.collections', ['ngRoute'])
                         exercise.tags = [];
                     } else {
                         if(exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
-                            exercise.tags.map(function (tag) {
+                            exercise.tags = exercise.tags.map(function (tag) {
                                 return tag.text
                             })
                         }
@@ -318,5 +318,64 @@ angular.module('myApp.collections', ['ngRoute'])
 
         };
 
+        $scope.openExerciseModal = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: "exerciseModal.html",
+                controller: "exerciseModalCtrl",
+                windowClass: "app-modal-window",
+                resolve: {
+                    exercises: function () {
+                        return $scope.exercises
+                    }
 
+                }
+            })
+        }
+
+
+    })
+    .controller('exerciseModalCtrl', function ($scope, $http, $uibModalInstance, exercises, apiUrl) {
+        $scope.exercises = [];
+        $scope.searchMode = "exercises";
+        $scope.removeExercise = function (index) {
+            $scope.exercises.splice(index, 1);
+            $scope.searchItems();
+        };
+
+        $scope.searchItems = function () {
+            $scope.resultList = [];
+            var exerciseIds = $scope.exercises.map(function (exercise) {
+                return exercise._id
+            });
+            $http({
+                url: apiUrl + "/search?search=" + $scope.searchTerm,
+                method: 'GET'
+            }).success(function (response) {
+                $scope.noResult = response.length ? false:true;
+                angular.forEach(response, function (item) {
+                    if(exerciseIds.indexOf(item.exercise._id) == -1) {
+                        $scope.resultList.push(item.exercise)
+                    }
+                })
+            })
+        };
+
+
+
+        $scope.dragControlListeners = {
+            accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;},
+            allowDuplicate:true,
+            ctrlClone: true,
+            containment: "#exercises-container"
+
+        };
+
+        $scope.dragControlListeners2 = {
+            accept: function(sourceItemHandleScope, destSortableScope) {return true},
+            allowDuplicate:true,
+            ctrlClone: true,
+            containment: "#exercises-container"
+
+        };
     });

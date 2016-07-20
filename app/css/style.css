@@ -1,5 +1,9 @@
 
 
+.app-modal-window .modal-dialog{
+    width: 1500px;
+}
+
 .btn-subjects{
     width:60%;
     height:100px;
