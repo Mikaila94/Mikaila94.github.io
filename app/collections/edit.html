@@ -71,12 +71,24 @@
                         <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'" onload="exerciseNumber = $index"></div>
                         <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'" onload="exerciseNumber = $index"></div>
 
+                        <div class="container-fluid">
+                            <form>
+                                <h4>Image:</h4>
+                                <input type="file" ng-change="upload()" base-sixty-four-input>
+                            </form>
+                        </div>
+
                     </div>
+
+
+
                     <div class="container-fluid" style="height: 30px;margin-top: 10px; margin-right: -10px;">
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
                               ng-click="deleteExercise($index)"
                               style="cursor:pointer;position: relative; left: 850px "></span>
                     </div>
+
+
                 </div>
 
             </div>

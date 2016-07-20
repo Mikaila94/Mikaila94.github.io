@@ -15,8 +15,10 @@ angular.module('myApp', [
     'ng-mfb',
     'ngCookies',
     'angular-loading-bar',
-    'myApp.services'
-        ,'as.sortable','uiSwitch']
+    'myApp.services',
+    'naif.base64',
+    'as.sortable',
+    'uiSwitch']
 )
     .config(['$locationProvider', '$routeProvider','cfpLoadingBarProvider', function($locationProvider, $routeProvider,cfpLoadingBarProvider) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'
@@ -81,8 +83,8 @@ angular.module('myApp', [
 
     })
 
-    //.constant("apiUrl", "https://acepi-test.herokuapp.com")
-    .constant("apiUrl", "http://192.168.31.54:3000")
+    .constant("apiUrl", "https://acepi-test.herokuapp.com")
+    //.constant("apiUrl", "http://192.168.31.54:3000")
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
     .factory('focus', function ($timeout, $window) {
         return function (id) { {
