@@ -69,6 +69,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             code: subject.code,
                             name: subject.name,
                             public: true,
+                            collections: [],
                             description: "Laget av ekte tælling " + $cookies.getObject('username')
                         }
                     },

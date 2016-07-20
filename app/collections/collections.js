@@ -10,13 +10,13 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.subject = subjectService.getSubject();
 
 
-        requestService.httpGet("/subjects/" + $routeParams.subjectId + "?editor=true")
+        requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 if(!$scope.subject) {
-                    $scope.subject = response;
+                    $scope.subject = response.subject;
                     subjectService.setSubject($scope.subject);
                 }
-                initCollections(response);
+                initCollections(response.subject);
             });
 
 
@@ -40,6 +40,7 @@ angular.module('myApp.collections', ['ngRoute'])
             var data = {
                 subject: $scope.subject
             };
+            console.log(data)
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
                     alert("lagret   ")
@@ -372,6 +373,36 @@ angular.module('myApp.collections', ['ngRoute'])
                     }
 
                 }
+            });
+
+            modalInstance.result.then(function (exercises) {
+                angular.forEach(exercises, function (exercise) {
+                    var newExercise = {};
+                    if (exercise.type == "mc") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer.toString(),
+                            type: exercise.type,
+                            alternatives: exercise.alternatives
+                        };
+                    } else if (exercise.type == "pd") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer.toString(),
+                            type: exercise.type,
+                            tags: exercise.tags
+                        };
+                    } else if (exercise.type == "tf") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer,
+                            type: exercise.type
+                        }
+                    }
+                    $scope.exercises.push(newExercise)
+
+                })
+
             })
         }
 
@@ -406,7 +437,13 @@ angular.module('myApp.collections', ['ngRoute'])
             })
         };
 
-
+        $scope.addExercises = function () {
+            $uibModalInstance.close($scope.exercises);
+        };
+        
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel')
+        };
 
         $scope.dragControlListeners = {
             accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;},
