@@ -331,6 +331,36 @@ angular.module('myApp.collections', ['ngRoute'])
                     }
 
                 }
+            });
+
+            modalInstance.result.then(function (exercises) {
+                angular.forEach(exercises, function (exercise) {
+                    var newExercise = {};
+                    if (exercise.type == "mc") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer.toString(),
+                            type: exercise.type,
+                            alternatives: exercise.alternatives
+                        };
+                    } else if (exercise.type == "pd") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer.toString(),
+                            type: exercise.type,
+                            tags: exercise.tags
+                        };
+                    } else if (exercise.type == "tf") {
+                        newExercise = {
+                            question: exercise.question,
+                            correctAnswer: exercise.correctAnswer,
+                            type: exercise.type
+                        }
+                    }
+                    $scope.exercises.push(newExercise)
+
+                })
+
             })
         }
 
