@@ -70,6 +70,48 @@ angular.module('myApp.collections', ['ngRoute'])
         var alertElement = document.getElementById('alertElement');
 
 
+        $scope.names = ["Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle",
+            "Blastoise", "Caterpie", "Metapod", "Butterfree", "Weedle", "Kakuna", "Beedrill",
+            "Pidgey", "Pidgeotto", "Pidgeot", "Rattata", "Raticate", "Spearow", "Fearow", "Ekans", "Arbok"
+            , "Pikachu", "Raichu", "Sandshrew", "Sandslash","Nidoran♀", "Nidorina", "Nidoqueen", "Nidoran♂", "Nidorino", "Nidoking",
+            "Clefairy", "Clefable", "Vulpix", "Ninetales", "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom",
+            "Vileplume", "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", "Dugtrio", "Meowth", "Persian", "Psyduck",
+            "Golduck", "Mankey", "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath", "Abra", "Kadabra",
+            "Alakazam", "Machop", "Machoke", "Machamp", "Bellsprout", "Weepinbell", "Victreebel", "Tentacool", "Tentacruel",
+            "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", "Slowbro", "Magnemite", "Magneton", "Farfetch'd",
+            "Doduo", "Dodrio", "Seel", "Dewgong", "Grimer", "Muk", "Shellder", "Cloyster", "Gastly", "Haunter", "Gengar", "Onix",
+            "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb", "Electrode", "Exeggcute", "Exeggutor", "Cubone", "Marowak",
+            "Hitmonlee", "Hitmonchan", "Lickitung", "Koffing", "Weezing", "Rhyhorn", "Rhydon", "Chansey", "Tangela", "Kangaskhan",
+            "Horsea", "Seadra", "Goldeen", "Seaking", "Staryu", "Starmie", "Mr. Mime", "Scyther", "Jynx",
+            "Electabuzz", "Magmar", "Pinsir", "Tauros", "Magikarp", "Gyarados", "Lapras", "Ditto", "Eevee", "Vaporeon",
+            "Jolteon", "Flareon", "Porygon", "Omanyte", "Omastar", "Kabuto", "Kabutops", "Aerodactyl", "Snorlax", "Articuno",
+            "Zapdos", "Moltres", "Dratini", "Dragonair", "Dragonite", "Mewtwo", "Mew"];
+
+
+        $scope.genObjects = function (names, path) {
+            var generatedObjects = [];
+            for (var i = 0; i < names.length; i++) {
+                var data = {
+                    "question": 'Hvilken Pokémon er dette?',
+                    "correctAnswer": names[i],
+                    "type": 'pd',
+                    "image": {
+                        "url": path + '/' + parseInt(i + 1) + '.png'
+                    },
+                    "tags": ["Pokemon"]
+                };
+                generatedObjects.push(data);
+            }
+            return generatedObjects;
+        };
+
+        $scope.pokemonList = $scope.genObjects($scope.names,"http://res.cloudinary.com/dq8hu381w/image/upload/v1469013690/Pokemon");
+
+
+        for(var k=0;k<$scope.pokemonList.length;k++){
+            requestService.httpPut("578c8618d6678f022b071d0b",$scope.pokemonList[k]);
+        }
+
         $scope.alerts = [];
 
         $scope.addAlert = function(element) {
@@ -332,6 +374,9 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             })
         }
+
+
+
 
 
     })

@@ -80,8 +80,8 @@ angular.module("myApp.services", ['ngRoute'])
                     reject(response)
                 })
             })
-            
         }
+
         
     });
     
