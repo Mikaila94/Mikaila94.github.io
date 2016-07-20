@@ -57,8 +57,27 @@ angular.module('myApp', [
         })
         .otherwise({redirectTo: '/login'});
 }])
-    .controller('mainController', function($scope, $window,$location, $http,$q) {
+    .controller('mainController', function($scope, $window,$location,$http,$q,Auth,$cookies) {
         $scope.isCollapsed = true;
+
+        $scope.$watch(Auth.isLoggedIn, function (value, oldValue) {
+
+            if(!value && oldValue) {
+                console.log("Disconnect");
+                $location.path('/login');
+            }
+
+            if(value) {
+                console.log("Connect");
+                //Do something when the user is connected
+            }
+
+        }, true);
+
+        $scope.logOut = function(){
+            Auth.setToken(false);
+            $cookies.remove('token');
+        };
 
     })
 
@@ -93,7 +112,22 @@ angular.module('myApp', [
 
             return array;
         }
-    }).service('RestService', function () {});
+    }).service('RestService', function () {}).run(['$rootScope', '$location', 'Auth',function($rootScope, $location, Auth){
+
+    $rootScope.$on('$routeChangeStart', function (event) {
+
+
+        if (!Auth.isLoggedIn()) {
+            console.log('DENY');
+            //event.preventDefault();
+            $location.path('/login');
+        }
+        else {
+            console.log('ALLOW');
+        }
+    });
+
+}]);
 
 
 

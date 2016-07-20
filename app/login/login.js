@@ -1,7 +1,7 @@
 angular.module('myApp.login', ['ngRoute', 'base64'])
 
 
-    .controller('loginCtrl', function ($scope, $http, $cookies, $base64, $location, apiUrl) {
+    .controller('loginCtrl',function ($scope, $http, $cookies, $base64, $location, apiUrl,Auth) {
 
 
         $scope.authenticate =function () {
@@ -21,6 +21,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                 });
                 $cookies.putObject('username', $scope.username);
                 $cookies.putObject('password', $scope.password);
+                Auth.setToken($cookies.getObject('token'));
                 $location.path('/subjects')
 
             }).error(function (response, status) {
@@ -61,4 +62,16 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                 $scope.errorMessage = "*Alle feltene må fylles ut"
             }
         }
+    }).factory('Auth',function($cookies){
+        var token = $cookies.getObject('token');
+
+        return {
+            setToken: function(aToken){
+                token = aToken;
+            },
+            isLoggedIn:function(){
+                return (token)? token: false;
+            }
+        }
+
     });
