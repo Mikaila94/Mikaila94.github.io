@@ -65,6 +65,7 @@ angular.module("myApp.services", ['ngRoute'])
                     data: data
                 }).success(function (response, status) {
                     resolve(response);
+                    console.log(response);
                 }).error(function (response, status, header, config) {
                     console.log(response)
                     console.log(status)
@@ -84,10 +85,30 @@ angular.module("myApp.services", ['ngRoute'])
                 }).success(function (response) {
                     resolve(response)
                 }).error(function (response, status, header, config) {
-                    console.log(response)
-                    console.log(status)
-                    console.log(header)
-                    console.log(config)
+                    console.log(response);
+                    console.log(status);
+                    console.log(header);
+                    console.log(config);
+                    reject(response)
+                })
+            })
+        }
+
+        this.putImage = function(data){
+            return $q(function (resolve, reject) {
+                $http({
+                    url: apiUrl + "/images",
+                    method: "POST",
+                    headers: $cookies.getObject("token"),
+                    data:data
+                }).success(function (response) {
+                    resolve(response)
+
+                }).error(function (response, status, header, config) {
+                    console.log(response);
+                    console.log(status);
+                    console.log(header);
+                    console.log(config);
                     reject(response)
                 })
             })

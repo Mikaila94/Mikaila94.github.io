@@ -1,6 +1,4 @@
 angular.module('myApp.collections', ['ngRoute'])
-
-
     .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
         var initCollections = function(response) {
             $scope.collections = response.collections;
@@ -10,9 +8,10 @@ angular.module('myApp.collections', ['ngRoute'])
 
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
-                $scope.subject = response.subject;
+                $scope.subject = response;
+                console.log(response)
                 subjectService.setSubject($scope.subject);
-                initCollections(response.subject);
+                initCollections(response);
             });
 
         $scope.setTargetCollection = function (target) {
@@ -53,7 +52,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
     .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl) {
-
         $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
@@ -63,8 +61,31 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.move = {};
         var alertElement = document.getElementById('alertElement');
 
-
         $scope.alerts = [];
+        $scope.files = [];
+
+
+
+        $scope.onChangeHandler = function(exercise) {
+            return function (e, fileObjects) {
+                if (fileObjects) {
+                    var data = {
+                        filetype: fileObjects[0].filetype,
+                        base64: fileObjects[0].base64,
+                        subjectId: subjectService.getSubject()._id
+                    };
+                    requestService.putImage(data).then((res) =>{
+                        console.log(res);
+                        exercise.image = {url: res.url};
+                        console.log(exercise)
+                        }, (err) =>{
+                            console.log(err);
+                    });
+
+                }
+            }
+        };
+
 
         $scope.addAlert = function(element) {
             $scope.alerts.push(element);

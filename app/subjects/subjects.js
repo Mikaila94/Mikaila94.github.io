@@ -14,10 +14,10 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
         $scope.deleteMode = false;
         $scope.deleteElements = {};
         $scope.deleteSubjects = function () {
-            for(var exercise in $scope.deleteElements) {
-                if($scope.deleteElements[exercise] == true) {
+            for(var subject in $scope.deleteElements) {
+                if($scope.deleteElements[subject] == true) {
                     $http({
-                        url: apiUrl + '/subjects/' + exercise,
+                        url: apiUrl + '/subjects/mine/' + subject,
                         method: "DELETE",
                         headers: $cookies.getObject('token')
                     }).success(function (response, status) {

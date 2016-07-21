@@ -74,7 +74,7 @@
                         <div class="container-fluid">
                             <form>
                                 <h4>Image:</h4>
-                                <input type="file" ng-change="upload()" base-sixty-four-input>
+                                <input type="file" ng-model="files" name="files" base-sixty-four-input on-after-validate="onChangeHandler(exercise)" accept="image/*" >
                             </form>
                         </div>
 
