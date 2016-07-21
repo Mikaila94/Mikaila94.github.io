@@ -238,12 +238,13 @@ angular.module('myApp.collections', ['ngRoute'])
 
                     for(var j = 0;j<response.errors.length;j++){
                         var error = response.errors[j].dataPath.split('.');
+                        console.log(error);
                         if (error.length > 0) {
-                            if (error[2] == 'name') {
+                            if (error[3] == 'name') {
                                 $scope.errorMsg += "Manglende navn på settet\n";
                             }
-                            else if(error[2].indexOf("exercises") > -1){
-                                var index = parseInt(error[2].substr(10,10).substr(0,1)) + parseInt(j);
+                            else if(error[3].indexOf("exercises") > -1){
+                                var index = parseInt(error[3].substr(10,10).substr(0,1)) + parseInt(j);
                                 var realIndex = parseInt(index + 1);
                                 $scope.errorList.push(index);
                                 $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
