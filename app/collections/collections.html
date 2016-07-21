@@ -44,7 +44,7 @@
         <table id="collectionsTable" class="table">
             <tbody ng-model="collections" as-sortable="dragControlListeners">
             <tr ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
-                <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection(coll)">
+                <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection($index)">
                     <a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}" style="width: 100%;">{{coll.name}}</a>
                 </td>
                 <td style="width:60px;"><Button style="margin-left:400px" ng-click="deleteCollection(coll,$index)">

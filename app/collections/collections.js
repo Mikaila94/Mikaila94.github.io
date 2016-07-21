@@ -14,10 +14,13 @@ angular.module('myApp.collections', ['ngRoute'])
                 initCollections(response);
             });
 
-        $scope.setTargetCollection = function (target) {
-            $scope.targetCollection = target._id;
-            collectionService.setCollection(target)
+        $scope.setTargetCollection = function (index) {
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
+            $scope.subject = subjectService.getSubject();
+            $scope.targetCollection = $scope.subject.collections[index]._id;
+            console.log($scope.subject);
+            console.log(subjectService.getSubject())
+            collectionService.setCollection($scope.subject.collections[index])
         };
 
         $scope.deleteCollection = function(coll,index){
@@ -138,7 +141,6 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.addExercise = function () {
-
             var exercise = {
                 "question": "",
                 "correctAnswer": "",
@@ -221,6 +223,7 @@ angular.module('myApp.collections', ['ngRoute'])
             var data = {
                 subject: subjectService.getSubject()
             };
+            console.log(data);
             requestService.httpPut(subjectService.getSubject()._id, data)
                 .then(function () {
                     $location.path('/subjects/' + subjectService.getSubject()._id);
