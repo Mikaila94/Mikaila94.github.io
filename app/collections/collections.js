@@ -443,7 +443,8 @@ angular.module('myApp.collections', ['ngRoute'])
                     text: "Sett:" + collection.name,
                     collection: collection
                 },{
-                    text: "Oppgaver:"
+                    text: "Oppgaver:",
+                    searchTerm: angular.copy($scope.searchTerm)
 
                 }];
             } else if(subject) {
@@ -452,7 +453,8 @@ angular.module('myApp.collections', ['ngRoute'])
                     text: "Fag:" + subject.name,
                     subject: subject
                 },{
-                    text: "Oppgaver:"
+                    text: "Oppgaver:",
+                    searchTerm: angular.copy($scope.searchTerm)
                 }];
             } else {
                 if($scope.navigationParts[1]) {
