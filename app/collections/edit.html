@@ -6,7 +6,6 @@
         <h2 align="center">{{collection.name}}</h2>
 
 
-
         <hr/>
         <div class="row">
             <div class="col-lg-2">
@@ -65,7 +64,10 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div ng-if="exercise.image.url" class="container-fluid" align="center">
+                            <img src="{{getJpegMini(exercise.image.url)}}" style="width: 120px;">
+                            <hr>
+                        </div>
 
                         <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'" onload="exerciseNumber = $index"></div>
                         <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'" onload="exerciseNumber = $index"></div>
@@ -129,17 +131,33 @@
             <div class="col-lg-6">
                 <h3>Søk etter oppgaver:</h3>
                 <div class="input-group" style="width: 100%;">
-                    <select class="form-control" ng-model="searchMode" style="width: 20%">
+                    <select class="form-control" ng-model="searchMode" ng-change="changeNavigationParts()" style="width: 20%">
                         <option value="exercises">Oppgaver</option>
                         <option value="collections">Sett</option>
                         <option value="subjects">Fag</option>
                     </select>
-                    <input class="form-control" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 55%">
+                    <input class="form-control" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 60%">
+
+                    <!--<input class="form-control" ng-show="searchMode=='collections'" ng-model="searchSubject" placeholder="Sett..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
+                    <!--<input class="form-control" ng-show="searchMode=='collections'" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
+
+                    <!--<input class="form-control" ng-show="searchMode=='subjects'" ng-model="searchSubject" placeholder="Fag..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
+                    <!--<input class="form-control" ng-show="searchMode=='subjects'" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
+
                     <button class="btn btn-primary" ng-click="searchItems()" style="width: 10%">Søk</button>
                 </div>
             </div>
             <div class="col-lg-6">
                 <h3>Oppgaver som legges til:</h3>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="col-lg-6">
+                <div ng-repeat="part in navigationParts">
+                    <a href="" ng-if="!$last" style="float: left">{{part.text}}</a>
+                    <p ng-if="!$last" style="float: left"> > </p>
+                    <p ng-if="$last" style="float: left">{{part.text}}</p>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -148,10 +166,19 @@
                     <div as-sortable="dragControlListeners" ng-model="resultList" id="loading-bar-container">
                         <div ng-repeat="result in resultList" as-sortable-item>
                             <div as-sortable-item-handle>
-                                <label class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                <label ng-if="result.question" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
                                     <h4>{{result.question}}</h4>
                                     <p>{{result.correctAnswer}}</p>
                                 </label>
+                                <label no-drag ng-if="result.collectionId" ng-click="searchItems(result)" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                    <h4>{{result.name}}</h4>
+                                    <p>{{result.code}}</p>
+                                </label>
+                                <label no-drag ng-if="result.subjectId" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                    <h4>{{result.name}}</h4>
+                                    <p>{{result.code}}</p>
+                                </label>
+
                             </div>
                         </div>
                         <div ng-if="noResult" align="center">
@@ -175,6 +202,15 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="container-fluid">
+                    <button class="btn btn-default" ng-click="addAllToList()">
+                        Legg til alle i lista
+                    </button>
                 </div>
             </div>
         </div>

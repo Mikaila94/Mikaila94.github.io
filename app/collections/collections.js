@@ -9,7 +9,7 @@ angular.module('myApp.collections', ['ngRoute'])
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 $scope.subject = response;
-                console.log(response)
+                console.log(response);
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
             });
@@ -35,7 +35,7 @@ angular.module('myApp.collections', ['ngRoute'])
             var data = {
                 subject: $scope.subject
             };
-            console.log(data)
+            console.log(data);
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
                     alert("lagret   ")
@@ -207,8 +207,10 @@ angular.module('myApp.collections', ['ngRoute'])
                         correctAnswer: exercise.correctAnswer,
                         type: exercise.type
                     }
+                };
+                if(exercise.image) {
+                    newExercise.image = exercise.image;
                 }
-                ;
                 exerciseList.push(newExercise)
             });
             $scope.collection.exercises = exerciseList;
@@ -307,7 +309,19 @@ angular.module('myApp.collections', ['ngRoute'])
                     return tag.text
                 }).toString()
             }
-        }
+        };
+
+        $scope.getJpegMini = function (imageUrl) {
+            var imageUrlParts = imageUrl.split('/');
+            imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "w_120";
+            imageUrlParts.splice(0,2);
+            var newUrl = "http:/";
+            angular.forEach(imageUrlParts, function (part) {
+                newUrl = newUrl + "/" + part
+            });
+            return newUrl;
+        };
+
 
         $scope.dragControlListeners = {
             accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id},
@@ -324,9 +338,9 @@ angular.module('myApp.collections', ['ngRoute'])
                 if (eventObj) {
                     var targetY = eventObj.pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
                     if (targetY + 200 > $window.innerHeight) {
-                        $window.scrollBy(0, 20);
+                        $window.scrollBy(0, 50);
                     } else if (targetY < 100) {
-                        $window.scrollBy(0, -20);
+                        $window.scrollBy(0, -50);
                     }
                 }
             }
@@ -371,6 +385,9 @@ angular.module('myApp.collections', ['ngRoute'])
                             type: exercise.type
                         }
                     }
+                    if(exercise.image) {
+                        newExercise.image = exercise.image;
+                    };
                     $scope.exercises.push(newExercise)
 
                 })
@@ -383,29 +400,119 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
     })
-    .controller('exerciseModalCtrl', function ($scope, $http, $uibModalInstance, exercises, apiUrl) {
+    .controller('exerciseModalCtrl', function ($scope, $http, $uibModalInstance, exercises, apiUrl, collectionService) {
         $scope.exercises = [];
         $scope.searchMode = "exercises";
+        $scope.navigationParts = [{
+            text: "Oppgaver:"
+
+        }];
         $scope.removeExercise = function (index) {
             $scope.exercises.splice(index, 1);
             $scope.searchItems();
         };
+        $scope.changeNavigationParts = function () {
+            if($scope.navigationParts.length = 1) {
+                if($scope.searchMode == 'exercises') {
+                    $scope.navigationParts = [{
+                        text: "Oppgaver:"
 
-        $scope.searchItems = function () {
+                    }];
+                } else if($scope.searchMode == 'collections') {
+                    $scope.navigationParts = [{
+                        text: "Sett:"
+
+                    }];
+                } else if($scope.searchMode == 'subjects') {
+                    $scope.navigationParts = [{
+                        text: "Fag:"
+                    }];
+                }
+
+
+            }
+        };
+
+        $scope.searchItems = function (collection, subject) {
+            if(collection) {
+                $scope.searchTerm = "";
+                $scope.navigationParts = [{
+                    text: "Sett:" + collection.name,
+                    collection: collection
+                },{
+                    text: "Oppgaver:"
+
+                }];
+            } else if(subject) {
+                $scope.searchTerm = "";
+                $scope.navigationParts = [{
+                    text: "Fag:" + subject.name,
+                    subject: subject
+                },{
+                    text: "Oppgaver:"
+                }];
+            } else {
+                if($scope.navigationParts[1]) {
+                    collection = $scope.navigationParts[0].collection;
+                    subject = $scope.navigationParts[0].subject
+                }
+            }
+
+
             $scope.resultList = [];
             var exerciseIds = $scope.exercises.map(function (exercise) {
                 return exercise._id
             });
             $http({
-                url: apiUrl + "/search?search=" + $scope.searchTerm,
+                url: apiUrl + "/search?search=" + $scope.searchTerm
+                + (collection ? "&collectionId=" + collection.collectionId: "") + (subject ? "&subjectId=" + subject.subjectId: ""),
                 method: 'GET'
             }).success(function (response) {
                 $scope.noResult = response.length ? false:true;
+                var resultListIds = [];
                 angular.forEach(response, function (item) {
-                    if(exerciseIds.indexOf(item.exercise._id) == -1) {
-                        $scope.resultList.push(item.exercise)
+                    if($scope.searchMode == 'exercises' || collection || subject) {
+                        if(exerciseIds.indexOf(item.exercise._id) == -1) {
+                            if(!collectionService.getCollection()) {
+                                $scope.resultList.push(item.exercise)
+                            } else {
+                                if(item.collection._id != collectionService.getCollection()._id ) {
+                                    $scope.resultList.push(item.exercise)
+                                }
+                            }
+                        }
+                    } else {
+                        if ($scope.searchMode == 'collections') {
+                            if(resultListIds.indexOf(item.collection._id) == -1) {
+                                if(!collectionService.getCollection) {
+                                    $scope.resultList.push({
+                                        collectionId: item.collection._id,
+                                        name: item.collection.name,
+                                        code: item.subject.code
+                                    });
+                                    resultListIds.push(item.collection._id)
+                                } else {
+                                    if(item.collection._id != collectionService.getCollection()._id) {
+                                        $scope.resultList.push({
+                                            collectionId: item.collection._id,
+                                            name: item.collection.name,
+                                            code: item.subject.code
+                                        });
+                                        resultListIds.push(item.collection._id)
+                                    }
+                                }
+                            }
+                        }
                     }
+
                 })
+
+            })
+        };
+
+        $scope.addAllToList = function () {
+            angular.forEach($scope.resultList, function (exercise) {
+                $scope.exercises.push(exercise)
             })
         };
 
