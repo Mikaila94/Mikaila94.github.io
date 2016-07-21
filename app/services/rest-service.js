@@ -2,12 +2,21 @@ angular.module("myApp.services", ['ngRoute'])
     .service("subjectService", function() {
         var subject;
         var userSubjects;
+        var subjectCopy;
 
         var setSubject= function(targetSubject) {
             subject = targetSubject
+            subjectCopy = angular.copy(targetSubject)
         };
+        var setSubjectToCopy = function(subjectCopy) {
+            subject = angular.copy(subjectCopy)
+
+        }
         var getSubject = function() {
             return subject
+        };
+        var getSubjectCopy = function() {
+          return subjectCopy;
         };
         var setUserSubjects = function (subjects) {
             userSubjects = subjects;
@@ -19,7 +28,9 @@ angular.module("myApp.services", ['ngRoute'])
             setSubject: setSubject,
             getSubject: getSubject,
             setUserSubjects: setUserSubjects,
-            getUserSubjects: getUserSubjects
+            getUserSubjects: getUserSubjects,
+            getSubjectCopy : getSubjectCopy,
+            setSubjectToCopy: setSubjectToCopy
         }
 
     })
