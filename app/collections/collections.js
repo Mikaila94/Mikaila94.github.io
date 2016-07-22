@@ -414,7 +414,7 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.searchItems();
         };
         $scope.changeNavigationParts = function () {
-            if($scope.navigationParts.length = 1) {
+            if($scope.navigationParts.length == 1) {
                 if($scope.searchMode == 'exercises') {
                     $scope.navigationParts = [{
                         text: "Oppgaver:"
@@ -437,24 +437,26 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.searchItems = function (collection, subject) {
             if(collection) {
-                $scope.searchTerm = "";
                 $scope.navigationParts = [{
-                    text: "Sett:" + collection.name,
+                    text: "Sett:" + collection.name + ", Søk: " + $scope.searchTerm,
                     collection: collection
                 },{
                     text: "Oppgaver:",
-                    searchTerm: angular.copy($scope.searchTerm)
+                    searchTerm: angular.copy($scope.searchTerm),
+                    searchMode: angular.copy($scope.searchMode)
 
                 }];
-            } else if(subject) {
                 $scope.searchTerm = "";
+            } else if(subject) {
                 $scope.navigationParts = [{
                     text: "Fag:" + subject.name,
                     subject: subject
                 },{
                     text: "Oppgaver:",
-                    searchTerm: angular.copy($scope.searchTerm)
+                    searchTerm: angular.copy($scope.searchTerm),
+                    searchMode: angular.copy($scope.searchMode)
                 }];
+                $scope.searchTerm = "";
             } else {
                 if($scope.navigationParts[1]) {
                     collection = $scope.navigationParts[0].collection;
@@ -512,6 +514,13 @@ angular.module('myApp.collections', ['ngRoute'])
                 })
 
             })
+        };
+
+        $scope.resetSearch = function () {
+            $scope.navigationParts.splice(0, 1);
+            $scope.searchTerm = $scope.navigationParts[0].searchTerm;
+            $scope.searchMode = $scope.navigationParts[0].searchMode;
+            $scope.searchItems()
         };
 
         $scope.addAllToList = function () {

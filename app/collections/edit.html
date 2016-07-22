@@ -154,7 +154,7 @@
         <div class="row" style="margin-top: 10px">
             <div class="col-lg-6">
                 <div ng-repeat="part in navigationParts">
-                    <a href="" ng-if="!$last" style="float: left">{{part.text}}</a>
+                    <a href="" ng-if="!$last" style="float: left" ng-click="resetSearch()">{{part.text}}</a>
                     <p ng-if="!$last" style="float: left"> > </p>
                     <p ng-if="$last" style="float: left">{{part.text}}</p>
                 </div>
@@ -182,7 +182,7 @@
                             </div>
                         </div>
                         <div ng-if="noResult" align="center">
-                            <i>Finner ingen oppgaver...</i>
+                            <i>Ingen resultater...</i>
                         </div>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
         </div>
         <div class="row">
             <div class="col-lg-6">
-                <div class="container-fluid">
+                <div ng-if="searchMode=='exercises'" class="container-fluid">
                     <button class="btn btn-default" ng-click="addAllToList()">
                         Legg til alle i lista
                     </button>

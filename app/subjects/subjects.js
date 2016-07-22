@@ -62,7 +62,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             $scope.addSubject = function (subject) {
                 $http({
                     ignoreLoadingBar:true,
-                    url: apiUrl +'/subjects',
+                    url: apiUrl +'/subjects/mine',
                     method: "POST",
                     data: {
                         "subject": {
