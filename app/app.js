@@ -116,14 +116,18 @@ angular.module('myApp', [
         }
     }).service('RestService', function () {}).run(['$rootScope', '$location', 'Auth',function($rootScope, $location, Auth){
 
-    $rootScope.$on('$routeChangeStart', function (event) {
+    $rootScope.$on('$routeChangeStart', function (event,current) {
+        console.log(current.$$route.originalPath);
 
-
-        if (!Auth.isLoggedIn()) {
+        if (current.$$route.originalPath.indexOf('register') > -1) {
+            console.log('ALLOW LOGIN/REGISTER');
+        }
+        else if(!Auth.isLoggedIn()){
             console.log('DENY');
             //event.preventDefault();
             $location.path('/login');
         }
+
         else {
             console.log('ALLOW');
         }

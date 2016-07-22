@@ -68,25 +68,17 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.files = [];
 
 
-
         $scope.onChangeHandler = function(exercise) {
             return function (e, fileObjects) {
                 if (fileObjects) {
-                    var data = {
-                        filetype: fileObjects[0].filetype,
-                        base64: fileObjects[0].base64,
-                        subjectId: subjectService.getSubject()._id
-                    };
-                    requestService.putImage(data).then((res) =>{
-                        console.log(res);
-                        exercise.image = {url: res.url};
-                        }, (err) =>{
-                            console.log(err);
-                    });
-
+                    exercise.image = fileObjects;
+                    console.log(fileObjects)
                 }
             }
         };
+
+
+
 
 
         $scope.addAlert = function(element) {
@@ -173,6 +165,23 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.saveCollection = function () {
             var exerciseList = [];
             angular.forEach($scope.exercises, function (exercise) {
+
+                if(exercise.image && !exercise.image.url){
+                    var data = {
+                        filetype: exercise.image[0].filetype,
+                        base64: exercise.image[0].base64,
+                        subjectId: subjectService.getSubject()._id
+                    };
+
+                    requestService.putImage(data).then((res) =>{
+                        console.log(res);
+                        exercise.image = {url: res.url};
+                    }, (err) =>{
+                        console.log(err);
+                    });
+                }
+
+
                 var newExercise = {};
                 if (exercise.type == "mc") {
                     if(!exercise.alternatives) {
@@ -313,15 +322,20 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        $scope.getJpegMini = function (imageUrl) {
-            var imageUrlParts = imageUrl.split('/');
-            imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "w_120";
-            imageUrlParts.splice(0,2);
-            var newUrl = "http:/";
-            angular.forEach(imageUrlParts, function (part) {
-                newUrl = newUrl + "/" + part
-            });
-            return newUrl;
+
+        $scope.getImage = function (image) {
+            if(!image.url) {
+                return ("data:" + image[0].filetype + ";base64, " + image[0].base64);
+            } else {
+                var imageUrlParts = image.url.split('/');
+                imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "w_120";
+                imageUrlParts.splice(0,2);
+                var newUrl = "http:/";
+                angular.forEach(imageUrlParts, function (part) {
+                    newUrl = newUrl + "/" + part
+                });
+                return newUrl;
+            }
         };
 
 

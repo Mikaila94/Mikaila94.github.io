@@ -59,7 +59,7 @@ angular.module("myApp.services", ['ngRoute'])
             return $q(function (resolve, reject) {
                 $http({
                     ignoreLoadingBar:true,
-                    url: apiUrl + '/subjects/' + subjectId,
+                    url: apiUrl + '/subjects/mine/' + subjectId,
                     method: 'PUT',
                     headers: $cookies.getObject("token"),
                     data: data

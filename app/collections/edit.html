@@ -64,8 +64,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-if="exercise.image.url" class="container-fluid" align="center">
-                            <img src="{{getJpegMini(exercise.image.url)}}" style="width: 120px;">
+                        <div ng-if="exercise.image" class="container-fluid" align="center">
+                            <img src="{{getImage(exercise.image)}}" style="width: 120px;">
                             <hr>
                         </div>
 
