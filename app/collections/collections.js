@@ -80,7 +80,6 @@ angular.module('myApp.collections', ['ngRoute'])
                     requestService.putImage(data).then((res) =>{
                         console.log(res);
                         exercise.image = {url: res.url};
-                        console.log(exercise)
                         }, (err) =>{
                             console.log(err);
                     });
