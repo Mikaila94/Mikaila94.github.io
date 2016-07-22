@@ -9,7 +9,6 @@ angular.module('myApp.collections', ['ngRoute'])
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 $scope.subject = response;
-                console.log(response);
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
             });
@@ -55,8 +54,8 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
     .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl) {
-        $scope.public = true;
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
+
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
             {desc: "Multiple Choice", type: "mc"},
             {desc: "True/False", type: "tf"}];
@@ -99,13 +98,12 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.collection = {
                     name: '',
                     exercises: [],
-                    public: $scope.public
+                    public: true
                 }
             } else {
                 $location.path("/subjects/" + $routeParams.subjectId)
             }
         }
-
         $scope.exercises = $scope.collection.exercises;
 
         if ($scope.exercises.length) {
@@ -164,24 +162,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.saveCollection = function () {
             var exerciseList = [];
-            angular.forEach($scope.exercises, function (exercise) {
-
-                if(exercise.image && !exercise.image.url){
-                    var data = {
-                        filetype: exercise.image[0].filetype,
-                        base64: exercise.image[0].base64,
-                        subjectId: subjectService.getSubject()._id
-                    };
-
-                    requestService.putImage(data).then(function(res){
-                        console.log(res);
-                        exercise.image = {url: res.url};
-                    }, function(err){
-                        console.log(err);
-                    });
-                }
-
-
+            var sendExercises = function(exercise) {
                 var newExercise = {};
                 if (exercise.type == "mc") {
                     if(!exercise.alternatives) {
@@ -222,6 +203,28 @@ angular.module('myApp.collections', ['ngRoute'])
                     newExercise.image = exercise.image;
                 }
                 exerciseList.push(newExercise)
+
+            }
+            angular.forEach($scope.exercises, function (exercise) {
+
+                if(exercise.image && !exercise.image.url){
+
+                    var data = {
+                        filetype: exercise.image[0].filetype,
+                        base64: exercise.image[0].base64,
+                        subjectId: subjectService.getSubject()._id
+                    };
+                    requestService.putImage(data).then(function(res){
+                        exercise.image = {url: res.url};
+                        sendExercises(exercise)
+                    }, function(err){
+                        console.log(err);
+                    });
+                } else {
+                    sendExercises(exercise)
+                }
+
+
             });
             $scope.collection.exercises = exerciseList;
             $scope.exercises = $scope.collection.exercises;
