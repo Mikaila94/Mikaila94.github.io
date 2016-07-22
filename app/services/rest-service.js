@@ -94,7 +94,7 @@ angular.module("myApp.services", ['ngRoute'])
             })
         }
 
-        this.putImage = function(data){
+        this.putImage = function(data, callback){
             return $q(function (resolve, reject) {
                 $http({
                     url: apiUrl + "/images",
@@ -102,7 +102,8 @@ angular.module("myApp.services", ['ngRoute'])
                     headers: $cookies.getObject("token"),
                     data:data
                 }).success(function (response) {
-                    resolve(response)
+                    resolve(response);
+                    callback(response)
 
                 }).error(function (response, status, header, config) {
                     console.log(response);

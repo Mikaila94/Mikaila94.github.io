@@ -205,81 +205,78 @@ angular.module('myApp.collections', ['ngRoute'])
                 exerciseList.push(newExercise)
 
             }
+            var imageUploads = [];
             angular.forEach($scope.exercises, function (exercise) {
-
-                if(exercise.image && !exercise.image.url){
-
+                if(exercise.image && !exercise.image.url) {
                     var data = {
                         filetype: exercise.image[0].filetype,
                         base64: exercise.image[0].base64,
                         subjectId: subjectService.getSubject()._id
                     };
-                    requestService.putImage(data).then(function(res){
-                        exercise.image = {url: res.url};
-                        sendExercises(exercise)
-                    }, function(err){
-                        console.log(err);
-                    });
-                } else {
-                    sendExercises(exercise)
+                    imageUploads.push(requestService.putImage(data, function (response) {
+                        console.log(response)
+                        exercise.image = {url: response.url}
+                    }))
                 }
-
-
             });
-            $scope.collection.exercises = exerciseList;
-            $scope.exercises = $scope.collection.exercises;
-            if ($routeParams.collectionId == "new") {
-                subjectService.getSubject().collections.push($scope.collection);
-            }
-            var data = {
-                subject: subjectService.getSubject()
-            };
-            console.log(data);
-            requestService.httpPut(subjectService.getSubject()._id, data)
-                .then(function () {
-                    $location.path('/subjects/' + subjectService.getSubject()._id);
-                    $scope.addAlert({ type: 'success', msg: 'Well done! You successfully read this important alert message.'});
-                    $timeout(function(){
-                        if($scope.alerts.length > 0){
-                            $scope.closeAlert(0);
-                        }
-                    },3000);
-                }, function (response) {
-                    if ($routeParams.collectionId == "new") {
-                        subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
-                    }
-
-                    $scope.errorList = [];
-                    $scope.errorMsg = '';
-
-                    for(var j = 0;j<response.errors.length;j++){
-                        var error = response.errors[j].dataPath.split('.');
-                        console.log(error);
-                        if (error.length > 0) {
-                            if (error[3] == 'name') {
-                                $scope.errorMsg += "Manglende navn på settet\n";
+            $q.all(imageUploads).then(function () {
+                angular.forEach($scope.exercises, function (exercise) {
+                    sendExercises(exercise)
+                });
+                $scope.collection.exercises = exerciseList;
+                $scope.exercises = $scope.collection.exercises;
+                if ($routeParams.collectionId == "new") {
+                    subjectService.getSubject().collections.push($scope.collection);
+                }
+                var data = {
+                    subject: subjectService.getSubject()
+                };
+                console.log(data);
+                requestService.httpPut(subjectService.getSubject()._id, data)
+                    .then(function () {
+                        $location.path('/subjects/' + subjectService.getSubject()._id);
+                        $scope.addAlert({ type: 'success', msg: 'Well done! You successfully read this important alert message.'});
+                        $timeout(function(){
+                            if($scope.alerts.length > 0){
+                                $scope.closeAlert(0);
                             }
-                            else if(error[3].indexOf("exercises") > -1){
-                                var index = parseInt(error[3].substr(10,10).substr(0,1)) + parseInt(j);
-                                var realIndex = parseInt(index + 1);
-                                $scope.errorList.push(index);
-                                $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
-                            }
-                            else{
-                                $scope.errorMsg += 'En feil oppsto\n'
+                        },3000);
+                    }, function (response) {
+                        if ($routeParams.collectionId == "new") {
+                            subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
+                        }
+
+                        $scope.errorList = [];
+                        $scope.errorMsg = '';
+
+                        for(var j = 0;j<response.errors.length;j++){
+                            var error = response.errors[j].dataPath.split('.');
+                            console.log(error);
+                            if (error.length > 0) {
+                                if (error[3] == 'name') {
+                                    $scope.errorMsg += "Manglende navn på settet\n";
+                                }
+                                else if(error[3].indexOf("exercises") > -1){
+                                    var index = parseInt(error[3].substr(10,10).substr(0,1)) + parseInt(j);
+                                    var realIndex = parseInt(index + 1);
+                                    $scope.errorList.push(index);
+                                    $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
+                                }
+                                else{
+                                    $scope.errorMsg += 'En feil oppsto\n'
+                                }
                             }
                         }
-                    }
 
+                        $scope.addAlert( { type: 'danger', msg: $scope.errorMsg });
+                        $timeout(function(){
+                            if($scope.alerts.length > 0){
+                                $scope.closeAlert(0);
+                            }
+                        },3000);
+                    })
+            });
 
-
-                    $scope.addAlert( { type: 'danger', msg: $scope.errorMsg });
-                    $timeout(function(){
-                        if($scope.alerts.length > 0){
-                            $scope.closeAlert(0);
-                        }
-                    },3000);
-                })
         };
 
         $scope.isInErrorList = function(index){
