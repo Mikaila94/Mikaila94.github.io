@@ -452,7 +452,7 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.searchItems = function (collection, subject) {
             if(collection) {
                 $scope.navigationParts = [{
-                    text: "Sett:" + collection.name + ", Søk: " + $scope.searchTerm,
+                    text: "Sett:" + collection.collectionName + ", Søk: " + $scope.searchTerm,
                     collection: collection
                 },{
                     text: "Oppgaver:",
@@ -463,7 +463,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.searchTerm = "";
             } else if(subject) {
                 $scope.navigationParts = [{
-                    text: "Fag:" + subject.name,
+                    text: "Fag:" + subject.subjectName + ", Søk: " + $scope.searchTerm,
                     subject: subject
                 },{
                     text: "Oppgaver:",
@@ -472,7 +472,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 }];
                 $scope.searchTerm = "";
             } else {
-                if($scope.navigationParts[1]) {
+                if($scope.navigationParts.length == 2) {
                     collection = $scope.navigationParts[0].collection;
                     subject = $scope.navigationParts[0].subject
                 }
@@ -502,25 +502,37 @@ angular.module('myApp.collections', ['ngRoute'])
                             }
                         }
                     } else {
+                        var newItem = {};
                         if ($scope.searchMode == 'collections') {
+                            newItem = {
+                                collectionId: item.collection._id,
+                                collectionName: item.collection.name,
+                                subjectCode: item.subject.code,
+                                subjectName: item.subject.name
+
+                            };
                             if(resultListIds.indexOf(item.collection._id) == -1) {
-                                if(!collectionService.getCollection) {
-                                    $scope.resultList.push({
-                                        collectionId: item.collection._id,
-                                        name: item.collection.name,
-                                        code: item.subject.code
-                                    });
+                                if(!collectionService.getCollection()) {
+                                    $scope.resultList.push(newItem);
                                     resultListIds.push(item.collection._id)
                                 } else {
                                     if(item.collection._id != collectionService.getCollection()._id) {
-                                        $scope.resultList.push({
-                                            collectionId: item.collection._id,
-                                            name: item.collection.name,
-                                            code: item.subject.code
-                                        });
+                                        $scope.resultList.push(newItem);
                                         resultListIds.push(item.collection._id)
                                     }
                                 }
+                            }
+                        } else if($scope.searchMode == "subjects") {
+
+                            newItem = {
+                                subjectId: item.subject._id,
+                                subjectName: item.subject.name,
+                                subjectCode: item.subject.code
+                            };
+                            if(resultListIds.indexOf(item.subject._id) == -1) {
+                                $scope.resultList.push(newItem);
+                                resultListIds.push(item.subject._id)
+
                             }
                         }
                     }
@@ -534,6 +546,7 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.navigationParts.splice(0, 1);
             $scope.searchTerm = $scope.navigationParts[0].searchTerm;
             $scope.searchMode = $scope.navigationParts[0].searchMode;
+            $scope.changeNavigationParts()
             $scope.searchItems()
         };
 

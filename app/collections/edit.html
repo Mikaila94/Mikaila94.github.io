@@ -66,6 +66,7 @@
                         </div>
                         <div ng-if="exercise.image" class="container-fluid" align="center">
                             <img src="{{getImage(exercise.image)}}" style="width: 120px;">
+
                             <hr>
                         </div>
 
@@ -166,17 +167,17 @@
                     <div as-sortable="dragControlListeners" ng-model="resultList" id="loading-bar-container">
                         <div ng-repeat="result in resultList" as-sortable-item>
                             <div as-sortable-item-handle>
-                                <label ng-if="result.question" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                <label ng-if="result.question" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left;">
                                     <h4>{{result.question}}</h4>
                                     <p>{{result.correctAnswer}}</p>
                                 </label>
                                 <label no-drag ng-if="result.collectionId" ng-click="searchItems(result)" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
-                                    <h4>{{result.name}}</h4>
-                                    <p>{{result.code}}</p>
+                                    <h4>{{result.collectionName}}</h4>
+                                    <p>{{result.subjectCode}}: {{result.subjectName}}</p>
                                 </label>
-                                <label no-drag ng-if="result.subjectId" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
-                                    <h4>{{result.name}}</h4>
-                                    <p>{{result.code}}</p>
+                                <label no-drag ng-if="result.subjectId" ng-click="searchItems(null, result)" class="btn btn-default" style="white-space: normal; width: 100%; text-align: left">
+                                    <h4>{{result.subjectName}}</h4>
+                                    <p>{{result.subjectCode}}</p>
                                 </label>
 
                             </div>
@@ -207,7 +208,7 @@
         </div>
         <div class="row">
             <div class="col-lg-6">
-                <div ng-if="searchMode=='exercises'" class="container-fluid">
+                <div ng-if="searchMode=='exercises' || navigationParts.length == 2" class="container-fluid">
                     <button class="btn btn-default" ng-click="addAllToList()">
                         Legg til alle i lista
                     </button>
