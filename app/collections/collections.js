@@ -173,10 +173,10 @@ angular.module('myApp.collections', ['ngRoute'])
                         subjectId: subjectService.getSubject()._id
                     };
 
-                    requestService.putImage(data).then((res) =>{
+                    requestService.putImage(data).then(function(res){
                         console.log(res);
                         exercise.image = {url: res.url};
-                    }, (err) =>{
+                    }, function(err){
                         console.log(err);
                     });
                 }
