@@ -1,3 +1,4 @@
+
 angular.module('myApp.collections', ['ngRoute'])
     .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
         var initCollections = function(response) {
@@ -54,6 +55,11 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
     .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl) {
+        var ajv = new Ajv({removeAdditional: true});
+        var validateExercise = function (schema, object) {
+            return ajv.validate(schema, object);
+        };
+
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
 
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
@@ -161,22 +167,18 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.saveCollection = function () {
-            var exerciseList = [];
             var sendExercises = function(exercise) {
-                var newExercise = {};
                 if (exercise.type == "mc") {
                     if(!exercise.alternatives) {
                         exercise.alternatives = [];
                     }
+                    exercise.correctAnswer = exercise.correctAnswer.toString()
                     exercise.alternatives = exercise.alternatives.filter(Boolean);
-                    newExercise = {
-                        question: exercise.question,
-                        correctAnswer: exercise.correctAnswer.toString(),
-                        type: exercise.type,
-                        alternatives: exercise.alternatives
-                    };
+
+                    validateExercise(mcSchema, exercise)
                 } else if (exercise.type == "pd") {
                     if(!exercise.tags) {
+                        console.log(exercise.tags)
                         exercise.tags = [];
                     } else {
                         if(exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
@@ -185,35 +187,15 @@ angular.module('myApp.collections', ['ngRoute'])
                             })
                         }
                     };
-
-                    newExercise = {
-                        question: exercise.question,
-                        correctAnswer: exercise.correctAnswer.toString(),
-                        type: exercise.type,
-                        tags: exercise.tags
-                    };
+                    exercise.correctAnswer = exercise.correctAnswer.toString();
+                    validateExercise(pdSchema, exercise)
                 } else if (exercise.type == "tf") {
-                    newExercise = {
-                        question: exercise.question,
-                        correctAnswer: exercise.correctAnswer,
-                        type: exercise.type
-                    }
+                    validateExercise(tfSchema, exercise)
                 };
-                if(exercise.image) {
-                    newExercise.image = exercise.image;
-                }
-                exerciseList.push(newExercise)
 
-            }
-            var imageUploads = [];
-            var ajv = new Ajv({removeAdditional: true});
-            var validateExercise = function (schema, object) {
-                var valid = ajv.validate(schema, object);
-                return valid;
             };
+            var imageUploads = [];
 
-            console.log(validateExercise(mcSchema, $scope.collection.exercises[0]))
-            console.log(ajv.errors)
             
             angular.forEach($scope.exercises, function (exercise) {
                 if(exercise.image && !exercise.image.url) {
@@ -233,8 +215,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 angular.forEach($scope.exercises, function (exercise) {
                     sendExercises(exercise)
                 });
-                $scope.collection.exercises = exerciseList;
-                $scope.exercises = $scope.collection.exercises;
+
                 if ($routeParams.collectionId == "new") {
                     subjectService.getSubject().collections.push($scope.collection);
                 }
@@ -258,7 +239,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
                         $scope.errorList = [];
                         $scope.errorMsg = '';
-
+                        console.log(subjectService.getSubject())
                         for(var j = 0;j<response.errors.length;j++){
                             var error = response.errors[j].dataPath.split('.');
                             console.log(error);
@@ -389,32 +370,17 @@ angular.module('myApp.collections', ['ngRoute'])
 
             modalInstance.result.then(function (exercises) {
                 angular.forEach(exercises, function (exercise) {
-                    var newExercise = {};
                     if (exercise.type == "mc") {
-                        newExercise = {
-                            question: exercise.question,
-                            correctAnswer: exercise.correctAnswer.toString(),
-                            type: exercise.type,
-                            alternatives: exercise.alternatives
-                        };
+                        exercise.correctAnswer = exercise.correctAnswer.toString();
+                        validateExercise(mcSchema, exercise);
                     } else if (exercise.type == "pd") {
-                        newExercise = {
-                            question: exercise.question,
-                            correctAnswer: exercise.correctAnswer.toString(),
-                            type: exercise.type,
-                            tags: exercise.tags
-                        };
+                        exercise.correctAnswer = exercise.correctAnswer.toString();
+                        validateExercise(pdSchema, exercise);
                     } else if (exercise.type == "tf") {
-                        newExercise = {
-                            question: exercise.question,
-                            correctAnswer: exercise.correctAnswer,
-                            type: exercise.type
-                        }
+                        validateExercise(tfSchema, exercise)
                     }
-                    if(exercise.image) {
-                        newExercise.image = exercise.image;
-                    };
-                    $scope.exercises.push(newExercise)
+
+                    $scope.exercises.push(exercise)
 
                 })
 
