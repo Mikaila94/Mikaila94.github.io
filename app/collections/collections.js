@@ -12,6 +12,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.subject = response;
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
+                console.log(response)
             });
 
         $scope.setTargetCollection = function (index) {
@@ -41,7 +42,7 @@ angular.module('myApp.collections', ['ngRoute'])
             console.log(data);
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
-                    alert("lagret   ")
+                    alert("lagret   ");
                     subjectService.setSubject($scope.subject);
                 })
         };
@@ -319,7 +320,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 return ("data:" + image[0].filetype + ";base64, " + image[0].base64);
             } else {
                 var imageUrlParts = image.url.split('/');
-                imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "w_120";
+                imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "h_140";
                 imageUrlParts.splice(0,2);
                 var newUrl = "http:/";
                 angular.forEach(imageUrlParts, function (part) {
@@ -401,6 +402,10 @@ angular.module('myApp.collections', ['ngRoute'])
         }];
         $scope.removeExercise = function (index) {
             $scope.exercises.splice(index, 1);
+            $scope.searchItems();
+        };
+        $scope.removeAllExercises = function () {
+            $scope.exercises = [];
             $scope.searchItems();
         };
         $scope.changeNavigationParts = function () {
