@@ -21,6 +21,14 @@ var mcSchema = {
                 type: 'string'
             }
         },
+        collaborators: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                minLength: 1,
+                type: 'string'
+            }
+        },
         type: {
             constant: 'mc'
         },

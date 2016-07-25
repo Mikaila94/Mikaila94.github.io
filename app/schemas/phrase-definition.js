@@ -16,6 +16,14 @@ var pdSchema = {
         type: {
             constant: 'pd'
         },
+        collaborators: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                minLength: 1,
+                type: 'string'
+            }
+        },
         tags: {
             type: 'array',
             minItems: 1,

@@ -12,6 +12,14 @@ var tfSchema = {
         correctAnswer: {
             type: 'boolean'
         },
+        collaborators: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                minLength: 1,
+                type: 'string'
+            }
+        },
         type: {
             constant: 'tf'
         },

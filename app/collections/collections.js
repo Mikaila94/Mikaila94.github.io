@@ -179,7 +179,13 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.saveCollection = function () {
-            var sendExercises = function (exercise) {
+
+            var sendExercises = function(exercise) {
+                exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];
+                if(exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
+                    exercise.collaborators.push($cookies.getObject('username'))
+                };
+
                 if (exercise.type == "mc") {
                     if (!exercise.alternatives) {
                         exercise.alternatives = [];
