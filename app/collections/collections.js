@@ -206,6 +206,12 @@ angular.module('myApp.collections', ['ngRoute'])
 
             }
             var imageUploads = [];
+            var ajv = new Ajv({removeAdditional: true});
+            var validateExercise = function (schema, object) {
+                var valid = ajv.validate(schema, object);
+                return valid;
+            };
+            
             angular.forEach($scope.exercises, function (exercise) {
                 if(exercise.image && !exercise.image.url) {
                     var data = {
@@ -220,6 +226,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             });
             $q.all(imageUploads).then(function () {
+
                 angular.forEach($scope.exercises, function (exercise) {
                     sendExercises(exercise)
                 });
@@ -235,7 +242,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 requestService.httpPut(subjectService.getSubject()._id, data)
                     .then(function () {
                         $location.path('/subjects/' + subjectService.getSubject()._id);
-                        $scope.addAlert({ type: 'success', msg: 'Well done! You successfully read this important alert message.'});
+                        $scope.addAlert({ type: 'success', msg: 'Well done!'});
                         $timeout(function(){
                             if($scope.alerts.length > 0){
                                 $scope.closeAlert(0);
