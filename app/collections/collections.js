@@ -206,6 +206,15 @@ angular.module('myApp.collections', ['ngRoute'])
 
             }
             var imageUploads = [];
+            var ajv = new Ajv({removeAdditional: true});
+            var validateExercise = function (schema, object) {
+                var valid = ajv.validate(schema, object);
+                return valid;
+            };
+
+            console.log(validateExercise(mcSchema, $scope.collection.exercises[0]))
+            console.log(ajv.errors)
+            
             angular.forEach($scope.exercises, function (exercise) {
                 if(exercise.image && !exercise.image.url) {
                     var data = {
@@ -220,6 +229,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             });
             $q.all(imageUploads).then(function () {
+
                 angular.forEach($scope.exercises, function (exercise) {
                     sendExercises(exercise)
                 });
