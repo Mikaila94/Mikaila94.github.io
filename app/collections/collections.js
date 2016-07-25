@@ -53,7 +53,7 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl) {
+    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl,blockUI){
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
 
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},

@@ -18,7 +18,8 @@ angular.module('myApp', [
     'myApp.services',
     'naif.base64',
     'as.sortable',
-    'uiSwitch']
+    'uiSwitch',
+    'blockUI']
 )
     .config(['$locationProvider', '$routeProvider','cfpLoadingBarProvider', function($locationProvider, $routeProvider,cfpLoadingBarProvider) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'
