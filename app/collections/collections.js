@@ -380,7 +380,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     } else if (exercise.type == "tf") {
                         validateExercise(tfSchema, exercise)
                     }
-
+                    delete exercise._id;
                     $scope.exercises.push(exercise)
 
                 })

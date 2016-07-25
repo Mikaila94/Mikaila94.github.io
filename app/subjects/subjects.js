@@ -47,7 +47,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
     })
 
 
-    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, requestService, apiUrl, focus, shuffle) {
+    .controller('addCtrl', function ($scope, $http, $cookies,$location, $uibModal, subjectService, requestService, apiUrl, focus, shuffle) {
         if(!subjectService.getUserSubjects()) {
             $location.path("/subjects")
         } else {
@@ -69,7 +69,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             code: subject.code,
                             name: subject.name,
                             public: true,
-                            collections: [],
+                            collections: subject.collections,
                             description: "Laget av ekte tælling " + $cookies.getObject('username')
                         }
                     },
@@ -118,7 +118,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
 
                 }
                 else {
-                    $scope.addSubject(item);
+                    $scope.openAddSubjectModal(item);
                 }
 
             };
@@ -131,7 +131,8 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
             $scope.saveNew = function () {
                 var newSubject = {
                     code: $scope.newCode,
-                    name: $scope.newName
+                    name: $scope.newName,
+                    collections: []
 
                 };
                 $scope.addSubject(newSubject)
@@ -139,8 +140,50 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
 
             $scope.quantity = 5;
 
+            $scope.openAddSubjectModal = function (subject) {
+                requestService.httpGet('/subjects/' + subject._id+"?editor=true").then(function (response) {
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'addSubjectModal.html',
+                        controller: 'addSubjectModalCtrl',
+                        windowClass: 'app-modal-window',
+                        resolve: {
+                            subject: function () {
+                                return response;
+                            }
+                        }
+                    });
+
+                    modalInstance.result.then(function (subject) {
+                        $scope.addSubject(subject)
+                    })
+                });
+
+
+            }
         }
 
 
+    })
+    .controller('addSubjectModalCtrl', function ($scope, $uibModalInstance, subject) {
+        $scope.subject = subject;
+
+        $scope.addSubject = function(includeSets) {
+            if(!includeSets) {
+                $scope.subject.collections = [];
+            }
+            angular.forEach(subject.collections, function (collection) {
+                angular.forEach(collection.exercises, function (exercise) {
+                    delete exercise._id
+                })
+                delete collection._id
+            });
+
+            $uibModalInstance.close($scope.subject)
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel')
+        }
     });
 
