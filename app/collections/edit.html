@@ -45,9 +45,11 @@
                     <div align="center" class="container-fluid" style="height: 30px;">
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal"
                               style="font-size: 20px; cursor: all-scroll"></span>
+                        <div ng-show="!focused[$index]" no-drag class="container-fluid" style="position: relative; top: 1px; left: 1px;">
+                            <p style="color: grey">Laget av {{exercise.collaborators}}</p>
+                        </div>
                     </div>
-
-                    <div align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
+                    <div no-drag align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                     </div>
 
@@ -93,7 +95,7 @@
                 </div>
 
 
-                <div class="container-fluid" style="height: 30px;margin-top: 10px; margin-right: -10px;">
+                <div no-drag class="container-fluid" style="height: 30px;margin-top: 10px; margin-right: -10px;">
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
                               ng-click="deleteExercise($index)"
                               style="cursor:pointer;position: relative; left: 850px "></span>
