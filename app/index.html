@@ -42,9 +42,9 @@
     </div>
     <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
       <ul style="width: 80%" class="nav navbar-nav" ng-controller="mainController">
-        <li><a href="#/subjects">Forside</a></li>
-        <li><a href="#/subjects">Sook</a></li>
-        <li><a href="#/login" ng-click="logOut()">Logg ut</a></li>
+          <li><a href="#/subjects">Forside</a></li>
+          <li ng-show="checkLoggedIn()"><a href="#/login" ng-click="logOut()">Logg ut</a></li>
+          <li ng-show="!checkLoggedIn()"><a href="#/login">Logg inn</a></li>
       </ul>
     </div>
   </div>

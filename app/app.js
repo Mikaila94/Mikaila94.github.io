@@ -88,6 +88,15 @@ angular.module('myApp', [
             }
 
         }, true);
+        $scope.logOut = function () {
+            $cookies.remove('token');
+            $cookies.remove('username');
+            $cookies.remove('password');
+        };
+
+        $scope.checkLoggedIn = function () {
+            return $cookies.getObject('token') ? true: false;
+        };
 
         $scope.logOut = function () {
             Auth.setToken(false);

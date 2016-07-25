@@ -27,7 +27,7 @@
 
     <div class="col-lg-6" style="display:inline-block;">
         <h2 style="display:inline-block;">Anbefalte fag</h2>
-        <button class="btn btn-default" ng-repeat="item in items | limitTo:quantity" style="width: 100%; height: 100px" ng-click="addSubject(item)">
+        <button class="btn btn-default" ng-repeat="item in items | limitTo:quantity" style="width: 100%; height: 100px" ng-click="openAddSubjectModal(item)">
             <h4>{{item.code}}</h4>
             <h4 ng-if="item.name != 'Unnamed'">{{item.name}}</h4>
         </button>
@@ -45,5 +45,20 @@
             <div uib-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></div>
         </li>
     </div>
+</script>
 
+<script type="text/ng-template" id="addSubjectModal.html">
+    <div class="modal-header">
+        <h3>{{subject.code}}, {{subject.name}}</h3>
+    </div>
+    <div class="modal-body">
+        <ul ng-repeat="collection in subject.collections">
+            <li>{{collection.name}}, Antall oppgaver: {{collection.exercises.length}}</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="addSubject(true)">Inkluder alle sett</button>
+        <button class="btn btn-primary" type="button" ng-click="addSubject(false)">Start blankt</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Avbryt</button>
+    </div>
 </script>

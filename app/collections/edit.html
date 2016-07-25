@@ -2,7 +2,7 @@
     <div class="container-fluid" style="margin: 20px;">
     </div>
     <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
-        <button class="btn btn-default" ng-click="openExerciseModal()">+ Finn oppgaver</button>
+        <button class="btn btn-default" style="position: relative; left: 785px" ng-click="openExerciseModal()">+ Finn oppgaver</button>
         <h2 align="center">{{collection.name}}</h2>
 
 
@@ -65,7 +65,7 @@
                             </div>
                         </div>
                         <div ng-if="exercise.image" class="container-fluid" align="center">
-                            <img src="{{getImage(exercise.image)}}" style="width: 120px;">
+                            <img src="{{getImage(exercise.image)}}" style="height: 140px;">
 
                             <hr>
                         </div>
@@ -214,8 +214,8 @@
                                      style="white-space: normal; width: 100%; text-align: left; cursor: default">
                                     <h4>{{exercise.question}}</h4>
                                     <p>{{exercise.correctAnswer}}</p>
-                                    <div ng-click="removeExercise($index)" class="container-fluid"
-                                         style="position: relative; bottom: 10px; left: 600px; cursor: pointer">
+
+                                    <div ng-click="removeExercise($index)" class="container-fluid" style="position: relative; bottom: 10px; left: 450px; cursor: pointer">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </div>
                                 </div>
@@ -227,9 +227,16 @@
         </div>
         <div class="row">
             <div class="col-lg-6">
-                <div ng-if="searchMode=='exercises' || navigationParts.length == 2" class="container-fluid">
+                <div ng-if="searchMode=='exercises' || navigationParts.length == 2" class="container-fluid" align="right">
                     <button class="btn btn-default" ng-click="addAllToList()">
                         Legg til alle i lista
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="container-fluid" align="right">
+                    <button class="btn btn-default" ng-click="removeAllExercises()">
+                        Fjern alle fra lista
                     </button>
                 </div>
             </div>
