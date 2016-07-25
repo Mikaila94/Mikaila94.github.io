@@ -1,7 +1,6 @@
-
 angular.module('myApp.collections', ['ngRoute'])
     .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
-        var initCollections = function(response) {
+        var initCollections = function (response) {
             $scope.collections = response.collections;
         };
 
@@ -23,15 +22,30 @@ angular.module('myApp.collections', ['ngRoute'])
             collectionService.setCollection($scope.subject.collections[index])
         };
 
-        $scope.deleteCollection = function(coll,index){
+        $scope.deleteCollection = function (coll, index) {
 
-            $scope.subject.collections.splice(index, 1);
-
-            var data = {
-                subject: $scope.subject
-            };
-            requestService.httpPut($scope.subject._id, data);
-
+            swal({
+                title: "Er du sikker på at du vil slette dette settet?",
+                text: "Det er ikke mulig å gjennopprette dette settet",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Ja, slett den!",
+                cancelButtonText: "Avbryt",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    swal("Slettet!", "Dette settet har blitt slettet!", "success");
+                    $scope.subject.collections.splice(index, 1);
+                    var data = {
+                        subject: $scope.subject
+                    };
+                    requestService.httpPut($scope.subject._id, data);
+                } else {
+                    swal("Avbrutt", "Operasjonen ble avbrutt!", "error");
+                }
+            });
         };
 
         $scope.saveSubject = function () {
@@ -54,7 +68,7 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies,$timeout,$window, $document,$http,$routeParams,$location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl,blockUI){
+    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl, blockUI) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
@@ -73,7 +87,7 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.files = [];
 
 
-        $scope.onChangeHandler = function(exercise) {
+        $scope.onChangeHandler = function (exercise) {
             return function (e, fileObjects) {
                 if (fileObjects) {
                     exercise.image = fileObjects;
@@ -83,14 +97,11 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
 
-
-
-
-        $scope.addAlert = function(element) {
+        $scope.addAlert = function (element) {
             $scope.alerts.push(element);
         };
 
-        $scope.closeAlert = function(index) {
+        $scope.closeAlert = function (index) {
             $scope.alerts.splice(index, 1);
         };
 
@@ -117,7 +128,7 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.defaultType = $scope.exercises[index].type;
         }
 
-        
+
         $scope.addAlternative = function (exercise) {
             if (!exercise.alternatives) {
                 exercise.alternatives = [];
@@ -143,7 +154,7 @@ angular.module('myApp.collections', ['ngRoute'])
             };
 
             $scope.collection.exercises.push(exercise);
-            $scope.activeExercise = $scope.collection.exercises.length-1;
+            $scope.activeExercise = $scope.collection.exercises.length - 1;
             $timeout(function () {
                 window.scrollTo(0, document.body.scrollHeight)
             }, 0)
@@ -157,19 +168,19 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.moveExcercise = function (index, up) {
-            if(up) {
-                $scope.collection.exercises.splice(index-1, 0, $scope.collection.exercises[index]);
-                $scope.collection.exercises.splice(index+1, 1)
+            if (up) {
+                $scope.collection.exercises.splice(index - 1, 0, $scope.collection.exercises[index]);
+                $scope.collection.exercises.splice(index + 1, 1)
             } else {
-                $scope.collection.exercises.splice(index+2, 0, $scope.collection.exercises[index]);
+                $scope.collection.exercises.splice(index + 2, 0, $scope.collection.exercises[index]);
                 $scope.collection.exercises.splice(index, 1)
             }
         };
 
         $scope.saveCollection = function () {
-            var sendExercises = function(exercise) {
+            var sendExercises = function (exercise) {
                 if (exercise.type == "mc") {
-                    if(!exercise.alternatives) {
+                    if (!exercise.alternatives) {
                         exercise.alternatives = [];
                     }
                     exercise.correctAnswer = exercise.correctAnswer.toString()
@@ -177,28 +188,30 @@ angular.module('myApp.collections', ['ngRoute'])
 
                     validateExercise(mcSchema, exercise)
                 } else if (exercise.type == "pd") {
-                    if(!exercise.tags) {
+                    if (!exercise.tags) {
                         console.log(exercise.tags)
                         exercise.tags = [];
                     } else {
-                        if(exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
+                        if (exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
                             exercise.tags = exercise.tags.map(function (tag) {
                                 return tag.text
                             })
                         }
-                    };
+                    }
+                    ;
                     exercise.correctAnswer = exercise.correctAnswer.toString();
                     validateExercise(pdSchema, exercise)
                 } else if (exercise.type == "tf") {
                     validateExercise(tfSchema, exercise)
-                };
+                }
+                ;
 
             };
             var imageUploads = [];
 
 
             angular.forEach($scope.exercises, function (exercise) {
-                if(exercise.image && !exercise.image.url) {
+                if (exercise.image && !exercise.image.url) {
                     var data = {
                         filetype: exercise.image[0].filetype,
                         base64: exercise.image[0].base64,
@@ -226,12 +239,12 @@ angular.module('myApp.collections', ['ngRoute'])
                 requestService.httpPut(subjectService.getSubject()._id, data)
                     .then(function () {
                         $location.path('/subjects/' + subjectService.getSubject()._id);
-                        $scope.addAlert({ type: 'success', msg: 'Well done!'});
-                        $timeout(function(){
-                            if($scope.alerts.length > 0){
+                        $scope.addAlert({type: 'success', msg: 'Well done!'});
+                        $timeout(function () {
+                            if ($scope.alerts.length > 0) {
                                 $scope.closeAlert(0);
                             }
-                        },3000);
+                        }, 3000);
                     }, function (response) {
                         if ($routeParams.collectionId == "new") {
                             subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
@@ -240,38 +253,38 @@ angular.module('myApp.collections', ['ngRoute'])
                         $scope.errorList = [];
                         $scope.errorMsg = '';
                         console.log(subjectService.getSubject())
-                        for(var j = 0;j<response.errors.length;j++){
+                        for (var j = 0; j < response.errors.length; j++) {
                             var error = response.errors[j].dataPath.split('.');
                             console.log(error);
                             if (error.length > 0) {
                                 if (error[3] == 'name') {
                                     $scope.errorMsg += "Manglende navn på settet\n";
                                 }
-                                else if(error[3].indexOf("exercises") > -1){
-                                    var index = parseInt(error[3].substr(10,10).substr(0,1)) + parseInt(j);
+                                else if (error[3].indexOf("exercises") > -1) {
+                                    var index = parseInt(error[3].substr(10, 10).substr(0, 1)) + parseInt(j);
                                     var realIndex = parseInt(index + 1);
                                     $scope.errorList.push(index);
                                     $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
                                 }
-                                else{
+                                else {
                                     $scope.errorMsg += 'En feil oppsto\n'
                                 }
                             }
                         }
 
-                        $scope.addAlert( { type: 'danger', msg: $scope.errorMsg });
-                        $timeout(function(){
-                            if($scope.alerts.length > 0){
+                        $scope.addAlert({type: 'danger', msg: $scope.errorMsg});
+                        $timeout(function () {
+                            if ($scope.alerts.length > 0) {
                                 $scope.closeAlert(0);
                             }
-                        },3000);
+                        }, 3000);
                     })
             });
 
         };
 
-        $scope.isInErrorList = function(index){
-            if(!$scope.errorList) {
+        $scope.isInErrorList = function (index) {
+            if (!$scope.errorList) {
                 return false
             }
             return $scope.errorList.indexOf(index) != -1;
@@ -279,7 +292,7 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.list = [];
 
         for (var i = 0; i < $scope.exercises.length; i++) {
-            if($scope.exercises[i].type == "pd") {
+            if ($scope.exercises[i].type == "pd") {
                 var len = $scope.exercises[i].tags.length;
                 for (j = 0; j < len; j++) {
                     var tag = $scope.exercises[i].tags[j];
@@ -288,10 +301,11 @@ angular.module('myApp.collections', ['ngRoute'])
                     }
                 }
             }
-        };
+        }
+        ;
 
 
-        $scope.getTagSuggestions = function(){
+        $scope.getTagSuggestions = function () {
             return $scope.list;
         };
 
@@ -300,11 +314,11 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.getExerciseTags = function (exercise) {
-            if(!exercise.tags || exercise.tags.length == 0) {
+            if (!exercise.tags || exercise.tags.length == 0) {
                 return
             }
 
-            if(typeof exercise.tags[0] == "string") {
+            if (typeof exercise.tags[0] == "string") {
                 return exercise.tags.toString()
             } else {
                 return exercise.tags.map(function (tag) {
@@ -315,12 +329,12 @@ angular.module('myApp.collections', ['ngRoute'])
 
 
         $scope.getImage = function (image) {
-            if(!image.url) {
+            if (!image.url) {
                 return ("data:" + image[0].filetype + ";base64, " + image[0].base64);
             } else {
                 var imageUrlParts = image.url.split('/');
                 imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "w_120";
-                imageUrlParts.splice(0,2);
+                imageUrlParts.splice(0, 2);
                 var newUrl = "http:/";
                 angular.forEach(imageUrlParts, function (part) {
                     newUrl = newUrl + "/" + part
@@ -329,13 +343,14 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-
         $scope.dragControlListeners = {
-            accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id},
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id
+            },
             containment: "#editArea",
-            allowDuplicate:true,
+            allowDuplicate: true,
             orderChanged: function (event) {
-                if(event.source.index == $scope.activeExercise) {
+                if (event.source.index == $scope.activeExercise) {
                     $scope.activeExercise = event.dest.index;
                 } else {
                     $scope.activeExercise = undefined
@@ -388,9 +403,6 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
 
-
-
-
     })
     .controller('exerciseModalCtrl', function ($scope, $http, $uibModalInstance, exercises, apiUrl, collectionService) {
         $scope.exercises = [];
@@ -404,18 +416,18 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.searchItems();
         };
         $scope.changeNavigationParts = function () {
-            if($scope.navigationParts.length == 1) {
-                if($scope.searchMode == 'exercises') {
+            if ($scope.navigationParts.length == 1) {
+                if ($scope.searchMode == 'exercises') {
                     $scope.navigationParts = [{
                         text: "Oppgaver:"
 
                     }];
-                } else if($scope.searchMode == 'collections') {
+                } else if ($scope.searchMode == 'collections') {
                     $scope.navigationParts = [{
                         text: "Sett:"
 
                     }];
-                } else if($scope.searchMode == 'subjects') {
+                } else if ($scope.searchMode == 'subjects') {
                     $scope.navigationParts = [{
                         text: "Fag:"
                     }];
@@ -426,29 +438,29 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.searchItems = function (collection, subject) {
-            if(collection) {
+            if (collection) {
                 $scope.navigationParts = [{
                     text: "Sett:" + collection.collectionName + ", Søk: " + $scope.searchTerm,
                     collection: collection
-                },{
+                }, {
                     text: "Oppgaver:",
                     searchTerm: angular.copy($scope.searchTerm),
                     searchMode: angular.copy($scope.searchMode)
 
                 }];
                 $scope.searchTerm = "";
-            } else if(subject) {
+            } else if (subject) {
                 $scope.navigationParts = [{
                     text: "Fag:" + subject.subjectName + ", Søk: " + $scope.searchTerm,
                     subject: subject
-                },{
+                }, {
                     text: "Oppgaver:",
                     searchTerm: angular.copy($scope.searchTerm),
                     searchMode: angular.copy($scope.searchMode)
                 }];
                 $scope.searchTerm = "";
             } else {
-                if($scope.navigationParts.length == 2) {
+                if ($scope.navigationParts.length == 2) {
                     collection = $scope.navigationParts[0].collection;
                     subject = $scope.navigationParts[0].subject
                 }
@@ -461,18 +473,18 @@ angular.module('myApp.collections', ['ngRoute'])
             });
             $http({
                 url: apiUrl + "/search?search=" + $scope.searchTerm
-                + (collection ? "&collectionId=" + collection.collectionId: "") + (subject ? "&subjectId=" + subject.subjectId: ""),
+                + (collection ? "&collectionId=" + collection.collectionId : "") + (subject ? "&subjectId=" + subject.subjectId : ""),
                 method: 'GET'
             }).success(function (response) {
-                $scope.noResult = response.length ? false:true;
+                $scope.noResult = response.length ? false : true;
                 var resultListIds = [];
                 angular.forEach(response, function (item) {
-                    if($scope.searchMode == 'exercises' || collection || subject) {
-                        if(exerciseIds.indexOf(item.exercise._id) == -1) {
-                            if(!collectionService.getCollection()) {
+                    if ($scope.searchMode == 'exercises' || collection || subject) {
+                        if (exerciseIds.indexOf(item.exercise._id) == -1) {
+                            if (!collectionService.getCollection()) {
                                 $scope.resultList.push(item.exercise)
                             } else {
-                                if(item.collection._id != collectionService.getCollection()._id ) {
+                                if (item.collection._id != collectionService.getCollection()._id) {
                                     $scope.resultList.push(item.exercise)
                                 }
                             }
@@ -487,25 +499,25 @@ angular.module('myApp.collections', ['ngRoute'])
                                 subjectName: item.subject.name
 
                             };
-                            if(resultListIds.indexOf(item.collection._id) == -1) {
-                                if(!collectionService.getCollection()) {
+                            if (resultListIds.indexOf(item.collection._id) == -1) {
+                                if (!collectionService.getCollection()) {
                                     $scope.resultList.push(newItem);
                                     resultListIds.push(item.collection._id)
                                 } else {
-                                    if(item.collection._id != collectionService.getCollection()._id) {
+                                    if (item.collection._id != collectionService.getCollection()._id) {
                                         $scope.resultList.push(newItem);
                                         resultListIds.push(item.collection._id)
                                     }
                                 }
                             }
-                        } else if($scope.searchMode == "subjects") {
+                        } else if ($scope.searchMode == "subjects") {
 
                             newItem = {
                                 subjectId: item.subject._id,
                                 subjectName: item.subject.name,
                                 subjectCode: item.subject.code
                             };
-                            if(resultListIds.indexOf(item.subject._id) == -1) {
+                            if (resultListIds.indexOf(item.subject._id) == -1) {
                                 $scope.resultList.push(newItem);
                                 resultListIds.push(item.subject._id)
 
@@ -535,22 +547,26 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.addExercises = function () {
             $uibModalInstance.close($scope.exercises);
         };
-        
+
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel')
         };
 
         $scope.dragControlListeners = {
-            accept: function(sourceItemHandleScope, destSortableScope) {return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;},
-            allowDuplicate:true,
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            },
+            allowDuplicate: true,
             ctrlClone: true,
             containment: "#exercises-container"
 
         };
 
         $scope.dragControlListeners2 = {
-            accept: function(sourceItemHandleScope, destSortableScope) {return true},
-            allowDuplicate:true,
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return true
+            },
+            allowDuplicate: true,
             ctrlClone: true,
             containment: "#exercises-container"
 

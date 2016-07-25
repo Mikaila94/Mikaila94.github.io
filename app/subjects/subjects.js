@@ -47,7 +47,8 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
     })
 
 
-    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, requestService, apiUrl, focus, shuffle) {
+    .controller('addCtrl', function ($scope, $http, $cookies,$location, subjectService, requestService, apiUrl, focus, shuffle,blockUI) {
+        blockUI.stop();
         if(!subjectService.getUserSubjects()) {
             $location.path("/subjects")
         } else {
