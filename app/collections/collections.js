@@ -111,6 +111,11 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.alerts = [];
         $scope.files = [];
 
+        $scope.removeImage = function(exercise){
+            delete exercise.image;
+            document.getElementById('imageBox').value=''
+        };
+
 
         $scope.onChangeHandler = function (exercise) {
             return function (e, fileObjects) {
@@ -120,11 +125,13 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             }
         };
-
+        $scope.clickedSave= false;
 
         $scope.$on("$routeChangeStart", function (event, next, current) {
-            if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
-                event.preventDefault();
+            if(!$scope.clickedSave){
+                if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
+                    event.preventDefault();
+                }
             }
         });
 
@@ -211,6 +218,7 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.saveCollection = function () {
+            $scope.clickedSave = true;
 
             var sendExercises = function (exercise) {
                 exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];

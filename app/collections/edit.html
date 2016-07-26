@@ -90,9 +90,10 @@
                                     <h4>Bilde:</h4>
                                 </div>
                                 <div class="col-lg-10">
-                                    <input id="files" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
+                                    <input id="imageBox" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
                                            base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
                                            accept="image/*">
+                                    <a style="cursor:pointer" ng-click="removeImage(exercise)" ng-if="exercise.image">Fjern bilde</a>
                                 </div>
                             </div>
                             <div ng-show="extraProperty=='explanation'" class="row">
