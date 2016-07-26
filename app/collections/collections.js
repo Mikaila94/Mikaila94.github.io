@@ -12,6 +12,19 @@ angular.module('myApp.collections', ['ngRoute'])
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
                 console.log(response)
+
+                $scope.reportedCollections = [];
+                $scope.reports = [];
+                var reportedCollectionIds = [];
+                angular.forEach($scope.subject.reports, function (report) {
+                    $scope.reports.push(report);
+                    reportedCollectionIds.push(report[0]._ids)
+                });
+                angular.forEach($scope.subject.collections, function (collection) {
+                    if(reportedCollectionIds.indexOf(collection._id) == -1) {
+                        $scope.reportedCollections.push
+                    };
+                })
             });
 
         $scope.setTargetCollection = function (index) {

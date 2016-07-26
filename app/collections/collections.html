@@ -17,11 +17,11 @@
                 <label style="margin-top: 5px">Rapporter:</label>
                 <p>Siste rapporter:</p>
                 <ul>
-                    <li ng-repeat="report in subject.reports.slice().reverse() | limitTo: 3">
-                        {{report.date}}
+                    <li ng-repeat="report in reports.slice().reverse() | limitTo: 3">
+                        {{report[0].date}}
                     </li>
                 </ul>
-                <div ng-if="subject.reports.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
+                <div ng-if="reports.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
                     <a style="cursor: pointer;">Se alle rapporter</a>
                 </div>
             </div>
