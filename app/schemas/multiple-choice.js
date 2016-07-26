@@ -34,7 +34,7 @@ var mcSchema = {
         },
         image: {
             additionalProperties: false,
-            required: ['url', '_id'],
+            required: ['url'],
             properties: {
                 url: {
                     type: 'string',
@@ -47,7 +47,7 @@ var mcSchema = {
         },
         explanation: {
             type: 'string',
-            maxLength: 500
+            maxLength: 50000
         }
     }
 };

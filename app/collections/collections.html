@@ -17,8 +17,10 @@
                 <label style="margin-top: 5px">Rapporter:</label>
                 <p>Siste rapporter:</p>
                 <ul>
-                    <li ng-repeat="report in reports.slice().reverse() | limitTo: 3">
-                        {{report[0].date}}
+                    <li ng-repeat="report in reports.slice().reverse()  | limitTo: 3">
+                        <a style="cursor: pointer" ng-click="openReportModal(report[0].collectionId)">
+                            {{report[0].date}}, {{reportedCollections[report[0].collectionId].name}}
+                        </a>
                     </li>
                 </ul>
                 <div ng-if="reports.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
@@ -82,3 +84,9 @@
     </div>
 
 </div>
+
+<script type="text/ng-template" id="reportModal.html">
+    <div class="modal-header">
+        <h3></h3>
+    </div>
+</script>
