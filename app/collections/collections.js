@@ -13,7 +13,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 initCollections(response);
                 console.log(response)
 
-                $scope.reportedCollections = [];
+                $scope.reportedCollections = {};
                 $scope.reports = [];
                 var reportedCollectionIds = [];
                 angular.forEach($scope.subject.reports, function (report) {
@@ -21,11 +21,11 @@ angular.module('myApp.collections', ['ngRoute'])
                     reportedCollectionIds.push(report[0]._ids)
                 });
                 angular.forEach($scope.subject.collections, function (collection) {
-                    if (reportedCollectionIds.indexOf(collection._id) == -1) {
-                        $scope.reportedCollections.push
-                    }
-                    ;
-                })
+
+                    if(reportedCollectionIds.indexOf(collection._id) == -1) {
+                        $scope.reportedCollections[collection._id] = collection
+                    };
+                });
             });
 
         $scope.setTargetCollection = function (index) {
@@ -75,6 +75,13 @@ angular.module('myApp.collections', ['ngRoute'])
                 })
         };
 
+        $scope.openReportModal = function (collectionId) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                
+            })
+        };
+
         $scope.dragControlListeners = {
             accept: function (sourceItemHandleScope, destSortableScope) {
                 return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
@@ -83,7 +90,11 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $route, collectionService, subjectService, requestService, apiUrl, blockUI, alertify) {
+
+    .controller('reportModalCtrl', function ($scope, $uibModalInstance, collections,exercise) {
+
+    })
+    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl, blockUI) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
@@ -249,8 +260,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     imageUploads.push(requestService.putImage(data, function (response) {
                         console.log(response);
                         exercise.image = {
-                            url: response.url,
-                            _id: response.public_id
+                            url: response.url
                         }
                     }))
                 }

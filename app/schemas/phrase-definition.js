@@ -39,9 +39,6 @@ var pdSchema = {
                 url: {
                     type: 'string',
                     format: 'uri'
-                },
-                _id: {
-                    type: 'string'
                 }
             }
         },
