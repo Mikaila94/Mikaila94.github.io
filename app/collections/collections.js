@@ -90,7 +90,9 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    
+    .controller('reportModalCtrl', function ($scope, $uibModalInstance, collections,exercise) {
+
+    })
     .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl, blockUI) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {

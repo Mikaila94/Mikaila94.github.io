@@ -39,9 +39,6 @@ var mcSchema = {
                 url: {
                     type: 'string',
                     format: 'uri'
-                },
-                _id: {
-                    type: 'string'
                 }
             }
         },
