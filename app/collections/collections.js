@@ -12,6 +12,20 @@ angular.module('myApp.collections', ['ngRoute'])
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
                 console.log(response)
+
+                $scope.reportedCollections = [];
+                $scope.reports = [];
+                var reportedCollectionIds = [];
+                angular.forEach($scope.subject.reports, function (report) {
+                    $scope.reports.push(report);
+                    reportedCollectionIds.push(report[0]._ids)
+                });
+                angular.forEach($scope.subject.collections, function (collection) {
+                    if (reportedCollectionIds.indexOf(collection._id) == -1) {
+                        $scope.reportedCollections.push
+                    }
+                    ;
+                })
             });
 
         $scope.setTargetCollection = function (index) {
@@ -69,15 +83,13 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $rootScope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $route, collectionService, subjectService, requestService, apiUrl, blockUI) {
+    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $route, collectionService, subjectService, requestService, apiUrl, blockUI, alertify) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
         };
 
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
-        console.log("fired")
-
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
             {desc: "Multiple Choice", type: "mc"},
             {desc: "True/False", type: "tf"}];
@@ -99,10 +111,8 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
 
-        $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            $window.confirm("You have unsaved changes, continue navigating to " + next + " ?");
-            if (!confirm) {
-                console.log('lalal')
+        $scope.$on("$routeChangeStart", function (event, next, current) {
+            if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
                 event.preventDefault();
             }
         });
@@ -237,8 +247,11 @@ angular.module('myApp.collections', ['ngRoute'])
                         subjectId: subjectService.getSubject()._id
                     };
                     imageUploads.push(requestService.putImage(data, function (response) {
-                        console.log(response)
-                        exercise.image = {url: response.url}
+                        console.log(response);
+                        exercise.image = {
+                            url: response.url,
+                            _id: response.public_id
+                        }
                     }))
                 }
             });
@@ -564,7 +577,8 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.addAllToList = function () {
             angular.forEach($scope.resultList, function (exercise) {
                 $scope.exercises.push(exercise)
-            })
+            });
+            $scope.searchItems();
         };
 
         $scope.addExercises = function () {
