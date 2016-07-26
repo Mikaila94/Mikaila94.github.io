@@ -34,13 +34,20 @@ var mcSchema = {
         },
         image: {
             additionalProperties: false,
-            required: ['url'],
+            required: ['url', '_id'],
             properties: {
                 url: {
                     type: 'string',
                     format: 'uri'
+                },
+                _id: {
+                    type: 'string'
                 }
             }
+        },
+        explanation: {
+            type: 'string',
+            maxLength: 500
         }
     }
 };

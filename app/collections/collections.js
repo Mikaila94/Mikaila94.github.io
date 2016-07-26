@@ -225,8 +225,11 @@ angular.module('myApp.collections', ['ngRoute'])
                         subjectId: subjectService.getSubject()._id
                     };
                     imageUploads.push(requestService.putImage(data, function (response) {
-                        console.log(response)
-                        exercise.image = {url: response.url}
+                        console.log(response);
+                        exercise.image = {
+                            url: response.url,
+                            _id: response.public_id
+                        }
                     }))
                 }
             });
@@ -552,7 +555,8 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.addAllToList = function () {
             angular.forEach($scope.resultList, function (exercise) {
                 $scope.exercises.push(exercise)
-            })
+            });
+            $scope.searchItems();
         };
 
         $scope.addExercises = function () {
