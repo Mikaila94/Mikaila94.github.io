@@ -19,7 +19,8 @@ angular.module('myApp', [
         'naif.base64',
         'as.sortable',
         'uiSwitch',
-        'blockUI']
+        'blockUI',
+        'ngAlertify']
     )
     .config(['$locationProvider', '$routeProvider', 'cfpLoadingBarProvider', 'blockUIConfig','apiUrl', function ($locationProvider, $routeProvider, cfpLoadingBarProvider, blockUIConfig,apiUrl) {
         cfpLoadingBarProvider.parentSelector = '#loading-bar-container'

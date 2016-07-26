@@ -1,10 +1,10 @@
 angular.module('myApp.collections', ['ngRoute'])
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl, $q) {
         var initCollections = function (response) {
             $scope.collections = response.collections;
-        };
-
+        }
         $scope.subject = subjectService.getSubject();
+
 
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
@@ -24,7 +24,6 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.deleteCollection = function (coll, index) {
-
             swal({
                 title: "Er du sikker på at du vil slette dette settet?",
                 text: "Det er ikke mulig å gjennopprette dette settet",
@@ -47,6 +46,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     swal("Avbrutt", "Operasjonen ble avbrutt!", "error");
                 }
             });
+
         };
 
         $scope.saveSubject = function () {
@@ -69,13 +69,14 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl, blockUI) {
+    .controller('editCtrl', function ($scope, $rootScope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $route, collectionService, subjectService, requestService, apiUrl, blockUI) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
         };
 
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
+        console.log("fired")
 
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
             {desc: "Multiple Choice", type: "mc"},
@@ -96,6 +97,15 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             }
         };
+
+
+        $rootScope.$on("$routeChangeStart", function (event, next, current) {
+            $window.confirm("You have unsaved changes, continue navigating to " + next + " ?");
+            if (!confirm) {
+                console.log('lalal')
+                event.preventDefault();
+            }
+        });
 
 
         $scope.addAlert = function (element) {
@@ -143,6 +153,7 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
+
         $scope.changeDefault = function (exercise, index) {
             $scope.defaultType = exercise.type;
         };
@@ -180,11 +191,12 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.saveCollection = function () {
 
-            var sendExercises = function(exercise) {
+            var sendExercises = function (exercise) {
                 exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];
-                if(exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
+                if (exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
                     exercise.collaborators.push($cookies.getObject('username'))
-                };
+                }
+                ;
 
                 if (exercise.type == "mc") {
                     if (!exercise.alternatives) {
@@ -341,7 +353,7 @@ angular.module('myApp.collections', ['ngRoute'])
             } else {
                 var imageUrlParts = image.url.split('/');
                 imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "h_140";
-                imageUrlParts.splice(0,2);
+                imageUrlParts.splice(0, 2);
                 var newUrl = "http:/";
                 angular.forEach(imageUrlParts, function (part) {
                     newUrl = newUrl + "/" + part

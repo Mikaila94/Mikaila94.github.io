@@ -2,7 +2,6 @@
 
 
 <div class="container-fluid" >
-
     <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
         <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
         <hr>
@@ -12,7 +11,7 @@
                     <label style=" margin-top:5px;">Fagnavn:</label>
                 </div>
                 <div class="col-lg-10">
-                    <input ng-model="subject.name" class="form-control" style="width:400px;margin-left:10px;" >
+                    <input ng-model="subject.name" onchange="hasChanged()" class="form-control" style="width:400px;margin-left:10px;" >
                 </div>
             </div>
 
@@ -21,7 +20,7 @@
                     <label style=" margin-top:5px;">Beskrivelse:</label>
                 </div>
                 <div class="col-lg-10">
-                    <textarea ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
+                    <textarea ng-model="subject.description" onchange="hasChanged()" rows="2" class="form-control" style="width:400px;resize: none;margin-left:10px" ></textarea>
                 </div>
             </div>
         </div>
