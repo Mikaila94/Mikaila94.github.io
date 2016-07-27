@@ -23,8 +23,7 @@
   <link rel="stylesheet" href="bower_components/angular-ui-switch/angular-ui-switch.min.css"/>
   <link rel="stylesheet" href="bower_components/angular-block-ui/dist/angular-block-ui.min.css"/>
   <link rel="stylesheet" type="text/css" href="bower_components/sweetalert/dist/sweetalert.css">
-
-
+  <link rel="stylesheet" href="bower_components/alertifyjs/dist/css/alertify.css" id="alertifyCSS">
 
   <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
@@ -40,10 +39,10 @@
       </button>
       <a class="navbar-brand" href="#/subjects"><img ng-click="resetMain()" src="img/ace.png" style="width: 100px;"></a>
     </div>
-    <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
-      <ul style="width: 80%" class="nav navbar-nav" ng-controller="mainController">
+    <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse" ng-controller="mainController">
+      <ul style="width: 80%" class="nav navbar-nav">
           <li><a href="#/subjects">Forside</a></li>
-          <li ng-show="checkLoggedIn()"><a href="#/login" ng-click="logOut()">Logg ut</a></li>
+          <li ng-show="checkLoggedIn()"><a style="cursor:pointer;" ng-click="logOut()">Logg ut</a></li>
           <li ng-show="!checkLoggedIn()"><a href="#/login">Logg inn</a></li>
       </ul>
     </div>
@@ -86,6 +85,8 @@
   <script src="bower_components/angular-base64-upload/dist/angular-base64-upload.min.js"></script>
   <script src="bower_components/angular-block-ui/dist/angular-block-ui.min.js"></script>
   <script src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="bower_components/alertifyjs/dist/js/ngAlertify.js"></script>
+
 
   <script src="ajv/dist/ajv.min.js"></script>
   <script src="schemas/multiple-choice.js"></script>

@@ -19,15 +19,13 @@ angular.module('myApp', [
         'naif.base64',
         'as.sortable',
         'uiSwitch',
-        'blockUI']
+        'blockUI',
+        'ngAlertify']
     )
-    .config(['$locationProvider', '$routeProvider', 'cfpLoadingBarProvider', 'blockUIConfig','apiUrl', function ($locationProvider, $routeProvider, cfpLoadingBarProvider, blockUIConfig,apiUrl) {
-        cfpLoadingBarProvider.parentSelector = '#loading-bar-container'
-        cfpLoadingBarProvider.spinnerTemplate = '<div align="center" style="margin-top: 10px"><div id="loading"></div></div>';
-
+    .config(['$locationProvider', '$routeProvider', 'cfpLoadingBarProvider', 'blockUIConfig','apiUrl',function ($locationProvider, $routeProvider, cfpLoadingBarProvider, blockUIConfig,apiUrl) {
         blockUIConfig.requestFilter = function (config) {
             // If the request starts with '/api/quote' ...
-            if (config.url.indexOf(apiUrl + "/subjects?search=") > -1) {
+            if (config.url.indexOf(apiUrl + "/subjects?search=") > -1 || config.url.indexOf('/reports') > -1) {
                 return false;
             }
             //if(config.urlRoot) {
@@ -58,7 +56,8 @@ angular.module('myApp', [
             })
             .when("/subjects/:subjectId/collections/:collectionId", {
                 templateUrl: "collections/edit.html",
-                controller: "editCtrl"
+                controller: "editCtrl",
+                param: 'editParam'
             })
             .when("/view1", {
                 templateUrl: "view1/view1.html",
@@ -72,7 +71,7 @@ angular.module('myApp', [
 
 
     }])
-    .controller('mainController', function ($scope, $window, $location, $http, $q, Auth, $cookies) {
+    .controller('mainController', function ($scope, $window, $location, $http, $q, Auth, $cookies,$rootScope,PreviousState) {
         $scope.isCollapsed = true;
 
         $scope.$watch(Auth.isLoggedIn, function (value, oldValue) {
@@ -88,21 +87,20 @@ angular.module('myApp', [
             }
 
         }, true);
-        $scope.logOut = function () {
-            $cookies.remove('token');
-            $cookies.remove('username');
-            $cookies.remove('password');
-        };
 
         $scope.checkLoggedIn = function () {
             return $cookies.getObject('token') ? true: false;
         };
 
         $scope.logOut = function () {
-            Auth.setToken(false);
-            $cookies.remove('token');
+            if(confirm("Er du sikker på at du vil logge ut?")){
+                Auth.setToken(false);
+                $cookies.remove('token');
+                $cookies.remove('username');
+                $cookies.remove('password');
+                $location.path('/login');
+            }
         };
-
     })
 
     .constant("apiUrl", "https://acepi-test.herokuapp.com")
@@ -137,8 +135,23 @@ angular.module('myApp', [
 
             return array;
         }
-    }).service('RestService', function () {
-}).run(['$rootScope', '$location', 'Auth', function ($rootScope, $location, Auth) {
+    }).factory('PreviousState', ['$rootScope',
+    function ($rootScope) {
+
+        var previousRoute = undefined;
+
+
+        $rootScope.$on("$routeChangeSuccess", function (event, current,previous) {
+            previousRoute = previous
+        })
+
+        return {
+            getPrevious: function (){ return previousRoute;},
+        }
+
+    }]).service('RestService', function () {
+    })
+    .run(['$rootScope','$location', 'Auth','PreviousState', function ($rootScope, $location, Auth,PreviousState) {
 
     $rootScope.$on('$routeChangeStart', function (event, current) {
         console.log(current.$$route.originalPath);
@@ -156,6 +169,8 @@ angular.module('myApp', [
             console.log('ALLOW');
         }
     });
+
+    $rootScope.PreviousState = PreviousState;
 
 }]);
 

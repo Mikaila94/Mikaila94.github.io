@@ -1,4 +1,4 @@
-<div id="mainDiv" ng-controller="editCtrl" class="container-fluid" style="width:960px">
+<div id="mainDiv" class="container-fluid" style="width:960px">
     <div class="container-fluid" style="margin: 20px;">
     </div>
     <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
@@ -46,13 +46,12 @@
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal"
                               style="font-size: 20px; cursor: all-scroll"></span>
                     </div>
-
-                    <div align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
+                    <div no-drag align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                     </div>
 
                     <div no-drag ng-click="activateEditExercise($index)" class="container-fluid">
-                        <div ng-if="$index == activeExercise" class="container-fluid">
+                        <div ng-if="$index == activeExercise" class="container-fluid" style="margin-bottom: 10px">
                             <div class="row">
                                 <div class="col-lg-10">
                                     <select id="typeBox" ng-change="changeDefault(exercise,$index)"
@@ -75,25 +74,41 @@
                              onload="exerciseNumber = $index"></div>
                         <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"
                              onload="exerciseNumber = $index"></div>
-                        <div class="container-fluid">
-                            <div class="row">
+
+                        <div ng-show="$index == activeExercise" class="container-fluid">
+                            <hr>
+                            <div class="row" style="margin-bottom: 10px">
+                                <div class="col-lg-1">
+                                    <a style="cursor: pointer" ng-click="extraProperty='image'">Bilde</a>
+                                </div>
+                                <div class="col-lg-1">
+                                    <a style="cursor: pointer" ng-click="extraProperty='explanation'">Forklaring</a>
+                                </div>
+                            </div>
+                            <div ng-show="extraProperty=='image'" class="row">
                                 <div class="col-lg-2">
-                                    <h4>Image:</h4>
+                                    <h4>Bilde:</h4>
                                 </div>
                                 <div class="col-lg-10">
-                                    <input id="files" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
+                                    <input id="imageBox" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
                                            base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
                                            accept="image/*">
+                                    <a style="cursor:pointer" ng-click="removeImage(exercise)" ng-if="exercise.image">Fjern bilde</a>
+                                </div>
+                            </div>
+                            <div ng-show="extraProperty=='explanation'" class="row">
+                                <div class="col-lg-2">
+                                    <h4>Forklaring:</h4>
+                                </div>
+                                <div class="col-lg-10">
+                                    <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.explanation"></textarea>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
 
-
-                </div>
-
-
-                <div class="container-fluid" style="height: 30px;margin-top: 10px; margin-right: -10px;">
+                <div no-drag class="container-fluid" style="height: 30px;margin-top: 20px; margin-right: -10px;">
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
                               ng-click="deleteExercise($index)"
                               style="cursor:pointer;position: relative; left: 850px "></span>

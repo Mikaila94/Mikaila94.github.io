@@ -41,6 +41,10 @@ var mcSchema = {
                     format: 'uri'
                 }
             }
+        },
+        explanation: {
+            type: 'string',
+            maxLength: 50000
         }
     }
 };
