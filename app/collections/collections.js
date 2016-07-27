@@ -12,23 +12,30 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.subject = response;
                 subjectService.setSubject($scope.subject);
                 initCollections(response);
-                console.log(response)
 
-                $scope.reportedCollections = {};
-                $scope.reports = [];
-                var reportedCollectionIds = [];
-                angular.forEach($scope.subject.reports, function (report) {
-                    $scope.reports.push(report);
-                    reportedCollectionIds.push(report[0]._ids)
-                });
-                angular.forEach($scope.subject.collections, function (collection) {
+                console.log(response);
 
-                    if(reportedCollectionIds.indexOf(collection._id) == -1) {
-                        $scope.reportedCollections[collection._id] = collection
-                    };
-                });
+                requestService.httpGet('/reports/' + $routeParams.subjectId).then(function (response) {
+                    var reportedCollectionIds = [];
+                    $scope.reportedCollections = {};
+                    angular.forEach(response, function (item) {
+                        reportedCollectionIds.push(item.collectionId)
+                        item.lastAdded = item.reports[item.reports.length -1].date
+                    });
+                    $scope.reportedExercises = response;
+                    angular.forEach($scope.subject.collections, function (collection) {
+                        if(reportedCollectionIds.indexOf(collection._id) != -1) {
+                            $scope.reportedCollections[collection._id] = collection;
+                        }
+                    });
+                    console.log($scope.reportedExercises)
+
+                })
+                
             });
 
+        
+        
         $scope.setTargetCollection = function (index) {
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
             $scope.subject = subjectService.getSubject();
@@ -76,9 +83,26 @@ angular.module('myApp.collections', ['ngRoute'])
                 })
         };
 
-        $scope.openReportModal = function (collectionId) {
+        $scope.openReportModal = function (collectionId, exerciseInfo) {
             var modalInstance = $uibModal.open({
                 animation: true,
+                templateUrl: 'reportModal.html',
+                controller: 'reportModalCtrl',
+                windowClass: 'app-modal-window',
+                resolve: {
+                    exercises: function () {
+                        return $scope.reportedExercises
+                    },
+                    collections: function () {
+                        return $scope.reportedCollections
+                    },
+                    exerciseInfo: function () {
+                        return exerciseInfo
+                    },
+                    collectionId: function () {
+                        return collectionId
+                    }
+                }
                 
             })
         };
@@ -92,7 +116,89 @@ angular.module('myApp.collections', ['ngRoute'])
 
     })
 
-    .controller('reportModalCtrl', function ($scope, $uibModalInstance, collections,exercise) {
+    .controller('reportModalCtrl', function ($scope, $uibModalInstance, exercises, collections, exerciseInfo, collectionId, subjectService) {
+        $scope.collections = collections;
+        $scope.exercises = exercises;
+        $scope.removeList = {};
+        $scope.types = [{desc: "Phrase & Definition", type: "pd"},
+            {desc: "Multiple Choice", type: "mc"},
+            {desc: "True/False", type: "tf"}];
+
+        var onChosenExercise = function () {
+            angular.forEach($scope.collection.exercises, function (exercise) {
+                if(exercise._id == exerciseInfo.exerciseId) {
+                    $scope.exercise = exercise;
+                    $scope.exerciseInfo = exerciseInfo
+                }
+            });
+            $scope.exerciseReportArrays = [[],[]];
+            $scope.splitPoint =  Math.ceil($scope.exerciseInfo.reports.length/2);
+
+            for(var i=0; i < $scope.splitPoint; i++) {
+                $scope.exerciseReportArrays[0].push($scope.exerciseInfo.reports[i])
+            };
+
+            for(var j=$scope.splitPoint; j<$scope.exerciseInfo.reports.length; j++) {
+                $scope.exerciseReportArrays[1].push($scope.exerciseInfo.reports[j])
+            };
+            console.log($scope.exerciseReportArrays)
+
+        };
+
+        if(collectionId) {
+            $scope.collection = $scope.collections[collectionId];
+        }
+        if(collectionId && exerciseInfo) {
+            onChosenExercise()
+        };
+        $scope.addAlternative = function (exercise) {
+            if (!exercise.alternatives) {
+                exercise.alternatives = [];
+            }
+            exercise.alternatives.push("")
+        };
+
+        $scope.deleteAlternative = function (exercise, index) {
+            if (index > -1) {
+                exercise.alternatives.splice(index, 1);
+            }
+        };
+
+        $scope.getExerciseTags = function (exercise) {
+            if (!exercise.tags || exercise.tags.length == 0) {
+                return
+            }
+
+            if (typeof exercise.tags[0] == "string") {
+                return exercise.tags.toString()
+            } else {
+                return exercise.tags.map(function (tag) {
+                    return tag.text
+                }).toString()
+            }
+        };
+
+
+        $scope.getImage = function (image) {
+            if (!image.url) {
+                return ("data:" + image[0].filetype + ";base64, " + image[0].base64);
+            } else {
+                var imageUrlParts = image.url.split('/');
+                imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "h_140";
+                imageUrlParts.splice(0,2);
+                var newUrl = "http:/";
+                angular.forEach(imageUrlParts, function (part) {
+                    newUrl = newUrl + "/" + part
+                });
+                return newUrl;
+            }
+        };
+        $scope.saveChanges = function () {
+            console.log(subjectService.getSubject())
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel')
+        }
 
     })
     .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal,$rootScope, collectionService, subjectService, requestService, apiUrl, blockUI) {

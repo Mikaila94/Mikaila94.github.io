@@ -28,7 +28,7 @@ angular.module('myApp', [
 
         blockUIConfig.requestFilter = function (config) {
             // If the request starts with '/api/quote' ...
-            if (config.url.indexOf(apiUrl + "/subjects?search=") > -1) {
+            if (config.url.indexOf(apiUrl + "/subjects?search=") > -1 || config.url.indexOf('/reports') > -1) {
                 return false;
             }
             //if(config.urlRoot) {
