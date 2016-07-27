@@ -1,0 +1,76 @@
+<div class="container-fluid" ng-if="exerciseNumber == activeExercise">
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Oppgave:</h4>
+        </div>
+        <div class="col-lg-10">
+            <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.question">
+            </textarea>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Svar:</h4>
+        </div>
+        <div class="col-lg-10">
+            <textarea class="form-control textarea-edit"  rows="2" ng-model="exercise.correctAnswer">
+            </textarea>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Alternativer:</h4>
+        </div>
+        <div class="col-lg-10" style="">
+            <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.alternatives[$index]"></textarea>
+                    </div>
+                    <div class="col-lg-1">
+                        <span ng-click="deleteAlternative(exercise,$index)" class="glyphicon glyphicon-remove" style="margin-top: 15px;font-size: 20px;height: 50px;cursor: pointer;"></span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100%;margin-top: 10px;">
+                <a style="cursor: pointer" ng-click="addAlternative(exercise)">+ Legg til alternativ</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container-fluid" ng-if="exerciseNumber != activeExercise">
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Oppgave:</h4>
+        </div>
+        <div class="col-lg-10">
+            <h4>{{exercise.question}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Svar:</h4>
+        </div>
+        <div class="col-lg-10">
+            <h4>{{exercise.correctAnswer}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <h4>Alternativer:</h4>
+        </div>
+        <div class="col-lg-10" style="">
+            <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
+                <h4>- {{alternative}}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
