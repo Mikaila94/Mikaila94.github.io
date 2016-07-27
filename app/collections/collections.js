@@ -5,7 +5,6 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.subject = subjectService.getSubject();
-
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 $scope.subject = response;
@@ -102,6 +101,10 @@ angular.module('myApp.collections', ['ngRoute'])
                     }
                 }
                 
+            });
+
+            modalInstance.result.then(function () {
+                console.log(subjectService.getSubject())
             })
         };
 
@@ -113,7 +116,7 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('reportModalCtrl', function ($scope, $uibModalInstance, exercises, collections, exerciseInfo, collectionId, subjectService) {
+    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, exercises, collections, exerciseInfo, collectionId, subjectService, requestService, apiUrl) {
         $scope.collections = collections;
         $scope.exercises = exercises;
         $scope.removeList = {};
@@ -191,7 +194,14 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
         $scope.saveChanges = function () {
-            console.log(subjectService.getSubject())
+            requestService.httpPut(subjectService.getSubject()._id, subjectService.getSubject()).then(function (response) {
+                console.log(response);
+                $http({
+                    url: apiUrl + "/reports/" + $scope.exercise._id,
+                    
+                })
+                
+            });
         };
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel')
