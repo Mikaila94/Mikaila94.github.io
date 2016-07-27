@@ -39,10 +39,10 @@
       </button>
       <a class="navbar-brand" href="#/subjects"><img ng-click="resetMain()" src="img/ace.png" style="width: 100px;"></a>
     </div>
-    <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
-      <ul style="width: 80%" class="nav navbar-nav" ng-controller="mainController">
+    <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse" ng-controller="mainController">
+      <ul style="width: 80%" class="nav navbar-nav">
           <li><a href="#/subjects">Forside</a></li>
-          <li ng-show="checkLoggedIn()"><a href="#/login" ng-click="logOut()">Logg ut</a></li>
+          <li ng-show="checkLoggedIn()"><a style="cursor:pointer;" ng-click="logOut()">Logg ut</a></li>
           <li ng-show="!checkLoggedIn()"><a href="#/login">Logg inn</a></li>
       </ul>
     </div>

@@ -6,6 +6,7 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.subject = subjectService.getSubject();
 
 
+
         requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
             .then(function (response) {
                 $scope.subject = response;
@@ -94,11 +95,13 @@ angular.module('myApp.collections', ['ngRoute'])
     .controller('reportModalCtrl', function ($scope, $uibModalInstance, collections,exercise) {
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, collectionService, subjectService, requestService, apiUrl, blockUI) {
+    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal,$rootScope, collectionService, subjectService, requestService, apiUrl, blockUI) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
         };
+
+
 
         $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
         $scope.types = [{desc: "Phrase & Definition", type: "pd"},
@@ -111,39 +114,7 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.alerts = [];
         $scope.files = [];
 
-        $scope.removeImage = function(exercise){
-            delete exercise.image;
-            document.getElementById('imageBox').value=''
-        };
-
-
-        $scope.onChangeHandler = function (exercise) {
-            return function (e, fileObjects) {
-                if (fileObjects) {
-                    exercise.image = fileObjects;
-                    console.log(fileObjects)
-                }
-            }
-        };
         $scope.clickedSave= false;
-
-        $scope.$on("$routeChangeStart", function (event, next, current) {
-            if(!$scope.clickedSave){
-                if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
-                    event.preventDefault();
-                }
-            }
-        });
-
-
-        $scope.addAlert = function (element) {
-            $scope.alerts.push(element);
-        };
-
-        $scope.closeAlert = function (index) {
-            $scope.alerts.splice(index, 1);
-        };
-
 
         if (!subjectService.getSubject()) {
             $location.path("/subjects/" + $routeParams.subjectId)
@@ -166,6 +137,53 @@ angular.module('myApp.collections', ['ngRoute'])
             var index = parseInt($scope.exercises.length) - 1;
             $scope.defaultType = $scope.exercises[index].type;
         }
+
+
+        //handles refresh
+        window.onbeforeunload = function (evt) {
+            var message = 'Er du sikker på at du vil forlate?';
+            if (typeof evt == 'undefined') {
+                evt = window.event;
+            }
+            if (evt) {
+                evt.returnValue = message;
+            }
+            return message;
+        }
+
+        $scope.$on("$routeChangeStart", function (event, next, current) {
+            if(!$scope.clickedSave){
+                if(!(next.$$route.originalPath.indexOf('/login') > -1)){
+                    if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
+                        event.preventDefault();
+                    }
+                }
+
+            }
+        });
+
+        $scope.onChangeHandler = function (exercise) {
+            return function (e, fileObjects) {
+                if (fileObjects) {
+                    exercise.image = fileObjects;
+                    console.log(fileObjects)
+                }
+            }
+        };
+
+
+
+
+
+        $scope.addAlert = function (element) {
+            $scope.alerts.push(element);
+        };
+
+        $scope.closeAlert = function (index) {
+            $scope.alerts.splice(index, 1);
+        };
+
+
 
 
         $scope.addAlternative = function (exercise) {
@@ -392,6 +410,12 @@ angular.module('myApp.collections', ['ngRoute'])
                 return newUrl;
             }
         };
+
+        $scope.removeImage = function(exercise){
+            delete exercise.image;
+            document.getElementById('imageBox').value=''
+        };
+
 
         $scope.dragControlListeners = {
             accept: function (sourceItemHandleScope, destSortableScope) {
