@@ -51,7 +51,7 @@
                     </div>
 
                     <div no-drag ng-click="activateEditExercise($index)" class="container-fluid">
-                        <div ng-if="$index == activeExercise" class="container-fluid">
+                        <div ng-if="$index == activeExercise" class="container-fluid" style="margin-bottom: 10px">
                             <div class="row">
                                 <div class="col-lg-10">
                                     <select id="typeBox" ng-change="changeDefault(exercise,$index)"
@@ -77,7 +77,7 @@
 
                         <div ng-show="$index == activeExercise" class="container-fluid">
                             <hr>
-                            <div class="row">
+                            <div class="row" style="margin-bottom: 10px">
                                 <div class="col-lg-1">
                                     <a style="cursor: pointer" ng-click="extraProperty='image'">Bilde</a>
                                 </div>
@@ -100,14 +100,11 @@
                                     <h4>Forklaring:</h4>
                                 </div>
                                 <div class="col-lg-10">
-                                    <textarea class="form-control" style="margin-top: 2px;resize: none;" rows="2" ng-model="exercise.explanation"></textarea>
+                                    <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.explanation"></textarea>
                                 </div>
                             </div>
                         </div>
-
-
-
-                </div>
+                    </div>
 
 
                 <div no-drag class="container-fluid" style="height: 30px;margin-top: 20px; margin-right: -10px;">

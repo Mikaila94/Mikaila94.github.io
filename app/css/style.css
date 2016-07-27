@@ -80,6 +80,11 @@
 
 }
 
+.textarea-edit {
+    margin-top: 8px;
+    resize: none;
+}
+
 #editArea {
     overflow: auto;
 }

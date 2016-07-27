@@ -4,7 +4,7 @@
             <h4>Oppgave:</h4>
         </div>
         <div class="col-lg-10">
-            <textarea class="form-control" style="margin-top: 5px;margin-bottom:5px; resize: none" rows="2" ng-model="exercise.question">
+            <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.question">
             </textarea>
 
         </div>
@@ -15,7 +15,7 @@
             <h4>Svar:</h4>
         </div>
         <div class="col-lg-10">
-            <textarea class="form-control" style="margin-top: 15px;margin-bottom:15px; resize: none" rows="2" ng-model="exercise.correctAnswer">
+            <textarea class="form-control textarea-edit"  rows="2" ng-model="exercise.correctAnswer">
             </textarea>
         </div>
 
@@ -28,7 +28,7 @@
             <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
                 <div class="row">
                     <div class="col-lg-11">
-                        <textarea class="form-control" style="margin-top: 2px;resize: none;" rows="2" ng-model="exercise.alternatives[$index]"></textarea>
+                        <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.alternatives[$index]"></textarea>
                     </div>
                     <div class="col-lg-1">
                         <span ng-click="deleteAlternative(exercise,$index)" class="glyphicon glyphicon-remove" style="margin-top: 15px;font-size: 20px;height: 50px;cursor: pointer;"></span>

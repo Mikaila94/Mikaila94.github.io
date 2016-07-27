@@ -17,14 +17,14 @@
                 <label style="margin-top: 5px">Rapporter:</label>
                 <p>Siste rapporter:</p>
                 <ul>
-                    <li ng-repeat="report in reports.slice().reverse()  | limitTo: 3">
-                        <a style="cursor: pointer" ng-click="openReportModal(report[0].collectionId)">
-                            {{report[0].date}}, {{reportedCollections[report[0].collectionId].name}}
+                    <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
+                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report)">
+                            {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
                         </a>
                     </li>
                 </ul>
-                <div ng-if="reports.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
-                    <a style="cursor: pointer;">Se alle rapporter</a>
+                <div ng-if="reportedExercises.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
+                    <a style="cursor: pointer;" ng-click="openReportModal()">Se alle rapporter</a>
                 </div>
             </div>
 
@@ -87,6 +87,78 @@
 
 <script type="text/ng-template" id="reportModal.html">
     <div class="modal-header">
-        <h3></h3>
+        <h3>Rapporter</h3>
+    </div>
+    <div class="modal-body" style="background-color: #F1F1F2">
+        <div ng-if="exercise" class="container-fluid">
+            <span class="glyphicon glyphicon-chevron-left" align="left" style="cursor: pointer; margin-bottom: 20px">
+                Alle rapporter
+            </span>
+            <div class="container-fluid" style="width: 960px; background-color: white">
+                <div class="row" style="margin-top: 20px; margin-bottom: 20px">
+                    <div ng-repeat="reportArray in exerciseReportArrays track by $index">
+                        <div class="col-lg-6">
+                            <div ng-repeat="report in reportArray track by $index" class="container-fluid">
+                                <p ng-show="!removeList[$parent.$index*splitPoint + $index]" ng-click="removeList[$parent.$index*splitPoint + $index]=true" style="cursor: pointer">
+                                    {{report.date}}, {{report.message}}
+                                </p>
+                                <del ng-show="removeList[$parent.$index*splitPoint + $index]" ng-click="removeList[$parent.$index*splitPoint + $index]=false" style="cursor: pointer">
+                                    <p>{{report.date}}, {{report.message}}</p>
+                                </del>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" ng-click="activeExercise = 0" style="width: 960px; background-color: white; margin-top: 10px">
+                <div ng-if="exercise.image" class="container-fluid" align="center" style="margin-top: 30px">
+                    <img src="{{getImage(exercise.image)}}" style="height: 140px;">
+
+                    <hr>
+                </div>
+
+                <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"
+                     onload="exerciseNumber = 0"></div>
+                <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"
+                     onload="exerciseNumber = 0"></div>
+                <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"
+                     onload="exerciseNumber = 0"></div>
+
+                <div ng-show="0 == activeExercise" class="container-fluid">
+                    <hr>
+                    <div class="row" style="margin-bottom: 10px">
+                        <div class="col-lg-1">
+                            <a style="cursor: pointer" ng-click="extraProperty='image'">Bilde</a>
+                        </div>
+                        <div class="col-lg-1">
+                            <a style="cursor: pointer" ng-click="extraProperty='explanation'">Forklaring</a>
+                        </div>
+                    </div>
+                    <div ng-show="extraProperty=='image'" class="row">
+                        <div class="col-lg-2">
+                            <h4>Bilde:</h4>
+                        </div>
+                        <div class="col-lg-10">
+                            <input id="files" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
+                                   base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
+                                   accept="image/*">
+                        </div>
+                    </div>
+                    <div ng-show="extraProperty=='explanation'" class="row">
+                        <div class="col-lg-2">
+                            <h4>Forklaring:</h4>
+                        </div>
+                        <div class="col-lg-10">
+                            <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.explanation"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid" style="margin-top: 30px"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="saveChanges()">Lagre</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">Avbryt</button>
     </div>
 </script>
