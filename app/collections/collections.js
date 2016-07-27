@@ -1,5 +1,5 @@
 angular.module('myApp.collections', ['ngRoute'])
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService,alertify) {
         var initCollections = function (response) {
             $scope.collections = response.collections;
         }
@@ -38,8 +38,6 @@ angular.module('myApp.collections', ['ngRoute'])
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
             $scope.subject = subjectService.getSubject();
             $scope.targetCollection = $scope.subject.collections[index]._id;
-            console.log($scope.subject);
-            console.log(subjectService.getSubject())
             collectionService.setCollection($scope.subject.collections[index])
         };
 
@@ -54,8 +52,8 @@ angular.module('myApp.collections', ['ngRoute'])
             console.log(data);
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
-                    alert("lagret   ");
                     refresh();
+                    alertify.success("Suksess! Endringene dine ble lagret.");
                 })
         };
 
@@ -83,7 +81,6 @@ angular.module('myApp.collections', ['ngRoute'])
             });
 
             modalInstance.result.then(function () {
-                console.log(subjectService.getSubject())
             })
         };
 
@@ -123,7 +120,6 @@ angular.module('myApp.collections', ['ngRoute'])
                 $scope.exerciseReportArrays[1].push($scope.exerciseInfo.reports[j])
             }
             ;
-            console.log($scope.exerciseReportArrays)
 
         };
 
@@ -191,7 +187,7 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI) {
+    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI,alertify) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
@@ -204,7 +200,6 @@ angular.module('myApp.collections', ['ngRoute'])
             {desc: "True/False", type: "tf"}];
         $scope.defaultType = "mc";
         $scope.move = {};
-        var alertElement = document.getElementById('alertElement');
 
         $scope.alerts = [];
         $scope.files = [];
@@ -244,12 +239,12 @@ angular.module('myApp.collections', ['ngRoute'])
                 evt.returnValue = message;
             }
             return message;
-        }
+        };
 
         $scope.$on("$routeChangeStart", function (event, next, current) {
             if (!$scope.clickedSave) {
                 if (!(next.$$route.originalPath.indexOf('/login') > -1)) {
-                    if (!confirm("You have unsaved changes, continue navigating to " + next.originalPath + " ?")) {
+                    if (!confirm("Alle endringer vil bli forkastet. Er du sikker på at du vil forlate denne siden? ")) {
                         event.preventDefault();
                     }
                 }
@@ -261,19 +256,18 @@ angular.module('myApp.collections', ['ngRoute'])
             return function (e, fileObjects) {
                 if (fileObjects) {
                     exercise.image = fileObjects;
-                    console.log(fileObjects)
                 }
             }
         };
 
-
-        $scope.addAlert = function (element) {
-            $scope.alerts.push(element);
-        };
-
-        $scope.closeAlert = function (index) {
-            $scope.alerts.splice(index, 1);
-        };
+        //
+        //$scope.addAlert = function (element) {
+        //    $scope.alerts.push(element);
+        //};
+        //
+        //$scope.closeAlert = function (index) {
+        //    $scope.alerts.splice(index, 1);
+        //};
 
 
         $scope.addAlternative = function (exercise) {
@@ -345,7 +339,6 @@ angular.module('myApp.collections', ['ngRoute'])
                     validateExercise(mcSchema, exercise)
                 } else if (exercise.type == "pd") {
                     if (!exercise.tags) {
-                        console.log(exercise.tags)
                         exercise.tags = [];
                     } else {
                         if (exercise.tags.length > 0 && typeof exercise.tags[0] == "object") {
@@ -393,16 +386,9 @@ angular.module('myApp.collections', ['ngRoute'])
                 var data = {
                     subject: subjectService.getSubject()
                 };
-                console.log(data);
                 requestService.httpPut(subjectService.getSubject()._id, data)
                     .then(function () {
                         $location.path('/subjects/' + subjectService.getSubject()._id);
-                        $scope.addAlert({type: 'success', msg: 'Well done!'});
-                        $timeout(function () {
-                            if ($scope.alerts.length > 0) {
-                                $scope.closeAlert(0);
-                            }
-                        }, 3000);
                     }, function (response) {
                         $scope.saveClicked = false;
                         if ($routeParams.collectionId == "new") {
@@ -411,7 +397,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
                         $scope.errorList = [];
                         $scope.errorMsg = '';
-                        console.log(subjectService.getSubject());
                         for (var j = 0; j < response.errors.length; j++) {
                             var error = response.errors[j].dataPath.split('.');
                             console.log(error);
@@ -431,12 +416,13 @@ angular.module('myApp.collections', ['ngRoute'])
                             }
                         }
 
-                        $scope.addAlert({type: 'danger', msg: $scope.errorMsg});
-                        $timeout(function () {
-                            if ($scope.alerts.length > 0) {
-                                $scope.closeAlert(0);
-                            }
-                        }, 3000);
+                        alertify.error($scope.errorMsg);
+                        //$scope.addAlert({type: 'danger', msg: $scope.errorMsg});
+                        //$timeout(function () {
+                        //    if ($scope.alerts.length > 0) {
+                        //        $scope.closeAlert(0);
+                        //    }
+                        //}, 3000);
                     })
             });
 

@@ -4,14 +4,11 @@
     <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
         <button class="btn btn-default" style="position: relative; left: 785px" ng-click="openExerciseModal()">+ Finn oppgaver</button>
         <h2 align="center">{{collection.name}}</h2>
-
-
         <hr/>
         <div class="row">
             <div class="col-lg-1">
                 <p style="font-size: 20px;margin-left: 10px">Navn:</p>
             </div>
-
             <div class="col-lg-11">
                 <div class="col-lg-5">
                     <input style="margin-bottom:13px;" ng-model="collection.name"
@@ -26,15 +23,11 @@
                 <div class="col-lg-4">
                     <form>
                         <label>Tilfeldig rekkefølge:</label>
-                        <switch id="enabled" name="enabled" ng-model="enabled"></switch>
+                        <switch id="enabled" name="enabled" ng-model="collection.inOrder"></switch>
                     </form>
                 </div>
             </div>
-
-
         </div>
-
-
     </div>
     <div id="editArea">
         <div as-sortable="dragControlListeners" ng-model="collection.exercises">

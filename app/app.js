@@ -154,8 +154,6 @@ angular.module('myApp', [
     .run(['$rootScope','$location', 'Auth','PreviousState', function ($rootScope, $location, Auth,PreviousState) {
 
     $rootScope.$on('$routeChangeStart', function (event, current) {
-        console.log(current.$$route.originalPath);
-
         if (current.$$route.originalPath.indexOf('register') > -1) {
             console.log('ALLOW LOGIN/REGISTER');
         }
