@@ -86,15 +86,20 @@
                                 </div>
                             </div>
                             <div ng-show="extraProperty=='image'" class="row">
-                                <div class="col-lg-2">
+                                <div class="col-lg-1">
                                     <h4>Bilde:</h4>
                                 </div>
-                                <div class="col-lg-10">
-                                    <input id="imageBox" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
+                                <div class="col-lg-7">
+                                    <input id="imageBox" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
                                            base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
                                            accept="image/*">
-                                    <a style="cursor:pointer" ng-click="removeImage(exercise)" ng-if="exercise.image">Fjern bilde</a>
                                 </div>
+                                <div class="col-lg-4">
+                                    <div style="margin-top:10px;">
+                                        <a style="cursor:pointer;" ng-click="removeImage(exercise)" ng-if="exercise.image"><em>Fjern bilde</em></a>
+                                    </div>
+                                </div>
+
                             </div>
                             <div ng-show="extraProperty=='explanation'" class="row">
                                 <div class="col-lg-2">
