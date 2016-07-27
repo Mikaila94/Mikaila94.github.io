@@ -1,18 +1,22 @@
 angular.module('myApp.collections', ['ngRoute'])
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService, apiUrl) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $routeParams, subjectService, collectionService, requestService) {
         var initCollections = function (response) {
             $scope.collections = response.collections;
         };
 
         $scope.subject = subjectService.getSubject();
 
-        requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
-            .then(function (response) {
-                $scope.subject = response;
-                subjectService.setSubject($scope.subject);
-                initCollections(response);
-                console.log(response)
-            });
+        var refresh = function () {
+            requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
+                .then(function (response) {
+                    $scope.subject = response;
+                    $scope.nameCopy = $scope.subject.name;
+                    subjectService.setSubject($scope.subject);
+                    initCollections(response);
+                    console.log(response)
+                });
+        };
+        refresh();
 
         $scope.setTargetCollection = function (index) {
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
@@ -24,29 +28,7 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.deleteCollection = function (coll, index) {
-
-            swal({
-                title: "Er du sikker på at du vil slette dette settet?",
-                text: "Det er ikke mulig å gjennopprette dette settet",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Ja, slett den!",
-                cancelButtonText: "Avbryt",
-                closeOnConfirm: false,
-                closeOnCancel: false
-            }, function (isConfirm) {
-                if (isConfirm) {
-                    swal("Slettet!", "Dette settet har blitt slettet!", "success");
-                    $scope.subject.collections.splice(index, 1);
-                    var data = {
-                        subject: $scope.subject
-                    };
-                    requestService.httpPut($scope.subject._id, data);
-                } else {
-                    swal("Avbrutt", "Operasjonen ble avbrutt!", "error");
-                }
-            });
+            $scope.subject.collections.splice(index, 1);
         };
 
         $scope.saveSubject = function () {
@@ -57,7 +39,7 @@ angular.module('myApp.collections', ['ngRoute'])
             requestService.httpPut($scope.subject._id, data)
                 .then(function (response) {
                     alert("lagret   ");
-                    subjectService.setSubject($scope.subject);
+                    refresh();
                 })
         };
 
@@ -179,12 +161,14 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.saveCollection = function () {
+            $scope.saveClicked = true;
 
-            var sendExercises = function(exercise) {
+            var sendExercises = function (exercise) {
                 exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];
-                if(exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
+                if (exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
                     exercise.collaborators.push($cookies.getObject('username'))
-                };
+                }
+                ;
 
                 if (exercise.type == "mc") {
                     if (!exercise.alternatives) {
@@ -253,13 +237,14 @@ angular.module('myApp.collections', ['ngRoute'])
                             }
                         }, 3000);
                     }, function (response) {
+                        $scope.saveClicked = false;
                         if ($routeParams.collectionId == "new") {
                             subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
                         }
 
                         $scope.errorList = [];
                         $scope.errorMsg = '';
-                        console.log(subjectService.getSubject())
+                        console.log(subjectService.getSubject());
                         for (var j = 0; j < response.errors.length; j++) {
                             var error = response.errors[j].dataPath.split('.');
                             console.log(error);
@@ -341,7 +326,7 @@ angular.module('myApp.collections', ['ngRoute'])
             } else {
                 var imageUrlParts = image.url.split('/');
                 imageUrlParts[imageUrlParts.indexOf("upload") + 1] = "h_140";
-                imageUrlParts.splice(0,2);
+                imageUrlParts.splice(0, 2);
                 var newUrl = "http:/";
                 angular.forEach(imageUrlParts, function (part) {
                     newUrl = newUrl + "/" + part
@@ -386,7 +371,6 @@ angular.module('myApp.collections', ['ngRoute'])
                     exercises: function () {
                         return $scope.exercises
                     }
-
                 }
             });
 

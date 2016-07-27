@@ -4,7 +4,7 @@
 <div class="container-fluid" >
 
     <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
-        <h2 align="center">{{subject.code}} - {{subject.name}}</h2>
+        <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
         <hr>
         <div class="container-fluid" align="center" style="margin-bottom: 30px">
             <div class="row" style="width: 480px">
@@ -43,13 +43,14 @@
         </a>
         <table id="collectionsTable" class="table">
             <tbody ng-model="collections" as-sortable="dragControlListeners">
-            <tr ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
+            <tr ng-mouseenter="focused[$index] = true"
+                ng-mouseleave="focused[$index] = false" ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
                 <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection($index)">
                     <a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}" style="width: 100%;">{{coll.name}}</a>
                 </td>
-                <td style="width:60px;"><Button style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
+                <td style="width:60px;"><div ng-show="focused[$index]" style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
                     <span class="glyphicon glyphicon-trash"></span>
-                    </Button>
+                    </div>
                 </td>
 
             </tr>
