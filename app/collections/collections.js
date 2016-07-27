@@ -1,7 +1,23 @@
 angular.module('myApp.collections', ['ngRoute'])
+
     .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService,alertify) {
-        var initCollections = function (response) {
-            $scope.collections = response.collections;
+        var initCollections = function (subject) {
+            $scope.collections = subject.collections;
+        };
+        var initReports = function (reportInfo) {
+            var reportedCollectionIds = [];
+            $scope.reportedCollections = {};
+            angular.forEach(reportInfo, function (item) {
+                reportedCollectionIds.push(item.collectionId)
+                item.lastAdded = item.reports[item.reports.length - 1].date
+            });
+            $scope.reportedExercises = reportInfo;
+            angular.forEach($scope.subject.collections, function (collection) {
+                if (reportedCollectionIds.indexOf(collection._id) != -1) {
+                    $scope.reportedCollections[collection._id] = collection;
+                }
+            });
+            console.log($scope.reportedExercises)
         }
         $scope.subject = subjectService.getSubject();
 
@@ -14,20 +30,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     initCollections(response);
                     console.log(response);
                     requestService.httpGet('/reports/' + $routeParams.subjectId).then(function (response) {
-                        var reportedCollectionIds = [];
-                        $scope.reportedCollections = {};
-                        angular.forEach(response, function (item) {
-                            reportedCollectionIds.push(item.collectionId)
-                            item.lastAdded = item.reports[item.reports.length - 1].date
-                        });
-                        $scope.reportedExercises = response;
-                        angular.forEach($scope.subject.collections, function (collection) {
-                            if (reportedCollectionIds.indexOf(collection._id) != -1) {
-                                $scope.reportedCollections[collection._id] = collection;
-                            }
-                        });
-                        console.log($scope.reportedExercises)
-
+                        initReports(response)
                     })
                 });
         };
@@ -57,7 +60,20 @@ angular.module('myApp.collections', ['ngRoute'])
                 })
         };
 
-        $scope.openReportModal = function (collectionId, exerciseInfo) {
+        $scope.openReportModal = function (collectionId, exerciseId) {
+            subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
+            $scope.subject = subjectService.getSubject();
+            initCollections($scope.subject);
+            initReports($scope.reportedExercises);
+            var exerciseInfo;
+            if(exerciseId) {
+                angular.forEach($scope.reportedExercises, function (exercise) {
+                    if(exercise.exerciseId == exerciseId) {
+                        exerciseInfo = exercise
+                    };
+                });
+            };
+
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'reportModal.html',
@@ -81,7 +97,9 @@ angular.module('myApp.collections', ['ngRoute'])
             });
 
             modalInstance.result.then(function () {
-            })
+                console.log(subjectService.getSubject());
+                refresh();
+            });
         };
 
         $scope.dragControlListeners = {
@@ -92,14 +110,12 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, exercises, collections, exerciseInfo, collectionId, subjectService, requestService, apiUrl) {
+    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, $q, exercises, collections, exerciseInfo, collectionId, subjectService, requestService, apiUrl) {
 
         $scope.collections = collections;
         $scope.exercises = exercises;
         $scope.removeList = {};
-        $scope.types = [{desc: "Phrase & Definition", type: "pd"},
-            {desc: "Multiple Choice", type: "mc"},
-            {desc: "True/False", type: "tf"}];
+
 
         var onChosenExercise = function () {
             angular.forEach($scope.collection.exercises, function (exercise) {
@@ -113,13 +129,16 @@ angular.module('myApp.collections', ['ngRoute'])
 
             for (var i = 0; i < $scope.splitPoint; i++) {
                 $scope.exerciseReportArrays[0].push($scope.exerciseInfo.reports[i])
+                $scope.removeList[i] = false
             }
             ;
 
             for (var j = $scope.splitPoint; j < $scope.exerciseInfo.reports.length; j++) {
                 $scope.exerciseReportArrays[1].push($scope.exerciseInfo.reports[j])
+                $scope.removeList[j] = false;
             }
             ;
+            console.log($scope.removeList)
 
         };
 
@@ -173,12 +192,33 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
         $scope.saveChanges = function () {
-            requestService.httpPut(subjectService.getSubject()._id, subjectService.getSubject()).then(function (response) {
-                console.log(response);
-                $http({
-                    url: apiUrl + "/reports/" + $scope.exercise._id,
+            var data = {
+                subject: subjectService.getSubject()
+            };
+            console.log(subjectService.getSubject())
 
-                })
+            requestService.httpPut(subjectService.getSubject()._id, data).then(function (response) {
+                console.log(response);
+                var data = {
+                    reports: []
+                };
+                angular.forEach($scope.removeList, function (value, key) {
+                    if(!value) {
+                        data.reports.push($scope.exerciseInfo.reports[key])
+                    }
+                });
+                $http({
+                    url: apiUrl + '/reports/' + $scope.exercise._id,
+                    method: 'PUT',
+                    data: data
+                }).success(function (response, status) {
+                    console.log(data)
+                    $uibModalInstance.close();
+                });
+
+
+
+
 
             });
         };
@@ -352,8 +392,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     validateExercise(pdSchema, exercise)
                 } else if (exercise.type == "tf") {
                     validateExercise(tfSchema, exercise)
-                }
-                ;
+                };
 
             };
             var imageUploads = [];

@@ -2,7 +2,7 @@
     <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
         <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
         <hr>
-        <div class="container-fluid" align="left" style="margin-bottom: 10px">
+        <div class="container-fluid" align="left" style="margin-bottom: 20px">
             <div class="col-lg-6" style="border-right: thin solid #F1F1F2;">
                 <label style=" margin-top:5px;">Fagnavn:</label>
                 <input ng-model="subject.name" class="form-control" style="width:400px;">
@@ -14,27 +14,13 @@
                 <p>Siste rapporter:</p>
                 <ul>
                     <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
-                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report)">
+                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report.exerciseId)">
                             {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
                         </a>
                     </li>
                 </ul>
                 <div ng-if="reportedExercises.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
                     <a style="cursor: pointer;" ng-click="openReportModal()">Se alle rapporter</a>
-                </div>
-            </div>
-
-            <div class="row" style="width: 480px">
-                <div class="col-lg-2">
-                </div>
-                <div class="col-lg-10">
-                </div>
-            </div>
-
-            <div class="row" style="margin-top:5px;margin-bottom:5px;width:480px;">
-                <div class="col-lg-2">
-                </div>
-                <div class="col-lg-10">
                 </div>
             </div>
         </div>
