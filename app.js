@@ -23,6 +23,8 @@ angular.module('myApp', [
         'ngAlertify']
     )
     .config(['$locationProvider', '$routeProvider', 'cfpLoadingBarProvider', 'blockUIConfig','apiUrl',function ($locationProvider, $routeProvider, cfpLoadingBarProvider, blockUIConfig,apiUrl) {
+        cfpLoadingBarProvider.includeSpinner = false;
+        blockUIConfig.message = "Laster inn";
         blockUIConfig.requestFilter = function (config) {
             // If the request starts with '/api/quote' ...
             if (config.url.indexOf(apiUrl + "/subjects?search=") > -1 || config.url.indexOf('/reports') > -1) {
@@ -71,6 +73,12 @@ angular.module('myApp', [
 
 
     }])
+    .run((function ($rootScope, $uibModalStack) {
+        $rootScope.$on('$routeChangeSuccess', function () {
+            $uibModalStack.dismissAll()
+        });
+        $uibModalStack.dismissAll()
+    }))
     .controller('mainController', function ($scope, $window, $location, $http, $q, Auth, $cookies,$rootScope,PreviousState) {
         $scope.isCollapsed = true;
 
@@ -154,8 +162,6 @@ angular.module('myApp', [
     .run(['$rootScope','$location', 'Auth','PreviousState', function ($rootScope, $location, Auth,PreviousState) {
 
     $rootScope.$on('$routeChangeStart', function (event, current) {
-        console.log(current.$$route.originalPath);
-
         if (current.$$route.originalPath.indexOf('register') > -1) {
             console.log('ALLOW LOGIN/REGISTER');
         }
