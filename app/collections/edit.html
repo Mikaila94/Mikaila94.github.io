@@ -1,7 +1,5 @@
 <div id="mainDiv" class="container-fluid" style="width:960px">
-    <div class="container-fluid" style="margin: 20px;">
-    </div>
-    <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
+    <div class="container-fluid div-card" style="width: 100%; margin-bottom: 20px;position:relative">
         <button class="btn btn-default" style="position: relative; left: 785px" ng-click="openExerciseModal()">+ Finn oppgaver</button>
         <h2 align="center">{{collection.name}}</h2>
         <hr/>
@@ -29,11 +27,11 @@
             </div>
         </div>
     </div>
-    <div id="editArea">
+    <div id="editArea" style="width: 960px; margin-left: -15px">
         <div as-sortable="dragControlListeners" ng-model="collection.exercises">
             <div class="container-fluid" as-sortable-item ng-repeat="exercise in collection.exercises track by $index"
-                 ng-model="exercise" style="background-color: white; margin-bottom: 10px;">
-                <div as-sortable-item-handle ng-style="{'cursor' : 'default'}" ng-mouseenter="focused[$index] = true"
+                 ng-model="exercise" style="margin-bottom: 15px;">
+                <div class="container-fluid div-card" as-sortable-item-handle style="cursor: default; width: 100%" ng-mouseenter="focused[$index] = true"
                      ng-mouseleave="focused[$index] = false">
                     <div align="center" class="container-fluid" style="height: 30px;">
                         <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal"
@@ -150,7 +148,7 @@
     </div>
     <div class="modal-body" style="background-color: #F1F1F2">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <h3>Søk etter oppgaver:</h3>
                 <div class="input-group" style="width: 100%;">
                     <select class="form-control" ng-model="searchMode" ng-change="changeNavigationParts()"
@@ -171,12 +169,12 @@
                     <button class="btn btn-primary" ng-click="searchItems()" style="width: 10%">Søk</button>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <h3>Oppgaver som legges til:</h3>
             </div>
         </div>
         <div class="row" style="margin-top: 10px">
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <div ng-repeat="part in navigationParts">
                     <a href="" ng-if="!$last" style="float: left" ng-click="resetSearch()">{{part.text}}</a>
                     <p ng-if="!$last" style="float: left"> > </p>
@@ -185,7 +183,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <div class="container-fluid" style="height: 500px; overflow-y: scroll; background-color: white;">
                     <div as-sortable="dragControlListeners" ng-model="resultList" id="loading-bar-container">
                         <div ng-repeat="result in resultList" as-sortable-item>
@@ -216,7 +214,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <div class="container-fluid"
                      style="height: 500px; overflow-y: scroll; overflow-x: hidden; background-color: white;">
                     <div as-sortable="dragControlListeners2" ng-model="exercises" style="height: 500px">
@@ -238,14 +236,14 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <div ng-if="searchMode=='exercises' || navigationParts.length == 2" class="container-fluid" align="right">
                     <button class="btn btn-default" ng-click="addAllToList()">
                         Legg til alle i lista
                     </button>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-xs-6">
                 <div class="container-fluid" align="right">
                     <button class="btn btn-default" ng-click="removeAllExercises()">
                         Fjern alle fra lista

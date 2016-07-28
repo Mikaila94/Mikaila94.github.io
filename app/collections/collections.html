@@ -1,5 +1,5 @@
 <div class="container-fluid" >
-    <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
+    <div class="container-fluid div-card"style="width:960px;margin-bottom: 20px;position: relative">
         <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
         <hr>
         <div class="container-fluid" align="left" style="margin-bottom: 20px">
@@ -35,7 +35,7 @@
     </div>
 
 
-    <div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;" id="loading-bar-container">
+    <div class="container-fluid div-card" style="width:960px;" id="loading-bar-container">
         <h2 align="center">Tilhørende sett</h2>
         <a href="#/subjects/{{subject._id}}/collections/new">
            <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
@@ -73,11 +73,32 @@
         <h3>Rapporter</h3>
     </div>
     <div class="modal-body" style="background-color: #F1F1F2">
-        <div ng-if="exercise" class="container-fluid">
-            <span class="glyphicon glyphicon-chevron-left" align="left" style="cursor: pointer; margin-bottom: 20px">
+        <div ng-show="!exercise" class="container-fluid div-card" style="width: 960px;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 20%">Dato siste rapport</th>
+                        <th style="width: 20%">Sett</th>
+                        <th style="width: 20%">Preview oppgave</th>
+                        <th style="width: 20%">Antall rapporter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="exercise in exercises" style="cursor: pointer" ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)">
+                        <td>{{exercise.lastAdded}}</td>
+                        <td>{{collections[exercise.collectionId].name}}</td>
+                        <td>{{exercise.preview}}</td>
+                        <td>{{exercise.reports.length}}</td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <div ng-show="exercise" class="container-fluid">
+            <span ng-click="exercise = undefined" class="glyphicon glyphicon-chevron-left" align="left" style="cursor: pointer; margin-bottom: 20px">
                 Alle rapporter
             </span>
-            <div class="container-fluid" style="width: 960px; background-color: white">
+            <div class="container-fluid div-card" style="width: 960px; margin-bottom: 20px">
                 <div class="row" style="margin-top: 20px; margin-bottom: 20px">
                     <div ng-repeat="reportArray in exerciseReportArrays track by $index">
                         <div class="col-lg-6">
@@ -93,13 +114,13 @@
                     </div>
                 </div>
             </div>
-            <div class="container-fluid" ng-click="activeExercise = 0" style="width: 960px; background-color: white; margin-top: 10px">
-                <div ng-if="exercise.image" class="container-fluid" align="center" style="margin-top: 30px">
+            <div class="container-fluid div-card" ng-click="activeExercise = 0" style="width: 960px;">
+                <div class="container-fluid" style="margin-top: 30px"></div>
+                <div ng-if="exercise.image" class="container-fluid" align="center">
                     <img src="{{getImage(exercise.image)}}" style="height: 140px;">
 
                     <hr>
                 </div>
-
                 <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"
                      onload="exerciseNumber = 0"></div>
                 <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"

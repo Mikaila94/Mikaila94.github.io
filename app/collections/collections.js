@@ -8,7 +8,7 @@ angular.module('myApp.collections', ['ngRoute'])
             var reportedCollectionIds = [];
             $scope.reportedCollections = {};
             angular.forEach(reportInfo, function (item) {
-                reportedCollectionIds.push(item.collectionId)
+                reportedCollectionIds.push(item.collectionId);
                 item.lastAdded = item.reports[item.reports.length - 1].date
             });
             $scope.reportedExercises = reportInfo;
@@ -18,7 +18,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             });
             console.log($scope.reportedExercises)
-        }
+        };
         $scope.subject = subjectService.getSubject();
 
         var refresh = function () {
@@ -65,14 +65,7 @@ angular.module('myApp.collections', ['ngRoute'])
             $scope.subject = subjectService.getSubject();
             initCollections($scope.subject);
             initReports($scope.reportedExercises);
-            var exerciseInfo;
-            if(exerciseId) {
-                angular.forEach($scope.reportedExercises, function (exercise) {
-                    if(exercise.exerciseId == exerciseId) {
-                        exerciseInfo = exercise
-                    };
-                });
-            };
+
 
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -80,14 +73,14 @@ angular.module('myApp.collections', ['ngRoute'])
                 controller: 'reportModalCtrl',
                 windowClass: 'app-modal-window',
                 resolve: {
-                    exercises: function () {
+                    reportedExercises: function () {
                         return $scope.reportedExercises
                     },
-                    collections: function () {
+                    reportedCollections: function () {
                         return $scope.reportedCollections
                     },
-                    exerciseInfo: function () {
-                        return exerciseInfo
+                    exerciseId: function () {
+                        return exerciseId
                     },
                     collectionId: function () {
                         return collectionId
@@ -110,18 +103,35 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, $q, exercises, collections, exerciseInfo, collectionId, subjectService, requestService, apiUrl) {
+    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, $q, reportedExercises, reportedCollections, exerciseId, collectionId, subjectService, requestService, apiUrl) {
 
-        $scope.collections = collections;
-        $scope.exercises = exercises;
+        $scope.collections = reportedCollections;
+        $scope.exercises = reportedExercises;
         $scope.removeList = {};
+        var previewMaxLength = 40;
+        for(var i=0; i<$scope.exercises.length; i++) {
+            for(var j=0; j<$scope.collections[$scope.exercises[i].collectionId].exercises.length; j++) {
+                var checkExercise = $scope.collections[$scope.exercises[i].collectionId].exercises[j];
+                if($scope.exercises[i].exerciseId == checkExercise._id) {
+                    $scope.exercises[i].preview = checkExercise.question.length > previewMaxLength ? checkExercise.question.substr(0, previewMaxLength) + "...": checkExercise.question;
+                    break;
+                }
+            }
+        }
+        console.log($scope.exercises);
 
 
-        var onChosenExercise = function () {
+        $scope.onChosenExercise = function (collectionId, exerciseId) {
+            $scope.collection = $scope.collections[collectionId];
+            angular.forEach($scope.exercises, function (exercise) {
+                if(exercise.exerciseId == exerciseId) {
+                    $scope.exerciseInfo = exercise
+                };
+            });
+
             angular.forEach($scope.collection.exercises, function (exercise) {
-                if (exercise._id == exerciseInfo.exerciseId) {
+                if (exercise._id == $scope.exerciseInfo.exerciseId) {
                     $scope.exercise = exercise;
-                    $scope.exerciseInfo = exerciseInfo
                 }
             });
             $scope.exerciseReportArrays = [[], []];
@@ -142,13 +152,9 @@ angular.module('myApp.collections', ['ngRoute'])
 
         };
 
-        if (collectionId) {
-            $scope.collection = $scope.collections[collectionId];
-        }
-        if (collectionId && exerciseInfo) {
-            onChosenExercise()
-        }
-        ;
+        if (collectionId && exerciseId) {
+            $scope.onChosenExercise(collectionId, exerciseId)
+        };
         $scope.addAlternative = function (exercise) {
             if (!exercise.alternatives) {
                 exercise.alternatives = [];
@@ -215,11 +221,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     console.log(data)
                     $uibModalInstance.close();
                 });
-
-
-
-
-
+                
             });
         };
         $scope.cancel = function () {
