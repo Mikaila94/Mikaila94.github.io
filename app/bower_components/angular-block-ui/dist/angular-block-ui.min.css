@@ -30,7 +30,7 @@ body.block-ui {
 
 .block-ui-active > .block-ui-container {
     height: 100%;
-    cursor: default
+    cursor: default;
 }
 
 .block-ui-active .block-ui-active > .block-ui-container {

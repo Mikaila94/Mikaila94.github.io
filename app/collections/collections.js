@@ -57,6 +57,23 @@ angular.module('myApp.collections', ['ngRoute'])
                 .then(function (response) {
                     refresh();
                     alertify.success("Suksess! Endringene dine ble lagret.");
+                },function(response){
+
+                    $scope.errorMsg = response.errors[0].dataPath.split('.');
+                    if($scope.errorMsg.length == 3){
+                        if($scope.errorMsg[2].indexOf('name') > -1) {
+                            alertify.error("Fagnavn mangler! Fyll ut og prøv igjen...");
+                        }
+                        else{
+                            alertify.error("Oops, noe gikk galt! Prøv igjen...");
+
+                        }
+                    }
+                    else{
+                        alertify.error("Oops, noe gikk galt! Prøv igjen...")
+
+                    }
+
                 })
         };
 
@@ -233,7 +250,7 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI,alertify) {
+    .controller('editCtrl', function ($scope, $cookies, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI,alertify) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
@@ -247,7 +264,6 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.defaultType = "mc";
         $scope.move = {};
 
-        $scope.alerts = [];
         $scope.files = [];
 
         $scope.clickedSave = false;
@@ -306,14 +322,7 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        //
-        //$scope.addAlert = function (element) {
-        //    $scope.alerts.push(element);
-        //};
-        //
-        //$scope.closeAlert = function (index) {
-        //    $scope.alerts.splice(index, 1);
-        //};
+
 
         $scope.backToSubjectPage = function(){
             $location.path('/subjects/' + subjectService.getSubject()._id);
@@ -347,9 +356,6 @@ angular.module('myApp.collections', ['ngRoute'])
 
             $scope.collection.exercises.push(exercise);
             $scope.activeExercise = $scope.collection.exercises.length - 1;
-            $timeout(function () {
-                window.scrollTo(0, document.body.scrollHeight)
-            }, 0)
         };
 
         $scope.deleteExercise = function (index) {
@@ -466,12 +472,6 @@ angular.module('myApp.collections', ['ngRoute'])
                         }
 
                         alertify.error($scope.errorMsg);
-                        //$scope.addAlert({type: 'danger', msg: $scope.errorMsg});
-                        //$timeout(function () {
-                        //    if ($scope.alerts.length > 0) {
-                        //        $scope.closeAlert(0);
-                        //    }
-                        //}, 3000);
                     })
             });
 
