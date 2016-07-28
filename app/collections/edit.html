@@ -86,13 +86,13 @@
                                     <h4>Bilde:</h4>
                                 </div>
                                 <div class="col-lg-7">
-                                    <input id="imageBox" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
+                                    <input id="{{$index}}" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
                                            base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
                                            accept="image/*">
                                 </div>
                                 <div class="col-lg-4">
                                     <div style="margin-top:10px;">
-                                        <a style="cursor:pointer;" ng-click="removeImage(exercise)" ng-if="exercise.image"><em>Fjern bilde</em></a>
+                                        <a style="cursor:pointer;" ng-click="removeImage($index)" ng-if="exercise.image"><em>Fjern bilde</em></a>
                                     </div>
                                 </div>
 

@@ -89,8 +89,12 @@ angular.module('myApp.collections', ['ngRoute'])
 
             });
 
-            modalInstance.result.then(function () {
+            modalInstance.result.then(function (changesMade) {
                 console.log(subjectService.getSubject());
+                if(changesMade) {
+                    refresh();
+                }
+            }, function () {
                 refresh();
             });
         };
@@ -201,36 +205,64 @@ angular.module('myApp.collections', ['ngRoute'])
                 return newUrl;
             }
         };
+        $scope.removeImage = function () {
+            delete $scope.exercise.image;
+            document.getElementById('image').value = ''
+        };
+        $scope.onChangeHandler = function (exercise) {
+            return function (e, fileObjects) {
+                if (fileObjects) {
+                    exercise.image = fileObjects;
+                }
+            }
+        };
         $scope.saveChanges = function () {
+            console.log(subjectService.getSubject());
+            var imageUpload =[];
+            if($scope.exercise.image && !$scope.exercise.image.url) {
+                var imageData = {
+                    filetype: $scope.exercise.image[0].filetype,
+                    base64: $scope.exercise.image[0].base64,
+                    subjectId: subjectService.getSubject()._id
+                };
+                imageUpload.push(requestService.putImage(imageData, function (response) {
+                    $scope.exercise.image = {url: response.url}
+                }))
+            }
             var data = {
                 subject: subjectService.getSubject()
             };
-            console.log(subjectService.getSubject())
+            $q.all(imageUpload).then(function () {
+                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
+                    var data = {
+                        reports: []
+                    };
+                    $scope.changesMade = true;
+                    angular.forEach($scope.removeList, function (value, key) {
+                        if(!value) {
+                            data.reports.push($scope.exerciseInfo.reports[key])
+                        }
+                    });
+                    $http({
+                        url: apiUrl + '/reports/' + $scope.exercise._id,
+                        method: 'PUT',
+                        data: data
+                    }).success(function () {
+                        $scope.exerciseInfo.reports = data.reports;
+                        console.log(data);
+                        $scope.exercise = undefined;
+                    });
 
-            requestService.httpPut(subjectService.getSubject()._id, data).then(function (response) {
-                console.log(response);
-                var data = {
-                    reports: []
-                };
-                angular.forEach($scope.removeList, function (value, key) {
-                    if(!value) {
-                        data.reports.push($scope.exerciseInfo.reports[key])
-                    }
                 });
-                $http({
-                    url: apiUrl + '/reports/' + $scope.exercise._id,
-                    method: 'PUT',
-                    data: data
-                }).success(function (response, status) {
-                    console.log(data)
-                    $uibModalInstance.close();
-                });
-                
+
             });
         };
         $scope.cancel = function () {
-            $uibModalInstance.dismiss('cancel')
-        }
+            $scope.exercise = undefined;
+        };
+        $scope.close = function () {
+            $uibModalInstance.close($scope.changesMade);
+        };
 
     })
     .controller('editCtrl', function ($scope, $cookies, $timeout, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI,alertify) {
@@ -537,9 +569,9 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-        $scope.removeImage = function (exercise) {
-            delete exercise.image;
-            document.getElementById('imageBox').value = ''
+        $scope.removeImage = function (index) {
+            delete $scope.collection.exercises[index].image;
+            document.getElementById(index).value = ''
         };
 
 
