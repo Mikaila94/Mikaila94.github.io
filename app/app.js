@@ -71,6 +71,12 @@ angular.module('myApp', [
 
 
     }])
+    .run((function ($rootScope, $uibModalStack) {
+        $rootScope.$on('$routeChangeSuccess', function () {
+            $uibModalStack.dismissAll()
+        });
+        $uibModalStack.dismissAll()
+    }))
     .controller('mainController', function ($scope, $window, $location, $http, $q, Auth, $cookies,$rootScope,PreviousState) {
         $scope.isCollapsed = true;
 
