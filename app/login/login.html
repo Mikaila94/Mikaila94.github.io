@@ -1,4 +1,4 @@
-<div class="container-fluid" align="center" style="width: 960px; background-color: white;margin-top: 250px" >
+<div class="container-fluid" align="center" style="width: 960px; background-color: white;margin-top: 75px" >
     <div class="container" style="margin-bottom: 100px"></div>
     <div id="loading-bar-container" class="row" >
 
@@ -8,7 +8,7 @@
             <!--<h3 style="display:inline-block;margin-right:10px;">Username</h3>-->
 
             <input placeholder="username" class="form-control" style="display:inline-block;border: 2px solid transparent;
-border-radius: 3px;background-color: #ECF0F1;width: 300px; margin-top: 10px" ng-model="username" align="center">
+border-radius: 3px;background-color: #ECF0F1;width: 300px; margin-top: 10px" ng-model="username" ng-keypress="$event.keyCode==13 && authenticate()" align="center">
 
 
 

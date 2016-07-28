@@ -48,7 +48,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
 
 
 
-    .controller('addCtrl', function ($scope, $http, $cookies,$location, $uibModal, subjectService, requestService, apiUrl, focus, shuffle) {
+    .controller('addCtrl', function ($scope, $http, $cookies,$location, $uibModal, subjectService, requestService, apiUrl, focus, shuffle,alertify) {
         if(!subjectService.getUserSubjects()) {
             $location.path("/subjects")
         } else {
@@ -79,6 +79,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                 }).success(function (response, status) {
                     $location.path("/subjects");
                 }).error(function (status) {
+                    alertify.error("Oops! Noe gikk galt...");
                     console.log({error: status});
                 })
             };

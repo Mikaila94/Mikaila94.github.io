@@ -1,7 +1,10 @@
 <div id="mainDiv" class="container-fluid" style="width:960px">
-    <div class="container-fluid" style="margin: 20px;">
+    <span class="glyphicon glyphicon-chevron-left" style="cursor:pointer;position: absolute;top: 60px;align:left;"  ng-click="backToSubjectPage()">
+        <label style="cursor:pointer">Fagsiden</label>
+    </span>
+    <div class="container-fluid" style="margin: 10px;">
     </div>
-    <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative">
+    <div class="container-fluid" style="width: 100%; background-color: white; margin-bottom: 10px;position:relative;">
         <button class="btn btn-default" style="position: relative; left: 785px" ng-click="openExerciseModal()">+ Finn oppgaver</button>
         <h2 align="center">{{collection.name}}</h2>
         <hr/>

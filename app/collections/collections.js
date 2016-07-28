@@ -1,6 +1,6 @@
 angular.module('myApp.collections', ['ngRoute'])
 
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService,alertify) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService,alertify,$location) {
         var initCollections = function (subject) {
             $scope.collections = subject.collections;
         };
@@ -107,6 +107,10 @@ angular.module('myApp.collections', ['ngRoute'])
                 return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
             },
             containment: '#collectionsTable'
+        }
+
+        $scope.goTo = function(path){
+            $location.path(path);
         }
 
     })
@@ -308,6 +312,10 @@ angular.module('myApp.collections', ['ngRoute'])
         //$scope.closeAlert = function (index) {
         //    $scope.alerts.splice(index, 1);
         //};
+
+        $scope.backToSubjectPage = function(){
+            $location.path('/subjects/' + subjectService.getSubject()._id);
+        }
 
 
         $scope.addAlternative = function (exercise) {

@@ -1,70 +1,83 @@
-<div class="container-fluid" >
-    <div class="container-fluid"style="background-color: white;width:960px;margin-top:10px;position: relative">
-        <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
-        <hr>
-        <div class="container-fluid" align="left" style="margin-bottom: 20px">
-            <div class="col-lg-6" style="border-right: thin solid #F1F1F2;">
-                <label style=" margin-top:5px;">Fagnavn:</label>
-                <input ng-model="subject.name" class="form-control" style="width:400px;">
-                <label style=" margin-top:5px;">Beskrivelse:</label>
-                <textarea ng-model="subject.description" rows="2" class="form-control" style="width:400px;resize: none;" ></textarea>
-            </div>
-            <div class="col-lg-6">
-                <label style="margin-top: 5px">Rapporter:</label>
-                <p>Siste rapporter:</p>
-                <ul>
-                    <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
-                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report.exerciseId)">
-                            {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
-                        </a>
-                    </li>
-                </ul>
-                <div ng-if="reportedExercises.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 300px;">
-                    <a style="cursor: pointer;" ng-click="openReportModal()">Se alle rapporter</a>
-                </div>
+<div class="container-fluid" style="width: 960px;"">
+<span class="glyphicon glyphicon-chevron-left" style="cursor:pointer;position: absolute;top: 60px;" align="left"
+      ng-click="goTo('/subjects')">
+        <label style="cursor:pointer">Forsiden</label>
+</span>
+<div class="container-fluid" style="margin: 10px;">
+</div>
+<div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;position: relative">
+
+    <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
+    <hr>
+    <div class="container-fluid" align="left" style="margin-bottom: 20px">
+        <div class="col-lg-6" style="border-right: thin solid #F1F1F2;">
+            <label style=" margin-top:5px;">Fagnavn:</label>
+            <input ng-model="subject.name" class="form-control" style="width:400px;">
+            <label style=" margin-top:5px;">Beskrivelse:</label>
+                <textarea ng-model="subject.description" rows="2" class="form-control"
+                          style="width:400px;resize: none;"></textarea>
+        </div>
+        <div class="col-lg-6">
+            <label style="margin-top: 5px">Rapporter:</label>
+            <p>Siste rapporter:</p>
+            <ul>
+                <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
+                    <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report.exerciseId)">
+                        {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
+                    </a>
+                </li>
+            </ul>
+            <div ng-if="reportedExercises.length > 0" class="container-fluid"
+                 style="width: 100%; margin-top: 20px; margin-left: 300px;">
+                <a style="cursor: pointer;" ng-click="openReportModal()">Se alle rapporter</a>
             </div>
         </div>
-
-        <label style="position: absolute;top: 25px;right: 70px;">Offentlig:</label>
-        <form style="position:absolute;top:20px;right:10px;">
-            <switch id="enabled" name="enabled" ng-model="subject.public"></switch>
-        </form>
-
-
-
     </div>
 
+    <label style="position: absolute;top: 25px;right: 70px;">Offentlig:</label>
+    <form style="position:absolute;top:20px;right:10px;">
+        <switch id="enabled" name="enabled" ng-model="subject.public"></switch>
+    </form>
 
-    <div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;" id="loading-bar-container">
-        <h2 align="center">Tilhørende sett</h2>
-        <a href="#/subjects/{{subject._id}}/collections/new">
-           <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
-        </a>
-        <table id="collectionsTable" class="table">
-            <tbody ng-model="collections" as-sortable="dragControlListeners">
-            <tr ng-mouseenter="focused[$index] = true"
-                ng-mouseleave="focused[$index] = false" ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
-                <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection($index)">
-                    <a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}" style="width: 100%;">{{coll.name}}</a>
-                </td>
-                <td style="width:60px;"><div ng-show="focused[$index]" style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
+
+</div>
+
+
+<div class="container-fluid" style="background-color: white;width:960px;margin-top:10px;"
+     id="loading-bar-container">
+    <h2 align="center">Tilhørende sett</h2>
+    <a href="#/subjects/{{subject._id}}/collections/new">
+        <button class="btn btn-default" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett
+        </button>
+    </a>
+    <table id="collectionsTable" class="table">
+        <tbody ng-model="collections" as-sortable="dragControlListeners">
+        <tr ng-mouseenter="focused[$index] = true"
+            ng-mouseleave="focused[$index] = false" ng-repeat="coll in collections track by $index" ng-model="coll"
+            as-sortable-item>
+            <td as-sortable-item-handle style="width:900px;" ng-model="coll" ng-click="setTargetCollection($index)">
+                <a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}"
+                   style="width: 100%;">{{coll.name}}</a>
+            </td>
+            <td style="width:60px;">
+                <div ng-show="focused[$index]" style="margin-left:400px" ng-click="deleteCollection(coll,$index)">
                     <span class="glyphicon glyphicon-trash"></span>
-                    </div>
-                </td>
+                </div>
+            </td>
 
-            </tr>
+        </tr>
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
 
-    </div>
-    <div class="container-fluid" style="position: fixed; right: 50px; bottom: 50px;">
-        <label class="btn btn-default" ng-click="saveSubject()">
-            <span class="glyphicon glyphicon-floppy-disk"></span>
-        </label>
-    </div>
+</div>
+<div class="container-fluid" style="position: fixed; right: 50px; bottom: 50px;">
+    <label class="btn btn-default" ng-click="saveSubject()">
+        <span class="glyphicon glyphicon-floppy-disk"></span>
+    </label>
+</div>
 
 </div>
 
@@ -82,10 +95,14 @@
                     <div ng-repeat="reportArray in exerciseReportArrays track by $index">
                         <div class="col-lg-6">
                             <div ng-repeat="report in reportArray track by $index" class="container-fluid">
-                                <p ng-show="!removeList[$parent.$index*splitPoint + $index]" ng-click="removeList[$parent.$index*splitPoint + $index]=true" style="cursor: pointer">
+                                <p ng-show="!removeList[$parent.$index*splitPoint + $index]"
+                                   ng-click="removeList[$parent.$index*splitPoint + $index]=true"
+                                   style="cursor: pointer">
                                     {{report.date}}, {{report.message}}
                                 </p>
-                                <del ng-show="removeList[$parent.$index*splitPoint + $index]" ng-click="removeList[$parent.$index*splitPoint + $index]=false" style="cursor: pointer">
+                                <del ng-show="removeList[$parent.$index*splitPoint + $index]"
+                                     ng-click="removeList[$parent.$index*splitPoint + $index]=false"
+                                     style="cursor: pointer">
                                     <p>{{report.date}}, {{report.message}}</p>
                                 </del>
                             </div>
@@ -93,7 +110,8 @@
                     </div>
                 </div>
             </div>
-            <div class="container-fluid" ng-click="activeExercise = 0" style="width: 960px; background-color: white; margin-top: 10px">
+            <div class="container-fluid" ng-click="activeExercise = 0"
+                 style="width: 960px; background-color: white; margin-top: 10px">
                 <div ng-if="exercise.image" class="container-fluid" align="center" style="margin-top: 30px">
                     <img src="{{getImage(exercise.image)}}" style="height: 140px;">
 
@@ -122,7 +140,8 @@
                             <h4>Bilde:</h4>
                         </div>
                         <div class="col-lg-10">
-                            <input id="files" class="form-control" type="file" ng-model="files" style="margin-top:10px;"name="files"
+                            <input id="files" class="form-control" type="file" ng-model="files" style="margin-top:10px;"
+                                   name="files"
                                    base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
                                    accept="image/*">
                         </div>
@@ -132,7 +151,8 @@
                             <h4>Forklaring:</h4>
                         </div>
                         <div class="col-lg-10">
-                            <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.explanation"></textarea>
+                            <textarea class="form-control textarea-edit" rows="2"
+                                      ng-model="exercise.explanation"></textarea>
                         </div>
                     </div>
                 </div>
