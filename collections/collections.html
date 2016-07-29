@@ -1,0 +1,229 @@
+<div class="container-fluid" style="width: 960px; margin-bottom: 10px">
+     <span class="glyphicon glyphicon-chevron-left" style="cursor:pointer;" align="left"
+           ng-click="goTo('/subjects')">Forsiden</span>
+</div>
+
+<div class="container-fluid">
+    <div class="container-fluid div-card"style="width:960px;margin-bottom: 20px;position: relative">
+
+        <h2 align="center">{{subject.code}} - {{nameCopy}}</h2>
+        <hr>
+        <div class="container-fluid" align="left" style="margin-bottom: 20px">
+            <div class="col-xs-6">
+                <label style=" margin-top:5px;">Fagnavn:</label>
+                <input ng-model="subject.name" class="form-control" style="width:400px;">
+            </div>
+            <div class="col-xs-6">
+                <label style=" margin-top:5px;">Beskrivelse:</label>
+                <textarea msd-elastic ng-model="subject.description" rows="1" class="form-control" style="width:400px;resize: none;" ></textarea>
+            </div>
+        </div>
+        <label style="position:absolute;top:25px;right: 70px;">Offentlig:</label>
+        <form style="position:absolute;top:20px;right:10px;">
+            <switch id="enabled" name="enabled" ng-model="subject.public"></switch>
+        </form>
+
+    </div>
+    <div class="container-fluid div-card" style="width: 960px; margin-bottom: 20px" align="center">
+        <h2 align="center">Høydepunkt</h2>
+        <hr>
+        <div class="container-fluid" align="left" style="margin-bottom: 20px">
+            <div class="col-xs-7" style="border-right: thin solid #F1F1F2;">
+                <div class="row" style="margin-bottom: 50px;">
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-heart" style="font-size: 30px">3000</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-star" style="font-size: 30px">3123</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-download" style="font-size: 30px">520</span>
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="glyphicon glyphicon-copyright-mark" style="font-size: 30px">1029</span>
+                    </div>
+                </div>
+                <div class="container-fluid" style="height: 40px"></div>
+            </div>
+            <div class="col-xs-5">
+                <label style="margin-top: 5px">Tilbakemeldinger:</label>
+                <p>Siste tilbakemeldinger:</p>
+                <ul>
+                    <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
+                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report.exerciseId)">
+                            {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
+                        </a>
+                    </li>
+                </ul>
+                <div ng-if="reportedExercises.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 200px;">
+                    <a style="cursor: pointer;" ng-click="openReportModal()">Alle tilbakemeldinger ({{reportedExercises.length}})</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid div-card" style="width:960px;" id="loading-bar-container">
+        <h2 align="center">Tilhørende sett</h2>
+        <a href="#/subjects/{{subject._id}}/collections/new">
+           <button class="btn btn-default" ng-click="setTargetCollection('new')" style="margin-bottom: 10px; margin-top: 10px;width:100%;">+ Nytt sett</button>
+        </a>
+        <table id="collectionsTable" class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50%">
+                        <div class="col-xs-6">
+                            Sett
+                        </div>
+                        <div class="col-xs-5">
+                            <p style="margin-left: -15px">Antall oppgaver</p>
+                        </div>
+                        <div class="col-xs-1">
+
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-model="collections" as-sortable="dragControlListeners">
+            <tr ng-mouseenter="focused[$index] = true"
+                ng-mouseleave="focused[$index] = false" ng-repeat="coll in collections track by $index" ng-model="coll" as-sortable-item>
+                <td as-sortable-item-handle  style="width: 100%" ng-click="setTargetCollection($index)">
+                    <div class="col-xs-6">
+                        <a href="#/subjects/{{subject._id}}/collections/{{targetCollection}}" style="width: 100%;">{{coll.name}}</a>
+                    </div>
+                    <div class="col-xs-5">
+                        {{coll.exercises.length}}
+                    </div>
+                    <div class="col-xs-1">
+                        <span ng-show="focused[$index]" ng-click="deleteCollection(coll,$index)" style="margin-left: 50px; cursor: pointer" class="glyphicon glyphicon-trash"></span>
+                    </div>
+                </td>
+                <td></td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+<div class="container-fluid" style="position: fixed; right: 50px; bottom: 50px;">
+    <label class="btn btn-default" ng-click="saveSubject()">
+        <span class="glyphicon glyphicon-floppy-disk"></span>
+    </label>
+</div>
+
+</div>
+
+<script type="text/ng-template" id="reportModal.html">
+    <div class="modal-header">
+        <h3>Tilbakemeldinger</h3>
+    </div>
+    <div class="modal-body" style="background-color: #F1F1F2">
+        <div ng-show="!exercise" class="container-fluid div-card" style="width: 960px;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Dato siste</th>
+                        <th style="width: 20%">Sett</th>
+                        <th style="width: 31%">Oppgave</th>
+                        <th style="width: 15%">Antall tilbakemeldinger</th>
+                        <th style="width: 4%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false" ng-repeat="exercise in exercises | orderBy:'lastAdded':true track by $index">
+                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{exercise.lastAdded}}</td>
+                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{collections[exercise.collectionId].name}}</td>
+                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{exercise.preview}}</td>
+                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer" align="center">{{exercise.reports.length}}</td>
+                        <td align="center"><span ng-show="focused[$index]" class="glyphicon glyphicon-remove" ng-click="removeAllReports($index)" style="cursor: pointer"></span></td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <div ng-show="exercise" class="container-fluid">
+            <span ng-click="goToOverview()" class="glyphicon glyphicon-chevron-left" align="left" style="cursor: pointer; margin-bottom: 20px">
+                Alle tilbakemeldinger
+            </span>
+            <div class="container-fluid div-card" style="width: 960px; margin-bottom: 20px">
+                <div class="row" style="margin-top: 20px; margin-bottom: 20px">
+                    <div ng-repeat="reportArray in exerciseReportArrays track by $index">
+                        <div class="col-xs-6">
+                            <div ng-repeat="report in reportArray track by $index" class="container-fluid">
+                                <p ng-show="!removeList[$parent.$index*splitPoint + $index]"
+                                   ng-click="removeList[$parent.$index*splitPoint + $index]=true"
+                                   style="cursor: pointer">
+                                    {{report.date}}, {{report.message}}
+                                </p>
+                                <del ng-show="removeList[$parent.$index*splitPoint + $index]"
+                                     ng-click="removeList[$parent.$index*splitPoint + $index]=false"
+                                     style="cursor: pointer">
+                                    <p>{{report.date}}, {{report.message}}</p>
+                                </del>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid div-card" ng-click="activeExercise = 0" style="width: 960px;">
+                <div class="container-fluid" style="margin-top: 30px"></div>
+                <div ng-if="exercise.image" class="container-fluid" align="center">
+                    <img src="{{getImage(exercise.image)}}" style="height: 140px;">
+
+                    <hr>
+                </div>
+                <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"
+                     onload="exerciseNumber = 0"></div>
+                <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"
+                     onload="exerciseNumber = 0"></div>
+                <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"
+                     onload="exerciseNumber = 0"></div>
+
+                <div ng-show="0 == activeExercise" class="container-fluid">
+                    <hr>
+                    <div class="row" style="margin-bottom: 10px">
+                        <div class="col-xs-1">
+                            <a style="cursor: pointer" ng-click="extraProperty='image'">Bilde</a>
+                        </div>
+                        <div class="col-xs-1">
+                            <a style="cursor: pointer" ng-click="extraProperty='explanation'">Forklaring</a>
+                        </div>
+                    </div>
+                    <div ng-if="extraProperty=='image'" class="row">
+                        <div class="col-xs-1">
+                            <h4>Bilde:</h4>
+                        </div>
+                        <div class="col-xs-7">
+                            <input id="image" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
+                                   base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
+                                   accept="image/*">
+                        </div>
+                        <div class="col-xs-4">
+                            <div style="margin-top:10px;">
+                                <a style="cursor:pointer;" ng-click="removeImage()" ng-if="exercise.image"><em>Fjern bilde</em></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="extraProperty=='explanation'" class="row">
+                        <div class="col-xs-2">
+                            <h4>Forklaring:</h4>
+                        </div>
+                        <div class="col-xs-10">
+                            <textarea msd-elastic class="form-control textarea-edit"
+                                      ng-model="exercise.explanation" rows="1"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid" style="margin-top: 30px"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-show="exercise" type="button" class="btn btn-primary" ng-click="saveChanges()">Lagre</button>
+        <button type="button" class="btn btn-default" ng-click="close()">Lukk</button>
+    </div>
+</script>
