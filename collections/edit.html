@@ -9,21 +9,21 @@
         <h2 align="center">{{collection.name}}</h2>
         <hr/>
         <div class="row">
-            <div class="col-lg-1">
+            <div class="col-xs-1">
                 <p style="font-size: 20px;margin-left: 10px">Navn:</p>
             </div>
-            <div class="col-lg-11">
-                <div class="col-lg-5">
+            <div class="col-xs-11">
+                <div class="col-xs-5">
                     <input style="margin-bottom:13px;" ng-model="collection.name"
                            type="text" class="form-control">
                 </div>
-                <div class="col-lg-3">
+                <div class="col-xs-3">
                     <form>
                         <label>Offentlig:</label>
                         <switch id="enabled" name="enabled" ng-model="collection.public"></switch>
                     </form>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-xs-4">
                     <form>
                         <label>Tilfeldig rekkefølge:</label>
                         <switch id="enabled" name="enabled" ng-model="collection.inOrder"></switch>
@@ -36,84 +36,87 @@
         <div as-sortable="dragControlListeners" ng-model="collection.exercises">
             <div class="container-fluid" as-sortable-item ng-repeat="exercise in collection.exercises track by $index"
                  ng-model="exercise" style="margin-bottom: 15px;">
-                <div class="container-fluid div-card" as-sortable-item-handle style="cursor: default; width: 100%" ng-mouseenter="focused[$index] = true"
+                <div class="container-fluid div-card" as-sortable-item-handle style="cursor: default; width: 100%; position: relative" ng-mouseenter="focused[$index] = true"
                      ng-mouseleave="focused[$index] = false">
-                    <div align="center" class="container-fluid" style="height: 30px;">
-                        <span ng-show="focused[$index]" class="glyphicon glyphicon-option-horizontal"
-                              style="font-size: 20px; cursor: all-scroll"></span>
-                    </div>
-                    <div no-drag align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span>
-                    </div>
+                    <div class="container-fluid" style="margin-top: 30px"></div>
+                    <div no-drag class="row" style="margin-bottom: 30px">
+                        <div class="col-xs-11" style="border-right: thin solid #F1F1F2;">
 
-                    <div no-drag ng-click="activateEditExercise($index)" class="container-fluid">
-                        <div ng-if="$index == activeExercise" class="container-fluid" style="margin-bottom: 10px">
-                            <div class="row">
-                                <div class="col-lg-10">
-                                    <select id="typeBox" ng-change="changeDefault(exercise,$index)"
-                                            ng-model="exercise.type"
-                                            align="left" style="margin-top:10px">
-                                        <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
-                                    </select>
-                                </div>
+                            <div no-drag align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span>
                             </div>
-                        </div>
-                        <div ng-if="exercise.image" class="container-fluid" align="center">
-                            <img src="{{getImage(exercise.image)}}" style="height: 140px;">
 
-                            <hr>
-                        </div>
-
-                        <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"
-                             onload="exerciseNumber = $index"></div>
-                        <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"
-                             onload="exerciseNumber = $index"></div>
-                        <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"
-                             onload="exerciseNumber = $index"></div>
-
-                        <div ng-show="$index == activeExercise" class="container-fluid">
-                            <hr>
-                            <div class="row" style="margin-bottom: 10px">
-                                <div class="col-lg-1">
-                                    <a style="cursor: pointer" ng-click="extraProperty='image'">Bilde</a>
-                                </div>
-                                <div class="col-lg-1">
-                                    <a style="cursor: pointer" ng-click="extraProperty='explanation'">Forklaring</a>
-                                </div>
-                            </div>
-                            <div ng-show="extraProperty=='image'" class="row">
-                                <div class="col-lg-1">
-                                    <h4>Bilde:</h4>
-                                </div>
-                                <div class="col-lg-7">
-                                    <input id="{{$index}}" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
-                                           base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
-                                           accept="image/*">
-                                </div>
-                                <div class="col-lg-4">
-                                    <div style="margin-top:10px;">
-                                        <a style="cursor:pointer;" ng-click="removeImage($index)" ng-if="exercise.image"><em>Fjern bilde</em></a>
+                            <div no-drag ng-click="activateEditExercise($index)" class="container-fluid">
+                                <div ng-if="$index == activeExercise" class="container-fluid" style="margin-bottom: 10px">
+                                    <div class="row">
+                                        <div class="col-lg-10">
+                                            <select id="typeBox" ng-change="changeDefault(exercise,$index)"
+                                                    ng-model="exercise.type"
+                                                    align="left" style="margin-top:10px">
+                                                <option ng-repeat="x in types" value="{{x.type}}">{{x.desc}}</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
+                                <div ng-if="exercise.image" class="container-fluid" align="center">
+                                    <img src="{{getImage(exercise.image)}}" style="height: 140px;">
+                                    <hr>
+                                </div>
 
-                            </div>
-                            <div ng-show="extraProperty=='explanation'" class="row">
-                                <div class="col-lg-2">
-                                    <h4>Forklaring:</h4>
+                                <div ng-if="exercise.type == 'pd'" ng-include src="'collections/pd.html'"
+                                     onload="exerciseNumber = $index"></div>
+                                <div ng-if="exercise.type == 'mc'" ng-include src="'collections/mc.html'"
+                                     onload="exerciseNumber = $index"></div>
+                                <div ng-if="exercise.type == 'tf'" ng-include src="'collections/tf.html'"
+                                     onload="exerciseNumber = $index"></div>
+                                <div ng-show="$index == activeExercise" class="container-fluid">
+                                    <hr>
+                                    <div class="row" style="margin-bottom: 10px">
+                                        <div class="col-lg-1">
+                                            <a style="cursor: pointer" ng-click="extraProperty[$index]='image'">Bilde</a>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <a style="cursor: pointer" ng-click="extraProperty[$index]='explanation'">Forklaring</a>
+                                        </div>
+                                    </div>
+                                    <div ng-if="extraProperty[$index]=='image'" class="row">
+                                        <div class="col-lg-1">
+                                            <h4>Bilde:</h4>
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <input id="{{$index}}" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
+                                                   base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
+                                                   accept="image/*">
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div style="margin-top:10px;">
+                                                <a style="cursor:pointer;" ng-click="removeImage($index)" ng-if="exercise.image"><em>Fjern bilde</em></a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div ng-if="extraProperty[$index]=='explanation'" class="row">
+                                        <div class="col-lg-2">
+                                            <h4>Forklaring:</h4>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea msd-elastic class="form-control textarea-edit" rows="1" ng-model="exercise.explanation"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-10">
-                                    <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.explanation"></textarea>
-                                </div>
                             </div>
+                            <div no-drag class="container-fluid" style="position: absolute; bottom: -5px; right: -60px">
+                                    <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
+                                          ng-click="deleteExercise($index)"
+                                          style="cursor:pointer;"></span>
+                            </div>
+
                         </div>
                     </div>
+                    <span class="glyphicon glyphicon-menu-hamburger" style="font-size: 25px; cursor: all-scroll;position: absolute; top: 46%; right: 3%"></span>
 
 
-                <div no-drag class="container-fluid" style="height: 30px;margin-top: 20px; margin-right: -10px;">
-                        <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
-                              ng-click="deleteExercise($index)"
-                              style="cursor:pointer;position: relative; left: 850px "></span>
-                </div>
+
 
 
             </div>
@@ -165,11 +168,6 @@
                     <input class="form-control" ng-model="searchTerm" placeholder="Søk..."
                            ng-keypress="$event.keyCode==13 && searchItems()" style="width: 60%">
 
-                    <!--<input class="form-control" ng-show="searchMode=='collections'" ng-model="searchSubject" placeholder="Sett..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
-                    <!--<input class="form-control" ng-show="searchMode=='collections'" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
-
-                    <!--<input class="form-control" ng-show="searchMode=='subjects'" ng-model="searchSubject" placeholder="Fag..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
-                    <!--<input class="form-control" ng-show="searchMode=='subjects'" ng-model="searchTerm" placeholder="Søk..." ng-keypress="$event.keyCode==13 && searchItems()" style="width: 30%">-->
 
                     <button class="btn btn-primary" ng-click="searchItems()" style="width: 10%">Søk</button>
                 </div>
@@ -191,9 +189,9 @@
             <div class="col-xs-6">
                 <div class="container-fluid" style="height: 500px; overflow-y: scroll; background-color: white;">
                     <div as-sortable="dragControlListeners" ng-model="resultList" id="loading-bar-container">
-                        <div ng-repeat="result in resultList" as-sortable-item>
+                        <div ng-repeat="result in resultList track by $index" ng-model="result" as-sortable-item>
                             <div as-sortable-item-handle>
-                                <label ng-if="result.question" class="btn btn-default"
+                                <label ng-click="addToList($index)" ng-if="result.question" class="btn btn-default"
                                        style="white-space: normal; width: 100%; text-align: left;">
                                     <h4>{{result.question}}</h4>
                                     <p>{{result.correctAnswer}}</p>
@@ -258,7 +256,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="addExercises()">Legg til</button>
+        <button class="btn btn-primary" type="button" ng-click="returnExercises()">Legg til</button>
         <button class="btn btn-default" type="button" ng-click="cancel()">Avbryt</button>
     </div>
 </script>

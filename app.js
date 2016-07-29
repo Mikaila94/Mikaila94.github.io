@@ -7,8 +7,10 @@ angular.module('myApp', [
         'myApp.view1',
         'myApp.view2',
         'myApp.subjects',
+        'myApp.add',
         'myApp.login',
         'myApp.collections',
+        'myApp.edit',
         'ngAnimate',
         'ui.bootstrap',
         'ngTagsInput',
@@ -20,7 +22,8 @@ angular.module('myApp', [
         'as.sortable',
         'uiSwitch',
         'blockUI',
-        'ngAlertify']
+        'ngAlertify',
+        'monospaced.elastic']
     )
     .config(['$locationProvider', '$routeProvider', 'cfpLoadingBarProvider', 'blockUIConfig','apiUrl',function ($locationProvider, $routeProvider, cfpLoadingBarProvider, blockUIConfig,apiUrl) {
         cfpLoadingBarProvider.includeSpinner = false;
@@ -73,12 +76,6 @@ angular.module('myApp', [
 
 
     }])
-    .run((function ($rootScope, $uibModalStack) {
-        $rootScope.$on('$routeChangeSuccess', function () {
-            $uibModalStack.dismissAll()
-        });
-        $uibModalStack.dismissAll()
-    }))
     .controller('mainController', function ($scope, $window, $location, $http, $q, Auth, $cookies,$rootScope,PreviousState) {
         $scope.isCollapsed = true;
 
@@ -178,7 +175,13 @@ angular.module('myApp', [
 
     $rootScope.PreviousState = PreviousState;
 
-}]);
+    }])
+    .run((function ($rootScope, $uibModalStack) {
+        $rootScope.$on('$routeChangeSuccess', function () {
+            $uibModalStack.dismissAll()
+        });
+        $uibModalStack.dismissAll()
+    }));
 
 
 

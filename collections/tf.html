@@ -2,19 +2,19 @@
 
 <div class="container-fluid" ng-if="exerciseNumber == activeExercise">
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-xs-2">
             <h4>Oppgave:</h4>
         </div>
-        <div class="col-lg-10">
-            <textarea class="form-control textarea-edit" rows="2" ng-model="exercise.question">
+        <div class="col-xs-10">
+            <textarea msd-elastic class="form-control textarea-edit" rows="1" ng-model="exercise.question">
             </textarea>
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-xs-2">
             <h4>Svar:</h4>
         </div>
-        <div class="col-lg-10">
+        <div class="col-xs-10">
             <div class="btn-group" style="margin-top:4px">
                 <label class="btn btn-default" ng-model="exercise.correctAnswer" uib-btn-radio="true" style="margin-top: 2px;" >
                     True
@@ -29,18 +29,18 @@
 
 <div class="container-fluid" ng-if="exerciseNumber != activeExercise">
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-xs-2">
             <h4>Oppgave:</h4>
         </div>
-        <div class="col-lg-10">
+        <div class="col-xs-10">
             <h4>{{exercise.question}}</h4>
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-xs-2">
             <h4>Svar:</h4>
         </div>
-        <div class="col-lg-10">
+        <div class="col-xs-10">
             <h4 ng-if="exercise.correctAnswer == true || exercise.correctAnswer == false">{{exercise.correctAnswer}}</h4>
         </div>
     </div>

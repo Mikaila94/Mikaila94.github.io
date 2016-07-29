@@ -1,5 +1,9 @@
-
-
+body {
+    height: 100vh;
+}
+body {
+    min-height: 100vh;
+}
 .app-modal-window .modal-dialog{
     width: 1200px;
 }
