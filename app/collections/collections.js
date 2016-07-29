@@ -1,6 +1,6 @@
 angular.module('myApp.collections', ['ngRoute'])
 
-    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService,alertify,$location) {
+    .controller('collectionsCtrl', function ($scope, $cookies, $http, $uibModal, $routeParams, subjectService, collectionService, requestService, alertify, $location) {
         var initCollections = function (subject) {
             $scope.collections = subject.collections;
         };
@@ -57,19 +57,19 @@ angular.module('myApp.collections', ['ngRoute'])
                 .then(function (response) {
                     refresh();
                     alertify.success("Suksess! Endringene dine ble lagret.");
-                },function(response){
+                }, function (response) {
 
                     $scope.errorMsg = response.errors[0].dataPath.split('.');
-                    if($scope.errorMsg.length == 3){
-                        if($scope.errorMsg[2].indexOf('name') > -1) {
+                    if ($scope.errorMsg.length == 3) {
+                        if ($scope.errorMsg[2].indexOf('name') > -1) {
                             alertify.error("Fagnavn mangler! Fyll ut og prøv igjen...");
                         }
-                        else{
+                        else {
                             alertify.error("Oops, noe gikk galt! Prøv igjen...");
 
                         }
                     }
-                    else{
+                    else {
                         alertify.error("Oops, noe gikk galt! Prøv igjen...")
 
                     }
@@ -108,7 +108,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
             modalInstance.result.then(function (changesMade) {
                 console.log(subjectService.getSubject());
-                if(changesMade) {
+                if (changesMade) {
                     refresh();
                 }
             }, function () {
@@ -123,7 +123,7 @@ angular.module('myApp.collections', ['ngRoute'])
             containment: '#collectionsTable'
         }
 
-        $scope.goTo = function(path){
+        $scope.goTo = function (path) {
             $location.path(path);
         }
 
@@ -134,11 +134,11 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.exercises = reportedExercises;
         $scope.removeList = {};
         var previewMaxLength = 40;
-        for(var i=0; i<$scope.exercises.length; i++) {
-            for(var j=0; j<$scope.collections[$scope.exercises[i].collectionId].exercises.length; j++) {
+        for (var i = 0; i < $scope.exercises.length; i++) {
+            for (var j = 0; j < $scope.collections[$scope.exercises[i].collectionId].exercises.length; j++) {
                 var checkExercise = $scope.collections[$scope.exercises[i].collectionId].exercises[j];
-                if($scope.exercises[i].exerciseId == checkExercise._id) {
-                    $scope.exercises[i].preview = checkExercise.question.length > previewMaxLength ? checkExercise.question.substr(0, previewMaxLength) + "...": checkExercise.question;
+                if ($scope.exercises[i].exerciseId == checkExercise._id) {
+                    $scope.exercises[i].preview = checkExercise.question.length > previewMaxLength ? checkExercise.question.substr(0, previewMaxLength) + "..." : checkExercise.question;
                     break;
                 }
             }
@@ -149,9 +149,10 @@ angular.module('myApp.collections', ['ngRoute'])
         $scope.onChosenExercise = function (collectionId, exerciseId) {
             $scope.collection = $scope.collections[collectionId];
             angular.forEach($scope.exercises, function (exercise) {
-                if(exercise.exerciseId == exerciseId) {
+                if (exercise.exerciseId == exerciseId) {
                     $scope.exerciseInfo = exercise
-                };
+                }
+                ;
             });
 
             angular.forEach($scope.collection.exercises, function (exercise) {
@@ -179,7 +180,8 @@ angular.module('myApp.collections', ['ngRoute'])
 
         if (collectionId && exerciseId) {
             $scope.onChosenExercise(collectionId, exerciseId)
-        };
+        }
+        ;
         $scope.addAlternative = function (exercise) {
             if (!exercise.alternatives) {
                 exercise.alternatives = [];
@@ -235,8 +237,8 @@ angular.module('myApp.collections', ['ngRoute'])
         };
         $scope.saveChanges = function () {
             console.log(subjectService.getSubject());
-            var imageUpload =[];
-            if($scope.exercise.image && !$scope.exercise.image.url) {
+            var imageUpload = [];
+            if ($scope.exercise.image && !$scope.exercise.image.url) {
                 var imageData = {
                     filetype: $scope.exercise.image[0].filetype,
                     base64: $scope.exercise.image[0].base64,
@@ -256,7 +258,7 @@ angular.module('myApp.collections', ['ngRoute'])
                     };
                     $scope.changesMade = true;
                     angular.forEach($scope.removeList, function (value, key) {
-                        if(!value) {
+                        if (!value) {
                             data.reports.push($scope.exerciseInfo.reports[key])
                         }
                     });
@@ -282,7 +284,7 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
     })
-    .controller('editCtrl', function ($scope, $cookies, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI,alertify) {
+    .controller('editCtrl', function ($scope, $cookies, $window, $document, $http, $routeParams, $location, $q, $uibModal, $rootScope, collectionService, subjectService, requestService, apiUrl, blockUI, alertify) {
         var ajv = new Ajv({removeAdditional: true});
         var validateExercise = function (schema, object) {
             return ajv.validate(schema, object);
@@ -295,12 +297,13 @@ angular.module('myApp.collections', ['ngRoute'])
             {desc: "True/False", type: "tf"}];
         $scope.defaultType = "mc";
         $scope.move = {};
-
         $scope.files = [];
-
         $scope.clickedSave = false;
+        window.localStorage.setItem('refreshed',false);
+
 
         if (!subjectService.getSubject()) {
+            window.localStorage.setItem('refreshed',true);
             $location.path("/subjects/" + $routeParams.subjectId)
         }
 
@@ -312,9 +315,11 @@ angular.module('myApp.collections', ['ngRoute'])
                     public: true
                 }
             } else {
+                window.localStorage.setItem('refreshed',true);
                 $location.path("/subjects/" + $routeParams.subjectId)
             }
         }
+
         $scope.exercises = $scope.collection.exercises;
 
         if ($scope.exercises.length) {
@@ -323,9 +328,8 @@ angular.module('myApp.collections', ['ngRoute'])
         }
 
 
-        //handles refresh
         window.onbeforeunload = function (evt) {
-            var message = 'Er du sikker på at du vil forlate?';
+            var message = 'Are you sure you want to leave?';
             if (typeof evt == 'undefined') {
                 evt = window.event;
             }
@@ -335,16 +339,28 @@ angular.module('myApp.collections', ['ngRoute'])
             return message;
         };
 
+        window.onunload = function(){
+            console.log("ONUNLOAD")
+            window.localStorage.setItem('refreshed',true);
+        };
+
         $scope.$on("$routeChangeStart", function (event, next, current) {
             if (!$scope.clickedSave) {
                 if (!(next.$$route.originalPath.indexOf('/login') > -1)) {
-                    if (!confirm("Alle endringer vil bli forkastet. Er du sikker på at du vil forlate denne siden? ")) {
-                        event.preventDefault();
+                    console.log("ROUTECHANGESTART")
+                    console.log(window.localStorage.getItem('refreshed'))
+                    if(window.localStorage.getItem('refreshed') == 'false') {
+                        if (!confirm("Alle endringer vil bli forkastet. Er du sikker på at du vil forlate denne siden? ")) {
+                            event.preventDefault();
+                        }
                     }
-                }
 
+                }
             }
-        });
+
+
+
+    });
 
         $scope.onChangeHandler = function (exercise) {
             return function (e, fileObjects) {
@@ -354,11 +370,9 @@ angular.module('myApp.collections', ['ngRoute'])
             }
         };
 
-
-
-        $scope.backToSubjectPage = function(){
+        $scope.backToSubjectPage = function () {
             $location.path('/subjects/' + subjectService.getSubject()._id);
-        }
+        };
 
 
         $scope.addAlternative = function (exercise) {
@@ -409,13 +423,13 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.saveCollection = function () {
             $scope.saveClicked = true;
-            $scope.clickedSave = true;
 
             var sendExercises = function (exercise) {
                 exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];
                 if (exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
                     exercise.collaborators.push($cookies.getObject('username'))
-                };
+                }
+                ;
 
                 if (exercise.type == "mc") {
                     if (!exercise.alternatives) {
@@ -440,7 +454,8 @@ angular.module('myApp.collections', ['ngRoute'])
                     validateExercise(pdSchema, exercise)
                 } else if (exercise.type == "tf") {
                     validateExercise(tfSchema, exercise)
-                };
+                }
+                ;
 
             };
             var imageUploads = [];
@@ -475,6 +490,7 @@ angular.module('myApp.collections', ['ngRoute'])
                 };
                 requestService.httpPut(subjectService.getSubject()._id, data)
                     .then(function () {
+                        $scope.clickedSave = true;
                         $location.path('/subjects/' + subjectService.getSubject()._id);
                     }, function (response) {
                         $scope.saveClicked = false;
