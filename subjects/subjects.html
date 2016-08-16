@@ -1,0 +1,32 @@
+
+<div class="container-fluid" align="center">
+    <a href="#/add" >
+        <button class="btn btn-default" style="width: 960px;height: 50px; margin-bottom: 30px" >
+            + Legg til fag
+        </button>
+    </a>
+</div>
+
+<div class="container-fluid" style="margin-bottom: 5px" align="center">
+    <input ng-model="filterSubjects" class="form-control" placeholder="Finn fag..." style="width: 500px">
+</div>
+<div class="container-fluid" id="loading-bar-container" ng-repeat="item in items | filter: filterSubjects track by $index" align="center">
+    <a ng-if="!deleteMode" href="#/subjects/{{targetSubject}}">
+        <div ng-mouseenter="mouseOver[$index] = true" ng-mouseleave="mouseOver[$index] = false" class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)" style="width: 960px">
+            <p ng-if="item.name != ''">{{ item.name }}</p>
+            <p>{{item.code}}</p>
+            <span ng-show="mouseOver[$index]" class="glyphicon glyphicon-trash" style="font-size: 15px; position: relative; top: -30px;left: 450px" ng-click="deleteSubject(item, $event)"></span>
+        </div>
+    </a>
+    <div ng-if="deleteMode" class="container-fluid" style="width: 960px">
+        <div class="col-lg-11">
+            <label class="btn btn-default btn-subjects" ng-click="deleteElements[item._id] = !deleteElements[item._id]" style="width: 100%">
+                <p ng-if="item.name != ''">{{ item.name }}</p>
+                <p>{{item.code}}</p>
+            </label>
+        </div>
+        <div class="col-lg-1">
+            <checkbox large ng-model="deleteElements[item._id]" style="margin-top: 35px">
+        </div>
+    </div>
+</div>

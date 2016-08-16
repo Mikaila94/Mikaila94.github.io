@@ -1,0 +1,80 @@
+<div class="container-fluid" ng-if="exerciseNumber == activeExercise">
+    <div class="row" style="margin-bottom: 20px">
+        <div class="col-xs-2">
+            <h4>Oppgave:</h4>
+        </div>
+        <div class="col-xs-10">
+            <textarea msd-elastic class="form-control textarea-edit" rows="1" ng-model="exercise.question">
+            </textarea>
+
+        </div>
+
+    </div>
+    <div class="row" style="margin-bottom: 5px">
+        <div class="col-xs-12">
+            <h4>Svar:</h4>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px">
+        <div class="col-xs-2">
+            <p>Riktig:</p>
+        </div>
+        <div class="col-xs-10">
+            <textarea msd-elastic class="form-control" style="resize: none;" rows="1" ng-model="exercise.correctAnswer">
+            </textarea>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            <p>Galt:</p>
+        </div>
+        <div class="col-xs-10">
+            <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
+                <div class="row">
+                    <div class="col-xs-11">
+                        <textarea msd-elastic class="form-control" style="resize: none;" rows="1" ng-model="exercise.alternatives[$index]"></textarea>
+                    </div>
+                    <div class="col-xs-1">
+                        <span ng-click="deleteAlternative(exercise,$index)" class="glyphicon glyphicon-remove" style="margin-top: 15px;font-size: 20px;height: 50px;cursor: pointer;"></span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100%;margin-top: 10px;">
+                <a style="cursor: pointer" ng-click="addAlternative(exercise)">+ Legg til galt alternativ</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container-fluid" ng-if="exerciseNumber != activeExercise">
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-xs-12">
+            <h4>{{exercise.question}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-1">
+            <span class="glyphicon glyphicon-ok" style="font-size: 15px;">
+            </span>
+        </div>
+        <div class="col-xs-11">
+            <h5 style="margin-top: 0; font-size: 15px">{{exercise.correctAnswer}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div ng-repeat="alternative in exercise.alternatives track by $index" style="margin-bottom:7px;">
+            <div class="col-xs-1">
+                <span class="glyphicon glyphicon-remove" style="font-size: 15px;">
+                </span>
+            </div>
+            <div class="col-xs-11">
+                <h5 style="margin-top: 0; font-size: 15px">{{alternative}}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
