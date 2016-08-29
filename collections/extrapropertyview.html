@@ -1,0 +1,57 @@
+<div ng-show="exerciseNumber == activeExercise" class="container-fluid">
+    <div class="container-fluid">
+        <div class="row" style="margin-top: 30px;">
+            <a ng-show="!extraProperty[exerciseNumber]" style="cursor: pointer" ng-click="extraProperty[exerciseNumber] = true">Vis ekstrafunksjoner</a>
+            <a ng-show="extraProperty[exerciseNumber]" style="cursor: pointer" ng-click="extraProperty[exerciseNumber] = false">Skjul ekstrafunksjoner</a>
+        </div>
+    </div>
+    <div ng-if="extraProperty[exerciseNumber]" class="row" style="margin-top: -10px">
+        <div class="container-fluid">
+            <hr>
+        </div>
+        <div class="col-xs-8" style="margin-top: -5px; border-right: thin solid #F1F1F2;">
+            <h4>Forklaring</h4>
+            <textarea msd-elastic class="form-control textarea-edit" rows="1" ng-model="exercise.explanation.text"></textarea>
+        </div>
+        <div class="col-xs-4" style="margin-top: -5px;">
+            <h4 ng-show="exercise.question.image">Bytt bilde</h4>
+            <h4 ng-show="!exercise.question.image">Legg til bilde</h4>
+            <input id="{{exerciseNumber}}" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"
+                   base-sixty-four-input on-after-validate="onChangeHandler(exercise)"
+                   accept="image/*">
+        </div>
+    </div>
+
+    <!--<div class="row" style="margin-bottom: 10px">-->
+    <!--<div class="col-lg-1">-->
+    <!--<a style="cursor: pointer" ng-click="extraProperty[exerciseNumber]='image'">Bilde</a>-->
+    <!--</div>-->
+    <!--<div class="col-lg-1">-->
+    <!--<a style="cursor: pointer" ng-click="extraProperty[exerciseNumber]='explanation'">Forklaring</a>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div ng-if="extraProperty[exerciseNumber]=='image'" class="row">-->
+    <!--<div class="col-lg-1">-->
+    <!--<h4>Bilde:</h4>-->
+    <!--</div>-->
+    <!--<div class="col-lg-7">-->
+    <!--<input id="{{exerciseNumber}}" class="form-control" type="file" ng-model="files" name="files" style="margin-top: 5px;"-->
+    <!--base-sixty-four-input on-after-validate="onChangeHandler(exercise)"-->
+    <!--accept="image/*">-->
+    <!--</div>-->
+    <!--<div class="col-lg-4">-->
+    <!--<div style="margin-top:10px;">-->
+    <!--<a style="cursor:pointer;" ng-click="removeImage(exerciseNumber)" ng-if="exercise.image"><em>Fjern bilde</em></a>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--</div>-->
+    <!--<div ng-if="extraProperty[exerciseNumber]=='explanation'" class="row">-->
+    <!--<div class="col-lg-2">-->
+    <!--<h4>Forklaring:</h4>-->
+    <!--</div>-->
+    <!--<div class="col-lg-10">-->
+    <!--<textarea msd-elastic class="form-control textarea-edit" rows="1" ng-model="exercise.explanation"></textarea>-->
+    <!--</div>-->
+    <!--</div>-->
+</div>
