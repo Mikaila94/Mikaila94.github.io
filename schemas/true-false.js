@@ -6,9 +6,6 @@ var tfSchema = {
     additionalProperties: false,
     required: ['question', 'correct', 'type'],
     properties: {
-        _id: {
-            type: 'string'
-        },
         question: question,
         correct: {
             type: 'object',

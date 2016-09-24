@@ -1,80 +1,67 @@
-<div sticky-scroll id="toolbar" class="container-fluid div-card" style="width: 960px; margin-bottom: 10px">
-    <div class="row" style="margin-top: 5px; margin-bottom: 5px">
-        <div class="col-xs-6">
-         <span class="glyphicon glyphicon-chevron-left" style="cursor:pointer;margin-top: 7px" align="left"
-               ng-click="goTo('/subjects')">Forsiden</span>
-        </div>
-        <div class="col-xs-6" align="right">
-            <label class="btn btn-default" ng-click="saveSubject()">
-                <span class="glyphicon glyphicon-floppy-disk"></span>
-            </label>
-        </div>
-    </div>
-</div>
-<div ng-show="showStickyToolbar" id="stickyToolbar" class="container-fluid div-sticky-toolbar" align="center">
-    <div class="row" style="width: 960px; margin-top: 5px; margin-bottom: 5px">
-        <div class="col-xs-6" align="left">
-         <span class="glyphicon glyphicon-chevron-left" style="cursor:pointer; margin-top: 7px"
-               ng-click="goTo('/subjects')">Forsiden</span>
-        </div>
-        <div class="col-xs-6" align="right">
-            <label class="btn btn-default" ng-click="saveSubject()">
-                <span class="glyphicon glyphicon-floppy-disk"></span>
-            </label>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="container-fluid div-card" ng-mouseenter="showExtendButton = true" ng-mouseleave="showExtendButton = false" style="width:960px;margin-bottom: 20px; position: relative">
-        <div class="container-fluid" style="margin-bottom: 5px; margin-top: 20px">
-            <div class="col-xs-12">
-                <span style="font-size: 25px; padding-right: 2px">{{nameCopy}}</span>
-                <span>({{subject.code}})</span>
+<div class="container-fluid" align="center" style="width: 100%" ng-click="unFocus()">
+    <div class="div-card" ng-mouseenter="showExtendButton = true" ng-mouseleave="showExtendButton = false" style="width:960px;margin-bottom: 20px; position: relative" align="left">
+        <div class="header-collections">
+            <div ng-click="$event.stopPropagation(); setEditTrue('subjectName')" class="container-fluid" style="width: 95%">
+                <h1 ng-if="!editSubjectName && !subject.name.length==0"
+                    style="margin-top: 20px; font-size: 40px; width: 70%;"><b>
+                    {{subject.name}}
+                </b></h1>
+                <textarea id="subjectName" ng-if="editSubjectName || subject.name.length==0" msd-elastic ng-model="subject.name"
+                    rows = 1 class="open-text-input" placeholder="Navn på pakken"
+                    style="font-size: 40px; font-weight: bold;width: 70%; margin-top: 7px; margin-left: -7px">
+                </textarea>
             </div>
-            <div class="col-xs-12">
-                {{subject.description}}
+            <div class="container-fluid" style="width: 95%">
+                <p style="margin-bottom: 20px; font-size: 15px">({{subject.code}})</p>
             </div>
         </div>
-
-        <div ng-show="editSubjectInfo" class="container-fluid" align="left" style="margin-bottom: 20px">
-            <hr>
-            <div class="col-xs-6">
-                <textarea msd-elastic ng-model="subject.name" rows="1" class="open-text-input" style="width:400px;" placeholder="Navn på pakke"></textarea>
+        <div style="margin-top: 20px">
+            <div class="container-fluid" style="width:95%; color: cornflowerblue; font-weight: bold; margin-bottom: 20px">
+                <span style="cursor: pointer;" ng-click="openReportModal()"></b>Oppdateringer({{reportInfo.length}})</span>
+                <span>/</span>
+                <span style="cursor: pointer;" ng-click="openReportModal()">Tilbakemeldinger ({{reportInfo.length}})</span>
             </div>
-            <div class="col-xs-6">
-                <textarea msd-elastic ng-model="subject.description" rows="1" class="open-text-input" style="width:400px;resize: none;" placeholder="Beskrivelse av faget"></textarea>
+            <div ng-click="$event.stopPropagation(); setEditTrue('subjectDescription')" class="container-fluid" style="width:95%;">
+                <p ng-if="!editSubjectDescription && !subject.description.length==0"
+                    style="font-size: 18px">
+                    {{subject.description}}
+                </p>
+                <textarea id="subjectDescription" ng-if="editSubjectDescription || subject.description.length==0"
+                    msd-elastic ng-model="subject.description"
+                    rows="1" class="open-text-input" placeholder="Beskrivelse av pakken"
+                    style="font-size: 18px; margin-top: -7px; margin-left: -7px">
+
+                </textarea>
             </div>
         </div>
-        <div class="container-fluid" align="center" style="height: 30px">
-            <span ng-show="showExtendButton && !editSubjectInfo" ng-click="editSubjectInfo = true" class="glyphicon glyphicon-menu-down"
-                  style="font-size: 20px; cursor: pointer"></span>
-            <span ng-show="showExtendButton && editSubjectInfo" ng-click="editSubjectInfo = false" class="glyphicon glyphicon-menu-up"
-                  style="font-size: 20px; cursor: pointer"></span>
-        </div>
+        <div class="container-fluid" style="height: 10px"></div>
 
-
-        <form style="position:absolute;top:10px;right:10px;">
-            <button class="btn btn-default" ng-click="publishSubject()">Publiser</button>
+        <form style="position:absolute;top:20px;right:10px;">
+            <label class="btn btn-collections" ng-click="saveSubject()">Lagre</label>
+            <label class="btn btn-collections" ng-click="publishSubject()">Publiser</label>
         </form>
 
     </div>
 
-    <div class="container-fluid div-card" style="width:960px; margin-bottom: 30px">
-        <div class="container-fluid">
-            <div class="col-xs-12">
-                <h3>Oppgavesett</h3>
-                <p ng-if="collections.length == 0">Her var det tomt, gitt. Kom i gang ved å lage et oppgavesett, eller enda bedre: kopier fra noen andre</p>
-                <button class="btn btn-default" ng-click="setTargetCollection('new')" style="margin-bottom: 10px; margin-top: 10px;width:20%;">
+    <div class="div-card" style="width:960px; margin-bottom: 30px" align="left">
+        <div class="header-collections" style="height: 70px; margin-bottom: 20px">
+            <div class="container-fluid" style="width: 95%; padding-bottom: 15px">
+                <h3><b>Oppgavesett</b></h3>
+            </div>
+            <form style="position: relative; top: -55px; left: 550px">
+                <label class="btn btn-collections" ng-click="setTargetCollection('new')" style="width:20%;">
                     <span class="glyphicon glyphicon-plus"></span>
                     Nytt oppgavesett
-                </button>
-                <button class="btn btn-default" ng-click="setTargetCollection('new')" style="margin-bottom: 10px; margin-top: 10px;width:20%;">
+                </label>
+                <label class="btn btn-collections" ng-click="goTo('subjects/'+subject.id+'/add')" style="width:20%;">
                     <span class="glyphicon glyphicon-arrow-right"></span>
                     Hent oppgavesett
-                </button>
-
-            </div>
+                </label>
+            </form>
+        </div>
+        <div class="container-fluid">
+            <div class="container-fluid">
+                <p ng-if="collections.length == 0">Her var det tomt, gitt. Kom i gang ved å lage et oppgavesett, eller enda bedre: kopier fra noen andre</p>
         </div>
 
         <div id="collectionsArea">
@@ -83,59 +70,23 @@
                      ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false">
                     <div as-sortable-item-handle class="container-fluid">
                         <div class="col-xs-11">
-                            <h4 ng-click="setTargetCollection($index)" style="cursor: pointer">{{collection.name}} ({{collection.exercises.length}} oppgaver)</h4>
+                            <h4 ng-show="!deletedCollections[collection.id]" ng-click="setTargetCollection($index)" style="cursor: pointer">
+                                {{collection.name}} ({{collection.exercises.length}} oppgaver)
+                            </h4>
+                            <h4 ng-show="deletedCollections[collection.id]" ng-click="undoDeleteCollection(collection.id)" style="cursor: pointer">
+                                <del>{{collection.name}} ({{collection.exercises.length}} oppgaver)</del>
+                            </h4>
                         </div>
                         <div class="col-xs-1">
-                            <span ng-show="focused[$index]" ng-click="deleteCollection(collection,$index)" style="margin-top:10px;cursor: pointer" class="glyphicon glyphicon-trash"></span>
+                            <span ng-show="focused[$index] && !deletedCollections[collection.id]" ng-click="deleteCollection(collection,$index)" style="margin-top:10px;cursor: pointer" class="glyphicon glyphicon-trash"></span>
                         </div>
                     </div>
+                    <hr>
                 </div>
             </div>
         </div>
-        <div class="container-fluid" style="height: 30px"></div>
 
 
-    </div>
-
-
-    <div class="container-fluid div-card" style="width: 960px; margin-bottom: 20px" align="center">
-        <h2 align="center">Høydepunkt</h2>
-        <hr>
-        <div class="container-fluid" align="left" style="margin-bottom: 20px">
-            <div class="col-xs-7" style="border-right: thin solid #F1F1F2;">
-                <div class="row" style="margin-bottom: 50px;">
-                    <div class="col-xs-6">
-                        <span class="glyphicon glyphicon-heart" style="font-size: 30px">3000</span>
-                    </div>
-                    <div class="col-xs-6">
-                        <span class="glyphicon glyphicon-star" style="font-size: 30px">3123</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <span class="glyphicon glyphicon-download" style="font-size: 30px">520</span>
-                    </div>
-                    <div class="col-xs-6">
-                        <span class="glyphicon glyphicon-copyright-mark" style="font-size: 30px">1029</span>
-                    </div>
-                </div>
-                <div class="container-fluid" style="height: 40px"></div>
-            </div>
-            <div class="col-xs-5">
-                <label style="margin-top: 5px">Tilbakemeldinger:</label>
-                <p>Siste tilbakemeldinger:</p>
-                <ul>
-                    <li ng-repeat="report in reportedExercises | orderBy: 'lastAdded':true | limitTo: 3">
-                        <a style="cursor: pointer" ng-click="openReportModal(report.collectionId, report.exerciseId)">
-                            {{report.lastAdded}}, {{reportedCollections[report.collectionId].name}}
-                        </a>
-                    </li>
-                </ul>
-                <div ng-if="reportedExercises.length > 0" class="container-fluid" style="width: 100%; margin-top: 20px; margin-left: 200px;">
-                    <a style="cursor: pointer;" ng-click="openReportModal()">Alle tilbakemeldinger ({{reportedExercises.length}})</a>
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
@@ -149,19 +100,17 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 10%">Dato siste</th>
-                        <th style="width: 20%">Sett</th>
-                        <th style="width: 31%">Oppgave</th>
+                        <th style="width: 15%">Dato siste</th>
+                        <th style="width: 46%">Oppgave</th>
                         <th style="width: 15%">Antall tilbakemeldinger</th>
                         <th style="width: 4%"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false" ng-repeat="exercise in exercises | orderBy:'lastAdded':true track by $index">
-                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{exercise.lastAdded}}</td>
-                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{collections[exercise.collectionId].name}}</td>
-                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer">{{exercise.preview}}</td>
-                        <td ng-click="onChosenExercise(exercise.collectionId, exercise.exerciseId)" style="cursor: pointer" align="center">{{exercise.reports.length}}</td>
+                    <tr ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false" ng-repeat="exercise in reportInfo track by $index">
+                        <td ng-click="onChosenExercise($index)" style="cursor: pointer">{{exercise.lastAdded | date:'dd.MM.yyyy hh.mm'}}</td>
+                        <td ng-click="onChosenExercise($index)" style="cursor: pointer">{{exercise.preview}}</td>
+                        <td ng-click="onChosenExercise($index)" style="cursor: pointer" align="center">{{exercise.reports.length}}</td>
                         <td align="center"><span ng-show="focused[$index]" class="glyphicon glyphicon-remove" ng-click="removeAllReports($index)" style="cursor: pointer"></span></td>
                     </tr>
                 </tbody>
@@ -178,14 +127,14 @@
                         <div class="col-xs-6">
                             <div ng-repeat="report in reportArray track by $index" class="container-fluid">
                                 <p ng-show="!removeElements[$parent.$index*splitPoint + $index]"
-                                   ng-click="removeElements[$parent.$index*splitPoint + $index]=true"
+                                   ng-click="removeElements[$parent.$index*splitPoint + $index]= report.id"
                                    style="cursor: pointer">
-                                    {{report.date}}, {{report.message}}
+                                    {{report.created | date:'dd.MM.yyyy hh.mm'}}, {{report.message}}
                                 </p>
                                 <del ng-show="removeElements[$parent.$index*splitPoint + $index]"
-                                     ng-click="removeElements[$parent.$index*splitPoint + $index]=false"
+                                     ng-click="removeElements[$parent.$index*splitPoint + $index]=undefined"
                                      style="cursor: pointer">
-                                    <p>{{report.date}}, {{report.message}}</p>
+                                    <p>{{report.created | date:'dd.MM.yyyy hh.mm'}}, {{report.message}}</p>
                                 </del>
                             </div>
                         </div>
@@ -194,15 +143,15 @@
             </div>
             <div class="container-fluid div-card" ng-click="$event.stopPropagation(); activeExercise = 0" style="width: 960px;">
                 <div class="container-fluid" style="margin-top: 30px"></div>
-                <div onload="exerciseNumber = 0" ng-include="'collections/imageview.html'"></div>
+                <div onload="exerciseNumber = 0" ng-include="'exercises/imageview.html'"></div>
 
-                <div ng-if="exercise.type == 'pd'" ng-include="'collections/pd.html'"
+                <div ng-if="exercise.type == 'pd'" ng-include="'exercises/pd.html'"
                      onload="exerciseNumber = 0"></div>
-                <div ng-if="exercise.type == 'mc'" ng-include="'collections/mc.html'"
+                <div ng-if="exercise.type == 'mc'" ng-include="'exercises/mc.html'"
                      onload="exerciseNumber = 0"></div>
-                <div ng-if="exercise.type == 'tf'" ng-include="'collections/tf.html'"
+                <div ng-if="exercise.type == 'tf'" ng-include="'exercises/tf.html'"
                      onload="exerciseNumber = 0"></div>
-                <div onload="exerciseNumber = 0" ng-include="'collections/extrapropertyview.html'"></div>
+                <div onload="exerciseNumber = 0" ng-include="'exercises/extrapropertyview.html'"></div>
                 <div class="container-fluid" style="margin-top: 30px"></div>
             </div>
         </div>

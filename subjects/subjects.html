@@ -1,15 +1,18 @@
 
 <div class="container-fluid" align="center">
-    <button class="btn btn-default" ng-click="openAddSubjectModal()" style="width: 240px;height: 50px;" >
-        + Ny pakke
+    <button class="btn add-subject" ng-click="openAddSubjectModal()" >
+        <p><b>+ Ny pakke</b></p>
     </button>
 </div>
 
 <div class="container-fluid" id="loading-bar-container" ng-repeat="item in subjects track by $index" align="center">
-    <div ng-mouseenter="mouseOver[$index] = true" ng-mouseleave="mouseOver[$index] = false" class="btn btn-default btn-subjects" ng-click="setTargetSubject(item)" style="width: 960px">
-        <p ng-if="item.name != ''">{{ item.name }}</p>
-        <p>{{item.code}}</p>
-        <span ng-show="mouseOver[$index]" class="glyphicon glyphicon-trash" style="font-size: 15px; position: relative; top: -30px;left: 450px" ng-click="deleteSubject($index, $event)"></span>
+    <div ng-mouseenter="mouseOver[$index] = true" ng-mouseleave="mouseOver[$index] = false" class="btn-subjects" ng-click="setTargetSubject(item)" align="left">
+        <div class="container-fluid" style="width: 90%">
+            <h1><b>{{ item.name }}</b></h1>
+            <p style="font-size: 20px">{{item.code}}</p>
+        </div>
+        <span ng-show="mouseOver[$index]" class="glyphicon glyphicon-trash" style="font-size: 15px; position: relative; top: -30px;left: 800px; cursor: pointer"
+              ng-click="$event.stopPropagation(); deleteSubject($index)"></span>
     </div>
 </div>
 

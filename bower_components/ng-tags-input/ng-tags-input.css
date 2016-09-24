@@ -17,22 +17,44 @@ tags-input .host:active {
 }
 
 tags-input .tags {
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
-  padding: 1px;
-  overflow: hidden;
-  word-wrap: break-word;
-  cursor: text;
-  background-color: #fff;
-  border: 1px solid darkgray;
-  box-shadow: 1px 1px 1px 0 lightgray inset;
-  height: 100%;
-}
-tags-input .tags.focused {
+  /*-moz-appearance: textfield;*/
+  /*-webkit-appearance: textfield;*/
+  /*padding: 1px;*/
+  /*overflow: hidden;*/
+  /*word-wrap: break-word;*/
+  /*cursor: text;*/
+  /*background-color: #fff;*/
+  /*border: 1px solid darkgray;*/
+  /*box-shadow: 1px 1px 1px 0 lightgray inset;*/
+  /*height: 100%;*/
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   outline: none;
-  -webkit-box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);
-  -moz-box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);
-  box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  background: transparent;
+  margin-bottom: 10px;
+}
+tags-input .tags .focused {
+  /*outline: none;*/
+  /*-webkit-box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);*/
+  /*-moz-box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);*/
+  /*box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);*/
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  outline: none;
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  background: transparent;
+  margin-bottom: 10px;
 }
 tags-input .tags .tag-list {
   margin: 0;
@@ -70,14 +92,24 @@ tags-input .tags .tag-item .remove-button:active {
   color: #ff0000;
 }
 tags-input .tags .input {
-  border: 0;
+  /*border: 0;*/
+  /*outline: none;*/
+  /*margin: 2px;*/
+  /*padding: 0;*/
+  /*padding-left: 5px;*/
+  /*height: 26px;*/
+  /*font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  /*float: left;*/
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   outline: none;
-  margin: 2px;
-  padding: 0;
-  padding-left: 5px;
-  float: left;
-  height: 26px;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  background: transparent;
+  margin-bottom: 10px;
 }
 tags-input .tags .input.invalid-tag {
   color: #ff0000;

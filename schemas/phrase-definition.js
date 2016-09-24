@@ -7,9 +7,6 @@ var pdSchema = {
     additionalProperties: false,
     required: ['question', 'correct', 'tags', 'type'],
     properties: {
-        _id: {
-            type: 'string'
-        },
         question: question,
         correct: answer,
         type: {
@@ -27,8 +24,7 @@ var pdSchema = {
             type: 'array',
             minItems: 1,
             items: {
-                minLength: 1,
-                type: 'string'
+                type: 'object'
             }
         }
     }

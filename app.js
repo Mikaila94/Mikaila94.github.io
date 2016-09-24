@@ -4,12 +4,12 @@
 
 angular.module('myApp', [
         'ngRoute',
-        'myApp.view1',
-        'myApp.view2',
         'myApp.subjects',
         'myApp.add',
         'myApp.login',
         'myApp.collections',
+        'myApp.addcollections',
+        'myApp.addexercises',
         'myApp.edit',
         'ngAnimate',
         'ui.bootstrap',
@@ -47,17 +47,17 @@ angular.module('myApp', [
                 controller: "collectionsCtrl"
             })
             .when("/subjects/:subjectId/collections/:collectionId", {
-                templateUrl: "collections/edit.html",
+                templateUrl: "exercises/edit.html",
                 controller: "editCtrl",
                 param: 'editParam'
             })
-            .when("/view1", {
-                templateUrl: "view1/view1.html",
-                controller: "View1Ctrl"
+            .when("/subjects/:subjectId/add", {
+                templateUrl: "search/add.html",
+                controller: "addCollectionsCtrl"
             })
-            .when("/view2", {
-                templateUrl: "view2/view2.html",
-                controller: "View2Ctrl"
+            .when("/subjects/:subjectId/collections/:collectionId/add", {
+                templateUrl: "search/add.html",
+                controller: "addExercisesCtrl"
             })
             .otherwise({redirectTo: '/login'});
 
@@ -95,8 +95,8 @@ angular.module('myApp', [
         };
     })
 
-    .constant("apiUrl", "https://acepi-test.herokuapp.com")
-    //.constant("apiUrl", "http://192.168.31.54:3000")
+    .constant("apiUrl", "https://acepi-test2.herokuapp.com")
+    //.constant("apiUrl", "http://10.22.2.96:3000")
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
     .factory('focus', function ($timeout, $window) {
         return function (id) {

@@ -1,85 +1,95 @@
 angular.module('myApp.collections', ['ngRoute'])
 
-    .controller('collectionsCtrl', function ($scope, $window, $cookies, $http, $uibModal, $routeParams, $location, subjectService, collectionService, requestService,alertify) {
+    .controller('collectionsCtrl', function ($scope, $window, $cookies, $http, $uibModal, $q, $routeParams, $location,
+                                             subjectService, collectionService, requestService,alertify, focus) {
+
+        $scope.subject = subjectService.getSubject();
+        $scope.deletedCollections = {};
+
         var initCollections = function (subject) {
             $scope.collections = subject.collections;
         };
         var initReports = function (reportInfo) {
-            var reportedCollectionIds = [];
-            $scope.reportedCollections = {};
-            angular.forEach(reportInfo, function (item) {
-                reportedCollectionIds.push(item.collectionId);
-                item.lastAdded = item.reports[item.reports.length - 1].date
-            });
-            $scope.reportedExercises = reportInfo;
-            angular.forEach($scope.subject.collections, function (collection) {
-                if (reportedCollectionIds.indexOf(collection._id) != -1) {
-                    $scope.reportedCollections[collection._id] = collection;
-                }
-            });
+            $scope.reportInfo = reportInfo;
         };
-        $scope.subject = subjectService.getSubject();
-
         var refresh = function () {
-            requestService.httpGet("/subjects/mine/" + $routeParams.subjectId + "?editor=true")
+            requestService.httpGet("/subjects/" + $routeParams.subjectId)
                 .then(function (response) {
                     $scope.subject = response;
                     $scope.nameCopy = $scope.subject.name;
+                    $scope.descriptionCopy = $scope.subject.description;
                     subjectService.setSubject($scope.subject);
                     initCollections(response);
                     console.log(response);
-                    requestService.httpGet('/reports/' + $routeParams.subjectId).then(function (response) {
+                    requestService.httpGet('/subjects/' + $routeParams.subjectId + '/reports').then(function (response) {
                         initReports(response)
                     })
                 });
         };
         refresh();
 
-
         $scope.setTargetCollection = function (index) {
-            var targetId = index=='new'? 'new':$scope.subject.collections[index]._id;
+            var targetId = index=='new'? 'new':$scope.subject.collections[index].id;
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
             $scope.subject = subjectService.getSubject();
             var collectionIdList = $scope.subject.collections.map(function (collection) {
-                return collection._id
+                return collection.id
             });
             if(index != "new") {
-                $scope.targetCollection = $scope.subject.collections[collectionIdList.indexOf(targetId)]._id;
+                $scope.targetCollection = $scope.subject.collections[collectionIdList.indexOf(targetId)].id;
                 collectionService.setCollection($scope.subject.collections[collectionIdList.indexOf(targetId)])
             }
-            $location.path("subjects/" + $scope.subject._id + "/collections/" + targetId)
+            $location.path("subjects/" + $scope.subject.id + "/collections/" + targetId)
 
         };
 
         $scope.deleteCollection = function (coll, index) {
-            $scope.subject.collections.splice(index, 1);
+            $scope.deletedCollections[$scope.subject.collections[index].id] = true;
+        };
+
+        $scope.undoDeleteCollection = function (collectionId) {
+            delete $scope.deletedCollections[collectionId];
         };
 
         $scope.saveSubject = function () {
             var data = {
-                subject: $scope.subject
+                    name: $scope.subject.name,
+                    description: $scope.subject.description,
+                    code: $scope.subject.code,
+                    order: orderUpdate ? $scope.collections.map(function (collection) {
+                        if(!$scope.deletedCollections[collection.id]) {
+                            return collection.id
+                        }
+                    }) : undefined
             };
-            console.log(data);
-            requestService.httpPut($scope.subject._id, data)
+            var requests = [];
+            angular.forEach($scope.deletedCollections, function (value, collectionId) {
+                if(value) {
+                    requests.push(requestService.httpDelete('/collections/' + collectionId))
+                }
+            });
+            console.log($scope.collections);
+            requests.push(requestService.httpPut('/subjects/' + $scope.subject.id, data));
+            $q.all(requests)
                 .then(function (response) {
                     refresh();
                     alertify.success("Suksess! Endringene dine ble lagret.");
                 },function(response){
-
-                    $scope.errorMsg = response.errors[0].dataPath.split('.');
-                    if($scope.errorMsg.length == 3){
-                        if($scope.errorMsg[2].indexOf('name') > -1) {
-                            alertify.error("Fagnavn mangler! Fyll ut og prøv igjen...");
-                        }
-                        else{
-                            alertify.error("Oops, noe gikk galt! Prøv igjen...");
-
-                        }
-                    }
-                    else{
-                        alertify.error("Oops, noe gikk galt! Prøv igjen...")
-
-                    }
+                    console.log(response);
+                    // $scope.errorMsg = response.errors[0].dataPath.split('.');
+                    // if($scope.errorMsg.length == 3){
+                    //     if($scope.errorMsg[2].indexOf('name') > -1) {
+                    //         alertify.error("Fagnavn mangler! Fyll ut og prøv igjen...");
+                    //     }
+                    //     else{
+                    //         alertify.error("Oops, noe gikk galt! Prøv igjen...");
+                    //
+                    //     }
+                    // }
+                    // else{
+                    //     alertify.error("Oops, noe gikk galt! Prøv igjen...")
+                    //
+                    // }
 
                 })
         };
@@ -89,11 +99,42 @@ angular.module('myApp.collections', ['ngRoute'])
             console.log(subjectService.getSubject())
         };
 
-        $scope.openReportModal = function (collectionId, exerciseId) {
+
+        var orderUpdate = false;
+        $scope.dragControlListeners = {
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            },
+            allowDuplicates: true,
+            containment: "#collectionsArea",
+            orderChanged: function (event) {
+                orderUpdate = true;
+            }
+        };
+
+        $scope.goTo = function(path){
+            $location.path(path);
+        };
+
+        $scope.unFocus = function () {
+            $scope.editSubjectName = false;
+            $scope.editSubjectDescription = false;
+        };
+
+        $scope.setEditTrue = function (id) {
+            if(id=='subjectName') {
+                $scope.editSubjectName = true;
+            }
+            else {
+                $scope.editSubjectDescription = true;
+            }
+            focus(id)
+        };
+
+        $scope.openReportModal = function () {
             subjectService.setSubjectToCopy(subjectService.getSubjectCopy());
             $scope.subject = subjectService.getSubject();
             initCollections($scope.subject);
-            initReports($scope.reportedExercises);
             $scope.changesMade = {};
             $scope.changesMade.value = false;
             var modalInstance = $uibModal.open({
@@ -102,17 +143,8 @@ angular.module('myApp.collections', ['ngRoute'])
                 controller: 'reportModalCtrl',
                 windowClass: 'app-modal-large',
                 resolve: {
-                    reportedExercises: function () {
-                        return $scope.reportedExercises
-                    },
-                    reportedCollections: function () {
-                        return $scope.reportedCollections
-                    },
-                    exerciseId: function () {
-                        return exerciseId
-                    },
-                    collectionId: function () {
-                        return collectionId
+                    reportInfo: function () {
+                        return $scope.reportInfo
                     },
                     changesMade: function () {
                         return $scope.changesMade
@@ -131,125 +163,99 @@ angular.module('myApp.collections', ['ngRoute'])
                 }
             });
         };
-        console.log(document.getElementById('collectionsArea').offsetTop)
-        $scope.dragControlListeners = {
-            accept: function (sourceItemHandleScope, destSortableScope) {
-                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
-            },
-            allowDuplicates: true,
-            containment: "#collectionsArea"
-        };
-
-        $scope.goTo = function(path){
-            $location.path(path);
-        };
-
 
     })
-    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, $q, reportedExercises, reportedCollections, exerciseId, collectionId, changesMade, subjectService, requestService, apiUrl) {
+    .controller('reportModalCtrl', function ($scope, $http, $uibModalInstance, $routeParams,
+                                             $q, reportInfo, changesMade, subjectService, requestService, apiUrl) {
         $scope.changesMade = changesMade;
-        $scope.collections = reportedCollections;
-        $scope.exercises = reportedExercises;
+        $scope.reportInfo = reportInfo;
         $scope.extraProperty = {};
-        var exerciseIdList = [];
-        var previewMaxLength = 100;
-        var exerciseCopyInfo = {};
-        for(var i=0; i<$scope.exercises.length; i++) {
-            for(var j=0; j<$scope.collections[$scope.exercises[i].collectionId].exercises.length; j++) {
-                var checkExercise = $scope.collections[$scope.exercises[i].collectionId].exercises[j];
-                if($scope.exercises[i].exerciseId == checkExercise._id) {
-                    exerciseIdList.push(checkExercise._id);
-                    $scope.exercises[i].preview = checkExercise.question.text.length > previewMaxLength ? checkExercise.question.text.substr(0, previewMaxLength) + "...": checkExercise.question.text;
-                    break;
+
+        var previewMaxLength = 200;
+        var initReportInfo = function (reportInfo) {
+            angular.forEach(reportInfo, function (item) {
+                item.lastAdded = item.reports[0].created;
+                item.preview = item.exercise.content.question.text.length > previewMaxLength ?
+                    item.exercise.content.question.text.substr(0, previewMaxLength): item.exercise.content.question.text;
+            });
+            $scope.reportInfo.sort(function (a, b) {
+                return a.lastAdded < b.lastAdded ? -1:1;
+            });
+        };
+        initReportInfo($scope.reportInfo);
+        var filterAlternativeArray = function (array) {
+            var alternativeRemoveList = [];
+            for(var i=0; i < array.length; i++) {
+                if(!array[i].answer.length > 0) {
+                    alternativeRemoveList.push(i)
                 }
             }
-        }
-        console.log($scope.exercises);
+            var removedCount = 0;
+            angular.forEach(alternativeRemoveList, function (index) {
+                array.splice(index-removedCount, 1);
+                removedCount += 1;
+            });
+            if(array.length == 0) {
+                array.push({answers:''})
+            };
+        };
 
-
-        $scope.onChosenExercise = function (collectionId, exerciseId) {
+        $scope.onChosenExercise = function (index) {
             console.log($scope.activeExercise);
-            $scope.collection = $scope.collections[collectionId];
             $scope.removeElements = {};
-            angular.forEach($scope.exercises, function (exercise, key) {
-                if(exercise.exerciseId == exerciseId) {
-                    exercise.index = key;
-                    $scope.exerciseInfo = exercise;
-                };
-            });
+            $scope.exerciseInfo = $scope.reportInfo[index];
+            $scope.exerciseInfo.index = index;
+            $scope.exercise = angular.copy($scope.reportInfo[index].exercise);
 
-            angular.forEach($scope.collection.exercises, function (exercise, key) {
-                if (exercise._id == $scope.exerciseInfo.exerciseId) {
-                    $scope.exercise = exercise;
-                    exerciseCopyInfo.exercise = angular.copy(exercise);
-                    exerciseCopyInfo.index = key;
-                    console.log(exerciseCopyInfo)
-                }
-            });
             $scope.exerciseReportArrays = [[], []];
             $scope.splitPoint = Math.ceil($scope.exerciseInfo.reports.length / 2);
 
             for (var i = 0; i < $scope.splitPoint; i++) {
                 $scope.exerciseReportArrays[0].push($scope.exerciseInfo.reports[i]);
-                $scope.removeElements[i] = false
             }
-            ;
 
             for (var j = $scope.splitPoint; j < $scope.exerciseInfo.reports.length; j++) {
                 $scope.exerciseReportArrays[1].push($scope.exerciseInfo.reports[j]);
-                $scope.removeElements[j] = false;
             }
-            ;
-            console.log($scope.removeElements)
 
         };
 
-        if (collectionId && exerciseId) {
-            $scope.onChosenExercise(collectionId, exerciseId)
-        };
         $scope.closeActiveExercise = function () {
             $scope.extraProperty = {};
-            if($scope.activeExercise != undefined && $scope.exercise.wrongs) {
-                var alternativeRemoveList = [];
-                angular.forEach($scope.exercise.wrongs, function (alternative, index) {
-                    if(!alternative.answer.length > 0) {
-                        alternativeRemoveList.push(index)
-                    }
-                });
-                var removedCount = 0;
-                angular.forEach(alternativeRemoveList, function (index) {
-                    $scope.exercise.wrongs.splice(index-removedCount, 1);
-                    removedCount += 1;
-                });
+            if($scope.activeExercise != undefined && $scope.exercise.content.wrongs) {
+                filterAlternativeArray($scope.exercise.content.wrongs)
+            }
+            if($scope.activeExercise != undefined && $scope.exercise.content.corrects) {
+                filterAlternativeArray($scope.exercise.content.corrects)
             }
             $scope.activeExercise = undefined;
         };
+
         $scope.addAlternative = function (exercise) {
-            if (!exercise.wrongs) {
-                exercise.wrongs = [];
-            }
-            exercise.wrongs.push({answer: ""})
+            exercise.content.wrongs.push({answer: ""})
         };
 
-        $scope.deleteAlternative = function (exercise, index) {
-            if (index > -1) {
-                exercise.wrongs.splice(index, 1);
-            }
-        };
-
-        $scope.getExerciseTags = function (exercise) {
-            if (!exercise.tags || exercise.tags.length == 0) {
-                return
-            }
-            if (typeof exercise.tags[0] == "string") {
-                return exercise.tags
+        $scope.deleteAlternative = function (exercise, index, corrects) {
+            if(corrects) {
+                if (index > -1) {
+                    exercise.content.corrects.splice(index, 1);
+                }
             } else {
-                return exercise.tags.map(function (tag) {
-                    return tag.text
-                })
+                if (index > -1) {
+                    exercise.content.wrongs.splice(index, 1);
+                }
             }
         };
 
+        $scope.makeWrong = function (exercise, index, alternative) {
+            exercise.content.wrongs.unshift(alternative);
+            $scope.deleteAlternative(exercise, index, true)
+        };
+
+        $scope.makeCorrect = function (exercise, index, alternative) {
+            exercise.content.corrects.push(alternative);
+            $scope.deleteAlternative(exercise, index, false)
+        };
 
         $scope.getImage = function (image) {
             if (!image.url) {
@@ -265,88 +271,68 @@ angular.module('myApp.collections', ['ngRoute'])
                 return newUrl;
             }
         };
+
         $scope.removeImage = function () {
-            delete $scope.exercise.question.image;
+            delete $scope.exercise.content.question.image;
             if(document.getElementById('0')) {
                 document.getElementById('0').value = ''
             }
         };
+
         $scope.onChangeHandler = function (exercise) {
             return function (e, fileObjects) {
                 if (fileObjects) {
-                    exercise.question.image = fileObjects;
+                    exercise.content.question.image = fileObjects;
                 }
             }
         };
-        $scope.saveChanges = function () {
 
+        $scope.saveChanges = function () {
+            console.log($scope.exercise);
             var imageUpload =[];
-            if($scope.exercise.question.image && !$scope.exercise.question.image.url) {
+            if($scope.exercise.content.question.image && !$scope.exercise.content.question.image.url) {
                 var imageData = {
-                    filetype: $scope.exercise.question.image[0].filetype,
-                    base64: $scope.exercise.question.image[0].base64,
-                    subjectId: subjectService.getSubject()._id
+                    filetype: $scope.exercise.content.question.image[0].filetype,
+                    base64: $scope.exercise.content.question.image[0].base64,
+                    subjectId: subjectService.getSubject().id
                 };
                 imageUpload.push(requestService.putImage(imageData, function (response) {
-                    $scope.exercise.question.image = {url: response.secure_url}
+                    $scope.exercise.content.question.image = {url: response.secure_url}
                 }))
             }
-            var data = {
-                subject: subjectService.getSubject()
-            };
-            console.log(subjectService.getSubject().collections[0].exercises[0].tags)
             $q.all(imageUpload).then(function () {
                 if ($scope.exercise.type == "mc") {
-                    var alternativeRemoveList = [];
-                    angular.forEach($scope.exercise.wrongs, function (alternative, index) {
-                        if(!alternative.answer.length > 0) {
-                            alternativeRemoveList.push(index)
-                        }
-                    });
-                    var removedCount = 0;
-                    angular.forEach(alternativeRemoveList, function (index) {
-                        $scope.exercise.wrongs.splice(index-removedCount, 1);
-                        removedCount += 1;
-                    });
-                } else if ($scope.exercise.type == "pd") {
-                    if ($scope.exercise.tags.length > 0 && typeof $scope.exercise.tags[0] == "object") {
-                        $scope.exercise.tags = $scope.exercise.tags.map(function (tag) {
-                            return tag.text
-                        })
-                    };
-                };
-                console.log(subjectService.getSubject().collections[0].exercises[0].tags)
-                requestService.httpPut(subjectService.getSubject()._id, data).then(function () {
-                    var data = {
-                        reports: []
-                    };
-                    $scope.changesMade.value = true;
-                    angular.forEach($scope.removeElements, function (value, key) {
-                        if(!value) {
-                            data.reports.push($scope.exerciseInfo.reports[key])
-                        }
-                    });
-                    $http({
-                        url: apiUrl + '/reports/' + $scope.exercise._id,
-                        method: 'PUT',
-                        data: data
-                    }).success(function () {
-                        $scope.exerciseInfo.reports = data.reports;
-                        console.log(data);
-                        if(data.reports.length == 0) {
-                            $scope.exercises.splice($scope.exerciseInfo.index, 1)
-                        }
-                        $scope.exercises[exerciseIdList.indexOf($scope.exercise._id)].preview =
-                            $scope.exercise.question.text.length > previewMaxLength ? $scope.question.text.substr(0, previewMaxLength) + "...": $scope.exercise.question.text;
-                        $scope.extraProperty = {};
-                        $scope.activeExercise = undefined;
-                        $scope.exercise = undefined;
-                    });
+                    if($scope.exercise.content.wrongs) {
+                        filterAlternativeArray($scope.exercise.content.wrongs)
+                    }
+                    if($scope.exercise.content.corrects) {
+                        filterAlternativeArray($scope.exercise.content.corrects)
+                    }
+                }
+                requestService.httpPut('/exercises/' + $scope.exerciseInfo.exercise.id, $scope.exercise).then(function () {
+                    var deleteReportRequests = [];
 
+                    $scope.changesMade.value = true;
+                    angular.forEach($scope.removeElements, function (value) {
+                        if(value) {
+                            deleteReportRequests.push(requestService.httpDelete('/reports/' + value))
+                        }
+                    });
+                    $q.all(deleteReportRequests).then(function (response) {
+                        requestService.httpGet('/subjects/' + $routeParams.subjectId + '/reports')
+                            .then(function (response) {
+                                $scope.reportInfo = response;
+                                initReportInfo($scope.reportInfo);
+                                $scope.extraProperty = {};
+                                $scope.activeExercise = undefined;
+                                $scope.exercise = undefined;
+                            })
+                    });
                 })
 
             });
         };
+
         $scope.removeAllReports = function (index) {
             var confirmRemoveAll = confirm('Sikker på at du vil slette alle tilbakemeldingene?');
             if(confirmRemoveAll){
@@ -361,9 +347,9 @@ angular.module('myApp.collections', ['ngRoute'])
                 });
             }
         };
+
         $scope.goToOverview = function () {
 
-            $scope.collection.exercises[exerciseCopyInfo.index] = exerciseCopyInfo.exercise;
             $scope.extraProperty = {};
             $scope.exercise = undefined;
             $scope.activeExercise = undefined;

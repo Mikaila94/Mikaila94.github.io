@@ -6,34 +6,34 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
     .controller('subjectsCtrl', function ($scope, $http, $cookies, $base64, $uibModal,$location, subjectService, requestService, apiUrl) {
         $scope.deleteMode = false;
         $scope.mouseOver = {};
-        requestService.httpGet("/subjects/mine")
+        requestService.httpGet("/subjects")
             .then(function (response) {
+                console.log(response);
                 subjectService.setUserSubjects(response.map(function (subject) {
-                    return subject._id
+                    return subject.id
                 }));
                 $scope.subjects = response;
         });
 
-
-        $scope.deleteSubject = function (index, event) {
-            event.stopPropagation();
+        $scope.deleteSubject = function (index) {
             $http({
-                url: apiUrl + '/subjects/mine/' + $scope.subjects[index]._id,
+                url: apiUrl + '/subjects/' + $scope.subjects[index].id,
                 method: "DELETE",
                 headers: $cookies.getObject('token')
             }).success(function (response, status) {
                 $scope.subjects.splice(index, 1);
-                requestService.httpGet("/subjects/mine")
+                requestService.httpGet("/subjects")
                     .then(function (response) {
                         subjectService.setUserSubjects(response.map(function (subject) {
-                            return subject._id
+                            return subject.id
                         }));
                         $scope.subjects = response;
                     });
             })
         };
+
         $scope.setTargetSubject = function (target) {
-            $scope.targetSubject = target._id;
+            $scope.targetSubject = target.id;
             subjectService.setSubject(target);
             $location.path('subjects/' + $scope.targetSubject)
 
@@ -57,14 +57,15 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
     .controller('addSubjectModalCtrl', function ($scope, $http, $cookies, $uibModalInstance, $timeout, apiUrl, focus, alertify) {
         focus('newSubjectCode');
         $scope.getSubjectSuggestions = function (val) {
+
             return $http({
-                url: apiUrl + "/subjects?search=" + val,
+                url: apiUrl + "/search/subjects?code=" + val,
                 method:'GET',
                 ignoreLoadingBar:true
             })
                 .then(function (response) {
-                    var resultList = [];
                     var resultInfoAdded = {};
+                    var resultList = [];
                     angular.forEach(response.data, function (subject) {
                         if(!resultInfoAdded[subject.code]) {
                             resultList.push(subject);
@@ -84,6 +85,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                     return resultList
                 })
         };
+
         $scope.selectedSubject = function (item) {
             $scope.newSubjectCode = item.code;
             if(!item.new) {
@@ -100,24 +102,21 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
         $scope.addSubject = function () {
             $http({
                 ignoreLoadingBar:true,
-                url: apiUrl +'/subjects/mine',
+                url: apiUrl +'/subjects',
                 method: "POST",
                 data: {
-                    "subject": {
-                        code: $scope.newSubjectCode,
-                        name: $scope.newSubjectName,
-                        published: 'no',
-                        collections: [],
-                        description: "Laget av ekte tælling " + $cookies.getObject('username')
-                    }
+                    code: $scope.newSubjectCode,
+                    name: $scope.newSubjectName,
+                    published: 'no',
+                    description: "Laget av " + $cookies.getObject('username')
                 },
                 headers: $cookies.getObject('token')
 
             }).success(function (response, status) {
                 $uibModalInstance.close(response.insertedId);
-            }).error(function (status) {
+            }).error(function (response, status) {
                 alertify.error("Oops! Noe gikk galt...");
-                console.log({error: status});
+                console.log(response);
             })
         };
 

@@ -3,16 +3,13 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
 
     .controller('loginCtrl',function ($scope, $http, $cookies, $base64, $location, apiUrl,Auth) {
 
-
         $scope.authenticate =function () {
             $http({
                 url: apiUrl + '/users/authentication',
                 method: "POST",
                 data: {
-                    user: {
-                        username: $scope.username,
-                        password: $scope.password
-                    }
+                    username: $scope.username,
+                    password: $scope.password
                 }
 
             }).success(function (response) {
@@ -34,6 +31,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
     })
     .controller('registerCtrl', function ($scope, $http, $location, apiUrl) {
         $scope.user = {};
+
         $scope.completeRegister = function () {
             if($scope.user.email && $scope.user.username && $scope.user.password) {
                 if($scope.user.password != $scope.controlPassword ) {
@@ -45,12 +43,14 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                         url: apiUrl + "/users",
                         method: "POST",
                         data: {
-                            user: $scope.user
+                            username: $scope.user.username,
+                            password: $scope.user.password,
+                            email: $scope.user.email
                         }
                     }).success(function (response) {
                         $location.path('/login')
                     }).error(function (response, status) {
-                        console.log(response, status)
+                        console.log(response, status);
                         $scope.error = true;
                         $scope.errorMessage = response.errors ? "*Feil format på utfyllingsskjema" : "*Brukernavn finnes fra før"
                     })

@@ -7,9 +7,6 @@ var mcSchema = {
     additionalProperties: false,
     required: ['question', 'corrects', 'wrongs', 'type'],
     properties: {
-        _id: {
-            type: 'string'
-        },
         question: question,
         corrects: {
             type: 'array',

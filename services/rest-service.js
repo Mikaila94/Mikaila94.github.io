@@ -55,11 +55,11 @@ angular.module("myApp.services", ['ngRoute'])
 
     })
     .service("requestService", function ($http, $q, $cookies, apiUrl) {
-        this.httpPut = function (subjectId, data) {
+        this.httpPut = function (path, data) {
             return $q(function (resolve, reject) {
                 $http({
                     ignoreLoadingBar:true,
-                    url: apiUrl + '/subjects/mine/' + subjectId,
+                    url: apiUrl + path,
                     method: 'PUT',
                     headers: $cookies.getObject("token"),
                     data: data
@@ -67,10 +67,10 @@ angular.module("myApp.services", ['ngRoute'])
                     resolve(response);
                     console.log(response);
                 }).error(function (response, status, header, config) {
-                    console.log(response)
-                    console.log(status)
-                    console.log(header)
-                    console.log(config)
+                    console.log(response);
+                    console.log(status);
+                    console.log(header);
+                    console.log(config);
                     reject(response)
 
                 })
@@ -110,6 +110,36 @@ angular.module("myApp.services", ['ngRoute'])
                     console.log(status);
                     console.log(header);
                     console.log(config);
+                    reject(response)
+                })
+            })
+        };
+        this.httpPost = function (path, data, callback) {
+            return $q(function (resolve, reject) {
+                $http({
+                    url: apiUrl + path,
+                    method: 'POST',
+                    headers: $cookies.getObject("token"),
+                    data: data
+                }).success(function (response) {
+                    resolve(response)
+                    if(callback){
+                        callback(response)
+                    }
+                }).error(function (response) {
+                    reject(response)
+                })
+            })
+        };
+        this.httpDelete = function (path) {
+            return $q(function (resolve, reject) {
+                $http({
+                    url: apiUrl + path,
+                    method: 'DELETE',
+                    headers: $cookies.getObject('token')
+                }).success(function (response) {
+                    resolve(response)
+                }).error(function (response) {
                     reject(response)
                 })
             })
