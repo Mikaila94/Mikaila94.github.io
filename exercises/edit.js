@@ -25,13 +25,32 @@ angular.module('myApp.edit', ['ngRoute'])
             return ajv.validate(schema, object);
         };
 
-
-        $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
         if (!subjectService.getSubject()) {
             window.localStorage.setItem('refreshed', true);
             $location.path("/subjects/" + $routeParams.subjectId)
 
         }
+
+        $scope.types = [{desc: "Phrase-Definition", type: "pd"},
+            {desc: "Multiple Choice", type: "mc"},
+            {desc: "True/False", type: "tf"}];
+        $scope.typeDesc = {
+            pd: "Phrase-Definition",
+            mc: "Multiple Choice",
+            tf: "True/False"
+        };
+        $scope.defaultType = "mc";
+        $scope.files = [];
+        $scope.clickedSave = false;
+        $scope.extraProperty = {};
+        $scope.editCollectionName = {};
+        if(subjectService.getSubject()) {
+            $scope.subjectName = subjectService.getSubject().name;
+        }
+        window.localStorage.setItem('refreshed', false);
+
+        $scope.collection = $routeParams.collectionId == 'new' ? undefined : collectionService.getCollection();
+
 
         if (!$scope.collection || collectionService.getCollection().id != $routeParams.collectionId) {
             if ($routeParams.collectionId == 'new') {
@@ -56,21 +75,6 @@ angular.module('myApp.edit', ['ngRoute'])
         }
 
 
-        $scope.types = [{desc: "Phrase-Definition", type: "pd"},
-            {desc: "Multiple Choice", type: "mc"},
-            {desc: "True/False", type: "tf"}];
-        $scope.typeDesc = {
-            pd: "Phrase-Definition",
-            mc: "Multiple Choice",
-            tf: "True/False"
-        };
-        $scope.defaultType = "mc";
-        $scope.files = [];
-        $scope.clickedSave = false;
-        $scope.extraProperty = {};
-        $scope.editCollectionName = {};
-        $scope.subjectName = subjectService.getSubject().name;
-        window.localStorage.setItem('refreshed', false);
 
 
 
@@ -115,10 +119,10 @@ angular.module('myApp.edit', ['ngRoute'])
         };
 
         $scope.addAlternative = function (exercise) {
-            if (!exercise.content.wrongs) {
-                exercise.content.wrongs = [];
+            if (!exercise.content.corrects) {
+                exercise.content.corrects = [];
             }
-            exercise.content.wrongs.push({answer: ""})
+            exercise.content.corrects.push({answer: ""})
         };
 
         $scope.deleteAlternative = function (exercise, index, corrects) {

@@ -242,7 +242,7 @@ angular.module('myApp.collections', ['ngRoute'])
         };
 
         $scope.addAlternative = function (exercise) {
-            exercise.content.wrongs.push({answer: ""})
+            exercise.content.corrects.push({answer: ""})
         };
 
         $scope.deleteAlternative = function (exercise, index, corrects) {
