@@ -99,6 +99,13 @@ angular.module('myApp.collections', ['ngRoute'])
             console.log(subjectService.getSubject())
         };
 
+        $scope.previewSubject = function () {
+            requestService.httpGet('/subjects/'+ $routeParams.subjectId+'/hash')
+                .then(function (response) {
+                    console.log(response);
+                    $window.open('http://acetest.herokuapp.com/#/preview/' + response.subjectId + '/' + response.hash, '_blank');
+                })
+        };
 
         var orderUpdate = false;
         $scope.dragControlListeners = {
@@ -229,6 +236,9 @@ angular.module('myApp.collections', ['ngRoute'])
                 filterAlternativeArray($scope.exercise.content.corrects)
             }
             $scope.activeExercise = undefined;
+        };
+
+        $scope.tabNextExercise = function () {
         };
 
         $scope.addAlternative = function (exercise) {

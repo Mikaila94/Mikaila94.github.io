@@ -47,6 +47,7 @@ angular.module('myApp.edit', ['ngRoute'])
                 $location.path('/subjects/' + $routeParams.subjectId)
             }
         }
+
         $scope.exercises = $scope.collection.exercises;
 
         if ($scope.exercises.length) {
@@ -151,6 +152,10 @@ angular.module('myApp.edit', ['ngRoute'])
                 if(!exercise.content.wrongs) {
                     exercise.content.wrongs = [{answer: ""}];
                 }
+            } else if(exercise.type == 'pd') {
+                if(!exercise.content.tags) {
+                    exercise.content.tags = [{text: $scope.collection.name.replace(/[\s]/g, '-')}]
+                }
             }
         };
 
@@ -167,6 +172,7 @@ angular.module('myApp.edit', ['ngRoute'])
                 exercise.content.wrongs = [{answer: ""}];
             } else if (exercise.type == 'pd') {
                 exercise.content.correct = {};
+                exercise.content.tags = [{text: $scope.collection.name.replace(/[\s]/g, '-')}]
             } else if(exercise.type == 'tf') {
                 exercise.content.correct = {};
             }

@@ -12,7 +12,7 @@ angular.module('myApp.addexercises', ['ngRoute'])
 
         $scope.searchItems = function () {
             $http({
-                url: apiUrl + "/search/exercises?search=" + $scope.searchTerms,
+                url: apiUrl + "/search/exercises?search=" + $scope.searchTerms.replace(/[\s]/g,'_'),
                 method: 'GET'
 
             }).success(function (response) {

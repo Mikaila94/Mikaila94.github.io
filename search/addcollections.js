@@ -8,7 +8,7 @@ angular.module('myApp.addcollections', ['ngRoute'])
 
         $scope.searchItems = function () {
             $http({
-                url: apiUrl + "/search/collections?search=" + $scope.searchTerms,
+                url: apiUrl + "/search/collections?search=" + $scope.searchTerms.replace(/[\s]/g, '_'),
                 method: 'GET'
 
             }).success(function (response) {
