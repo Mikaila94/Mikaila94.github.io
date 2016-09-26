@@ -165,7 +165,7 @@ angular.module('myApp.edit', ['ngRoute'])
             orderUpdate = true;
             var exercise = {
                 "type": $scope.defaultType,
-                "content": {}
+                "content": {question: {}}
             };
             if(exercise.type == 'mc') {
                 exercise.content.corrects = [{answer: ""}];
@@ -187,7 +187,9 @@ angular.module('myApp.edit', ['ngRoute'])
         var deleteList = [];
 
         $scope.deleteExercise = function (index) {
-            deleteList.push($scope.exercises[index].id);
+            if($scope.exercises[index].id){
+                deleteList.push($scope.exercises[index].id);
+            }
             if (index > -1) {
                 $scope.exercises.splice(index, 1);
             }
@@ -297,8 +299,12 @@ angular.module('myApp.edit', ['ngRoute'])
                             $location.path('/subjects/' + $routeParams.subjectId + '/collections/' + $scope.collection.id + '/add')
                         }
                     }, function (response) {
-                        console.log(response)
+                        console.log(response);
+                        $scope.saveClicked = false;
                     })
+                }, function (response) {
+                    console.log(response);
+                    $scope.saveClicked = false;
                 });
                 // requestService.httpPut(subjectService.getSubject()._id, data)
                 //     .then(function () {
@@ -333,6 +339,9 @@ angular.module('myApp.edit', ['ngRoute'])
                 //         alertify.error($scope.errorMsg);
                 //         console.log($scope.collection)
                 //     })
+            }, function (response) {
+                console.log(response);
+                $scope.saveClicked = false;
             });
 
         };
