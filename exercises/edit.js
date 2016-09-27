@@ -119,32 +119,43 @@ angular.module('myApp.edit', ['ngRoute'])
         };
 
         $scope.addAlternative = function (exercise) {
-            if (!exercise.content.corrects) {
-                exercise.content.corrects = [];
-            }
-            exercise.content.corrects.push({answer: ""})
+           $scope.mcAlternatives.push({answer: "", correct: false});
         };
 
-        $scope.deleteAlternative = function (exercise, index, corrects) {
-            if(corrects) {
-                if (index > -1) {
-                    exercise.content.corrects.splice(index, 1);
+        $scope.deleteAlternative = function (index) {
+            $scope.mcAlternatives.splice(index, 1)
+        };
+
+        $scope.initAlternatives = function (exercise) {
+            $scope.mcAlternatives = [];
+            angular.forEach(exercise.content.corrects, function (correct) {
+                var correctCopy = angular.copy(correct);
+                correctCopy.correct = true;
+                $scope.mcAlternatives.push(correctCopy);
+            });
+            angular.forEach(exercise.content.wrongs, function (wrong) {
+                var wrongCopy = angular.copy(wrong);
+                wrongCopy.correct = false;
+                $scope.mcAlternatives.push(wrongCopy);
+            })
+        };
+
+        $scope.focusNextAlternative = function (event, last, index) {
+            if(event.keyCode==13) {
+                event.preventDefault();
+                if(last) {
+                    $scope.addAlternative()
                 }
-            } else {
-                if (index > -1) {
-                    exercise.content.wrongs.splice(index, 1);
-                }
+                focus('alt-'+(index+1));
             }
         };
 
-        $scope.makeWrong = function (exercise, index, alternative) {
-            exercise.content.wrongs.unshift(alternative);
-            $scope.deleteAlternative(exercise, index, true)
+        $scope.makeWrong = function (exercise, index) {
+            $scope.mcAlternatives[index].correct = false;
         };
 
-        $scope.makeCorrect = function (exercise, index, alternative) {
-            exercise.content.corrects.push(alternative);
-            $scope.deleteAlternative(exercise, index, false)
+        $scope.makeCorrect = function (exercise, index) {
+            $scope.mcAlternatives[index].correct = true;
         };
 
         $scope.changeDefault = function (exercise, index) {
@@ -160,6 +171,8 @@ angular.module('myApp.edit', ['ngRoute'])
                 if(!exercise.content.tags) {
                     exercise.content.tags = [{text: $scope.collection.name.replace(/[\s]/g, '-')}]
                 }
+            } else if(exercise.type =='tf') {
+                exercise.content.correct = {answer: true};
             }
         };
 
@@ -178,7 +191,7 @@ angular.module('myApp.edit', ['ngRoute'])
                 exercise.content.correct = {};
                 exercise.content.tags = [{text: $scope.collection.name.replace(/[\s]/g, '-')}]
             } else if(exercise.type == 'tf') {
-                exercise.content.correct = {};
+                exercise.content.correct = {answer: true};
             }
             $scope.collection.exercises.push(exercise);
             $timeout(function () {
@@ -203,6 +216,7 @@ angular.module('myApp.edit', ['ngRoute'])
         $scope.saveCollection = function (nextAction) {
             $scope.saveClicked = true;
             $scope.clickedSave = true;
+            $scope.choseActiveExercise(undefined);
             var validateExercises = function (exercise) {
                 exercise.collaborators = exercise.collaborators || [$cookies.getObject('username')];
                 if (exercise.collaborators.indexOf($cookies.getObject('username')) == -1) {
@@ -211,8 +225,6 @@ angular.module('myApp.edit', ['ngRoute'])
 
                 if (exercise.type == "mc") {
                     //exercise.wrongs = exercise.wrongs.filter(Boolean);
-                    filterAlternativeArray(exercise.content.wrongs);
-                    filterAlternativeArray(exercise.content.corrects);
                     for(var property in exercise.content) {
                         if(!mc[property]) {
                             delete exercise.content[property]
@@ -369,23 +381,31 @@ angular.module('myApp.edit', ['ngRoute'])
                 array.splice(index-removedCount, 1);
                 removedCount += 1;
             });
-            if(array.length == 0) {
-                array.push({answer:''})
-            };
         };
 
         $scope.choseActiveExercise = function (index) {
             if(index != $scope.activeExercise) {
                 $scope.extraProperty = {};
-                if($scope.activeExercise != undefined && $scope.exercises[$scope.activeExercise].content.wrongs) {
-                    filterAlternativeArray($scope.exercises[$scope.activeExercise].content.wrongs)
-                };
-                if($scope.activeExercise != undefined && $scope.exercises[$scope.activeExercise].content.corrects) {
-                    filterAlternativeArray($scope.exercises[$scope.activeExercise].content.corrects)
-                };
+                if($scope.activeExercise != undefined) {
+                    if($scope.exercises[$scope.activeExercise].type == 'mc') {
+                        filterAlternativeArray($scope.mcAlternatives);
+                        $scope.exercises[$scope.activeExercise].content.corrects = [];
+                        $scope.exercises[$scope.activeExercise].content.wrongs = [];
+                        angular.forEach($scope.mcAlternatives, function (alternative) {
+                            if(alternative.correct) {
+                                $scope.exercises[$scope.activeExercise].content.corrects.push({answer: alternative.answer});
+                            } else {
+                                $scope.exercises[$scope.activeExercise].content.wrongs.push({answer: alternative.answer})
+                            }
+                        });
+
+
+                    }
+
+                }
             }
             $scope.activeExercise = index;
-            $scope.editCollectionName.value = false
+            $scope.editCollectionName.value = false;
         };
 
         $scope.tabNextExercise = function () {
