@@ -16,6 +16,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                 $cookies.putObject('token', {
                     'x-access-token': response.token
                 });
+                $cookies.putObject('admin', response.admin);
                 $cookies.putObject('username', $scope.username);
                 $cookies.putObject('password', $scope.password);
                 Auth.setToken($cookies.getObject('token'));
@@ -52,7 +53,7 @@ angular.module('myApp.login', ['ngRoute', 'base64'])
                     }).error(function (response, status) {
                         console.log(response, status);
                         $scope.error = true;
-                        $scope.errorMessage = response.errors ? "*Feil format på utfyllingsskjema" : "*Brukernavn finnes fra før"
+                        $scope.errorMessage = response.errors ? "*Feil format på utfyllingsskjema" : "*Brukernavn eller e-mail finnes fra før"
                     })
                 }
 

@@ -38,9 +38,14 @@
 
         <form style="position:absolute;top:20px;right:10px;">
             <label class="btn btn-collections" ng-click="saveSubject()">Lagre</label>
-            <label class="btn btn-collections" ng-click="publishSubject()">Publiser</label>
-            <div>
-                <label class="btn btn-collections" ng-click="previewSubject()">Preview</label>
+            <label class="btn btn-collections" ng-click="previewSubject()">Preview</label>
+            <div ng-if="admin">
+                <label ng-if="subject.published!='yes'" class="btn btn-collections" ng-click="publishSubject('yes')">Publiser</label>
+                <label ng-if="subject.published!='no'" class="btn btn-collections" ng-click="publishSubject('no')">Avpubliser</label>
+            </div>
+            <div ng-if="!admin">
+                <label ng-if="subject.published=='no'" class="btn btn-collections" ng-click="publishSubject('pending')">Publiser</label>
+                <p ng-if="subject.published=='pending'" style="color: white">Gjøres offentlig innen kort tid...</p>
             </div>
         </form>
 
@@ -72,19 +77,26 @@
                 <div as-sortable-item ng-repeat="collection in collections track by $index" ng-model="collection"
                      ng-mouseenter="focused[$index] = true" ng-mouseleave="focused[$index] = false">
                     <div as-sortable-item-handle class="container-fluid">
-                        <div class="col-xs-11">
-                            <h4 ng-show="!deletedCollections[collection.id]" ng-click="setTargetCollection($index)" style="cursor: pointer">
-                                {{collection.name}} ({{collection.exercises.length}} oppgaver)
-                            </h4>
-                            <h4 ng-show="deletedCollections[collection.id]" ng-click="undoDeleteCollection(collection.id)" style="cursor: pointer">
-                                <del>{{collection.name}} ({{collection.exercises.length}} oppgaver)</del>
+                        <div class="col-xs-8" ng-show="!deletedCollections[collection.id]">
+                            <h4 ng-click="setTargetCollection($index)" style="cursor: pointer">
+                                {{collection.name}}
                             </h4>
                         </div>
+                        <div class="col-xs-2" align="right" ng-show="!deletedCollections[collection.id]">
+                            <h4>{{collection.exercises.length}} <img src="img/definition-icon.png" style="width: 20px"></h4>
+                        </div>
+                        <div class="col-xs-9" ng-show="deletedCollections[collection.id]">
+                            <h4 ng-click="undoDeleteCollection(collection.id)" style="cursor: pointer">
+                                <del>{{collection.name}}</del>
+                            </h4>
+                        </div>
+                        <div class="col-xs-1"></div>
                         <div class="col-xs-1">
                             <span ng-show="focused[$index] && !deletedCollections[collection.id]" ng-click="deleteCollection(collection,$index)" style="margin-top:10px;cursor: pointer" class="glyphicon glyphicon-trash"></span>
                         </div>
                     </div>
-                    <hr>
+                    <div ng-show="$last" style="height: 20px"></div>
+                    <hr ng-show="!$last">
                 </div>
             </div>
         </div>

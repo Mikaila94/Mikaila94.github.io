@@ -77,12 +77,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                             }
                         };
                     });
-                    resultList.push({
-                        code: val.toUpperCase(),
-                        name: "Opprett ny",
-                        new: true
-                    });
-                    return resultList
+                    return resultList;
                 })
         };
 

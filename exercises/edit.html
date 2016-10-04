@@ -35,7 +35,7 @@
                         <div class="container-fluid" style="margin-top: 30px"></div>
                         <div no-drag class="row" style="margin-bottom: 30px">
                             <div class="col-xs-11">
-                                <div no-drag align="right" style="top:0px;right:10px;" ng-show="isInErrorList($index)">
+                                <div no-drag align="right" style="position: absolute;top:-10px;right:-45px;" ng-show="isInErrorList($index)">
                                     <span class="glyphicon glyphicon-exclamation-sign"></span>
                                 </div>
 
@@ -64,7 +64,7 @@
                                     <div onload="exerciseNumber = $index" ng-include="'exercises/extrapropertyview.html'"></div>
                                 </div>
                                 <div no-drag class="container-fluid" style="position: absolute; bottom: -20px; right: -60px">
-                                        <span ng-show="focused[$index]" class="glyphicon glyphicon-trash"
+                                        <span ng-show="focused[$index] || activeExercise==$index" class="glyphicon glyphicon-trash"
                                               ng-click="deleteExercise($index)"
                                               style="cursor:pointer;"></span>
                                 </div>

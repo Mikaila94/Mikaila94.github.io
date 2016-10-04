@@ -90,13 +90,14 @@ angular.module('myApp', [
                 $cookies.remove('token');
                 $cookies.remove('username');
                 $cookies.remove('password');
+                $cookies.remove('admin');
                 $location.path('/login');
             }
         };
     })
 
     .constant("apiUrl", "https://acepi-test2.herokuapp.com")
-    //.constant("apiUrl", "http://10.22.2.96:3000")
+    //.constant("apiUrl", "http://10.22.32.75:3000")
     //.constant("apiUrl", "https://acepi.herokuapp.com/subjects")
     .factory('focus', function ($timeout, $window) {
         return function (id) {

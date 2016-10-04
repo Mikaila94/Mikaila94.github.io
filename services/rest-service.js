@@ -54,8 +54,8 @@ angular.module("myApp.services", ['ngRoute'])
 
 
     })
-    .service("requestService", function ($http, $q, $cookies, apiUrl) {
-        this.httpPut = function (path, data) {
+    .service("requestService", function ($http, $q, $cookies, apiUrl, alertify) {
+        this.httpPut = function (path, data, errorList, index) {
             return $q(function (resolve, reject) {
                 $http({
                     ignoreLoadingBar:true,
@@ -71,7 +71,17 @@ angular.module("myApp.services", ['ngRoute'])
                     console.log(status);
                     console.log(header);
                     console.log(config);
-                    reject(response)
+                    if(status==500) {
+                        alertify.error('Problemer med server')
+                    };
+                    if(status==400 && errorList) {
+                        errorList[index] = true
+                    }
+                    console.log(status);
+                    reject({
+                        response: response,
+                        status: status
+                    })
 
                 })
             })
@@ -89,6 +99,9 @@ angular.module("myApp.services", ['ngRoute'])
                     console.log(status);
                     console.log(header);
                     console.log(config);
+                    if(status==500) {
+                        alertify.error('Problemer med server')
+                    };
                     reject(response)
                 })
             })
@@ -114,7 +127,7 @@ angular.module("myApp.services", ['ngRoute'])
                 })
             })
         };
-        this.httpPost = function (path, data, callback) {
+        this.httpPost = function (path, data, callback, errorList, index) {
             return $q(function (resolve, reject) {
                 $http({
                     url: apiUrl + path,
@@ -122,12 +135,21 @@ angular.module("myApp.services", ['ngRoute'])
                     headers: $cookies.getObject("token"),
                     data: data
                 }).success(function (response) {
-                    resolve(response)
+                    resolve(response);
                     if(callback){
                         callback(response)
                     }
-                }).error(function (response) {
-                    reject(response)
+                }).error(function (response, status) {
+                    if(status==500) {
+                        alertify.error('Problemer med server')
+                    };
+                    if(status==400 && errorList) {
+                        errorList[index] = true
+                    };
+                    reject({
+                        response: response,
+                        status: status
+                    });
                 })
             })
         };
@@ -140,6 +162,9 @@ angular.module("myApp.services", ['ngRoute'])
                 }).success(function (response) {
                     resolve(response)
                 }).error(function (response) {
+                    if(status==500) {
+                        alertify.error('Problemer med server')
+                    };
                     reject(response)
                 })
             })

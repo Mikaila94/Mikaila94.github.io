@@ -141,7 +141,7 @@ angular.module('myApp.edit', ['ngRoute'])
         };
 
         $scope.focusNextAlternative = function (event, last, index) {
-            if(event.keyCode==13) {
+            if(event.keyCode==13 && !event.shiftKey) {
                 event.preventDefault();
                 if(last) {
                     $scope.addAlternative()
@@ -151,7 +151,9 @@ angular.module('myApp.edit', ['ngRoute'])
         };
 
         $scope.makeWrong = function (exercise, index) {
-            $scope.mcAlternatives[index].correct = false;
+            if(index!=0) {
+                $scope.mcAlternatives[index].correct = false;
+            };
         };
 
         $scope.makeCorrect = function (exercise, index) {
@@ -213,7 +215,9 @@ angular.module('myApp.edit', ['ngRoute'])
             $scope.activeExercise = undefined
         };
 
+        var errorList = {};
         $scope.saveCollection = function (nextAction) {
+            errorList = {};
             $scope.saveClicked = true;
             $scope.clickedSave = true;
             $scope.choseActiveExercise(undefined);
@@ -282,15 +286,14 @@ angular.module('myApp.edit', ['ngRoute'])
                 }
             });
             $q.all(initHttpRequests).then(function () {
-                angular.forEach($scope.exercises, function (exercise) {
+                angular.forEach($scope.exercises, function (exercise, index) {
                     if(!exercise.id) {
                         sendExercises.push(requestService.httpPost('/collections/' + $scope.collection.id + '/exercises'
                             , exercise, function (response) {
-
                                 exercise.id = parseInt(response.insertedId)
-                            }))
+                            },errorList, index))
                     } else {
-                        sendExercises.push(requestService.httpPut('/exercises/' + exercise.id, exercise))
+                        sendExercises.push(requestService.httpPut('/exercises/' + exercise.id, exercise, errorList, index))
                     }
                 });
                 angular.forEach(deleteList, function (exerciseId) {
@@ -315,46 +318,16 @@ angular.module('myApp.edit', ['ngRoute'])
                             $location.path('/subjects/' + $routeParams.subjectId + '/collections/' + $scope.collection.id + '/add')
                         }
                     }, function (response) {
-                        console.log(response);
+                        if(response.status==400) {
+                            alertify.error('En feil oppstod. Kontroller navnet på settet')
+                        }
                         $scope.saveClicked = false;
                     })
                 }, function (response) {
                     console.log(response);
+                    alertify.error('En eller flere feil oppstod. Kontroller markerte oppgaver');
                     $scope.saveClicked = false;
                 });
-                // requestService.httpPut(subjectService.getSubject()._id, data)
-                //     .then(function () {
-                //         $location.path('/subjects/' + subjectService.getSubject()._id);
-                //     }, function (response) {
-                //         $scope.saveClicked = false;
-                //         if ($routeParams.collectionId == "new") {
-                //             subjectService.getSubject().collections.splice(subjectService.getSubject().collections.length - 1, 1)
-                //         }
-                //
-                //         $scope.errorList = [];
-                //         $scope.errorMsg = '';
-                //         for (var j = 0; j < response.errors.length; j++) {
-                //             var error = response.errors[j].dataPath.split('.');
-                //             console.log(error);
-                //             if (error.length > 0) {
-                //                 if (error[3] == 'name') {
-                //                     $scope.errorMsg += "Manglende navn på settet\n";
-                //                 }
-                //                 else if (error[3].indexOf("exercises") > -1) {
-                //                     var index = parseInt(error[3].substr(10, 10).substr(0, 1)) + parseInt(j);
-                //                     var realIndex = parseInt(index + 1);
-                //                     $scope.errorList.push(index);
-                //                     $scope.errorMsg += "Feil i oppgavenr " + realIndex + "\n";
-                //                 }
-                //                 else {
-                //                     $scope.errorMsg += 'En feil oppsto\n'
-                //                 }
-                //             }
-                //         }
-                //
-                //         alertify.error($scope.errorMsg);
-                //         console.log($scope.collection)
-                //     })
             }, function (response) {
                 console.log(response);
                 $scope.saveClicked = false;
@@ -363,10 +336,7 @@ angular.module('myApp.edit', ['ngRoute'])
         };
 
         $scope.isInErrorList = function (index) {
-            if (!$scope.errorList) {
-                return false
-            }
-            return $scope.errorList.indexOf(index) != -1;
+            return errorList[index];
         };
 
         var filterAlternativeArray = function (array) {

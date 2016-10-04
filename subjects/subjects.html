@@ -1,18 +1,27 @@
 
 <div class="container-fluid" align="center">
     <button class="btn add-subject" ng-click="openAddSubjectModal()" >
-        <p><b>+ Ny pakke</b></p>
+        <p style="margin-top: 5px"><b>+ Ny pakke</b></p>
     </button>
 </div>
 
 <div class="container-fluid" id="loading-bar-container" ng-repeat="item in subjects track by $index" align="center">
-    <div ng-mouseenter="mouseOver[$index] = true" ng-mouseleave="mouseOver[$index] = false" class="btn-subjects" ng-click="setTargetSubject(item)" align="left">
+    <div ng-mouseenter="mouseOver[$index] = true" ng-mouseleave="mouseOver[$index] = false; delete[$index]=false"
+         class="btn-subjects" ng-click="setTargetSubject(item)" align="left">
         <div class="container-fluid" style="width: 90%">
-            <h1><b>{{ item.name }}</b></h1>
-            <p style="font-size: 20px">{{item.code}}</p>
+            <h1 style="margin-top: 25px"><b>{{ item.name }}</b></h1>
+            <p style="font-size: 17px; margin-top: -2px">{{item.code}}</p>
         </div>
-        <span ng-show="mouseOver[$index]" class="glyphicon glyphicon-trash" style="font-size: 15px; position: relative; top: -30px;left: 800px; cursor: pointer"
-              ng-click="$event.stopPropagation(); deleteSubject($index)"></span>
+        <div ng-show="mouseOver[$index]" class="container-fluid">
+            <span ng-show="!delete[$index]" class="glyphicon glyphicon-trash"
+                  style="font-size: 15px; position: relative; top: -30px;left: 800px; cursor: pointer"
+                  ng-click="$event.stopPropagation(); delete[$index]=true"></span>
+            <div ng-show="delete[$index]">
+                <span style="position: relative; top: -30px;left: 730px; font-size: 12px">Er du sikker?</span>
+                <span ng-click="$event.stopPropagation();deleteSubject($index)"
+                      style="position: relative; top: -30px;left: 730px; font-size: 12px">Ja</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -24,6 +33,7 @@
         <div class="container-fluid" style="width: 400px; margin-bottom: 15px">
             <input id="newSubjectCode" class="form-control" placeholder="Fagkode" ng-model="newSubjectCode"
                    uib-typeahead="subject as subject.code+', '+subject.name for subject in getSubjectSuggestions($viewValue)"
+                   typeahead-focus-first="false"
                    typeahead-popup-template-url="subjectSearchResult.html" typeahead-on-select="selectedSubject($item)">
             <br>
             <input id="newSubjectName" class="form-control" placeholder="Navn på pakken" ng-model="newSubjectName">
@@ -39,7 +49,6 @@
     <div class="dropdown-menu" ng-show="isOpen() && !moveInProgress" ng-style="{top: position().top+'px', left: position().left+'px'}" role="listbox" aria-hidden="{{!isOpen()}}">
         <li class="uib-typeahead-match" ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)"
             ng-click="selectMatch($index, $event)" role="option" id="{{::match.id}}">
-            <hr ng-if="$last">
             <div uib-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></div>
         </li>
     </div>

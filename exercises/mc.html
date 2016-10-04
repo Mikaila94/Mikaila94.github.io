@@ -23,7 +23,7 @@
                     <textarea id="alt-{{$index}}" ng-if="!alternative.correct" ng-keypress="focusNextAlternative($event, $last, $index)"
                               msd-elastic class="open-text-input" style="resize: none;" rows="1" ng-model="alternative.answer" placeholder="Galt alternativ"></textarea>
                 </div>
-                <div class="col-xs-1">
+                <div class="col-xs-1" ng-hide="$first">
                     <span ng-show="hoverAlternative[$index]" ng-click="deleteAlternative($index)"
                           class="glyphicon glyphicon-remove"
                           style="font-size: 10px;cursor: pointer;"></span>

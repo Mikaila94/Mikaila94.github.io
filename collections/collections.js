@@ -5,6 +5,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.subject = subjectService.getSubject();
         $scope.deletedCollections = {};
+        $scope.admin = $cookies.getObject('admin');
 
         var initCollections = function (subject) {
             $scope.collections = subject.collections;
@@ -94,9 +95,14 @@ angular.module('myApp.collections', ['ngRoute'])
                 })
         };
 
-        $scope.publishSubject = function () {
-            $scope.subject.published = "yes";
-            console.log(subjectService.getSubject())
+        $scope.publishSubject = function (value) {
+            var data = {
+                published: value
+
+            };
+            requestService.httpPut('/subjects/'+$routeParams.subjectId+'/published', data).then(function (response) {
+                refresh();
+            });
         };
 
         $scope.previewSubject = function () {
@@ -229,42 +235,66 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.closeActiveExercise = function () {
             $scope.extraProperty = {};
-            if($scope.activeExercise != undefined && $scope.exercise.content.wrongs) {
-                filterAlternativeArray($scope.exercise.content.wrongs)
-            }
-            if($scope.activeExercise != undefined && $scope.exercise.content.corrects) {
-                filterAlternativeArray($scope.exercise.content.corrects)
+            if($scope.activeExercise != undefined) {
+                if($scope.exercise.type == 'mc') {
+                    filterAlternativeArray($scope.mcAlternatives);
+                    $scope.exercise.content.corrects = [];
+                    $scope.exercise.content.wrongs = [];
+                    angular.forEach($scope.mcAlternatives, function (alternative) {
+                        if(alternative.correct) {
+                            $scope.exercise.content.corrects.push({answer: alternative.answer});
+                        } else {
+                            $scope.exercise.content.wrongs.push({answer: alternative.answer})
+                        }
+                    });
+
+
+                }
+
             }
             $scope.activeExercise = undefined;
         };
 
-        $scope.tabNextExercise = function () {
-        };
-
         $scope.addAlternative = function (exercise) {
-            exercise.content.corrects.push({answer: ""})
+            $scope.mcAlternatives.push({answer: "", correct: false});
         };
 
-        $scope.deleteAlternative = function (exercise, index, corrects) {
-            if(corrects) {
-                if (index > -1) {
-                    exercise.content.corrects.splice(index, 1);
+        $scope.deleteAlternative = function (index) {
+            $scope.mcAlternatives.splice(index, 1)
+        };
+
+        $scope.initAlternatives = function (exercise) {
+            $scope.mcAlternatives = [];
+            angular.forEach(exercise.content.corrects, function (correct) {
+                var correctCopy = angular.copy(correct);
+                correctCopy.correct = true;
+                $scope.mcAlternatives.push(correctCopy);
+            });
+            angular.forEach(exercise.content.wrongs, function (wrong) {
+                var wrongCopy = angular.copy(wrong);
+                wrongCopy.correct = false;
+                $scope.mcAlternatives.push(wrongCopy);
+            })
+        };
+
+        $scope.focusNextAlternative = function (event, last, index) {
+            if(event.keyCode==13 && !event.shiftKey) {
+                event.preventDefault();
+                if(last) {
+                    $scope.addAlternative()
                 }
-            } else {
-                if (index > -1) {
-                    exercise.content.wrongs.splice(index, 1);
-                }
+                focus('alt-'+(index+1));
             }
         };
 
-        $scope.makeWrong = function (exercise, index, alternative) {
-            exercise.content.wrongs.unshift(alternative);
-            $scope.deleteAlternative(exercise, index, true)
+        $scope.makeWrong = function (exercise, index) {
+            if(index!=0) {
+                $scope.mcAlternatives[index].correct = false;
+            };
         };
 
-        $scope.makeCorrect = function (exercise, index, alternative) {
-            exercise.content.corrects.push(alternative);
-            $scope.deleteAlternative(exercise, index, false)
+        $scope.makeCorrect = function (exercise, index) {
+            $scope.mcAlternatives[index].correct = true;
         };
 
         $scope.getImage = function (image) {
@@ -299,6 +329,7 @@ angular.module('myApp.collections', ['ngRoute'])
 
         $scope.saveChanges = function () {
             console.log($scope.exercise);
+            $scope.closeActiveExercise();
             var imageUpload =[];
             if($scope.exercise.content.question.image && !$scope.exercise.content.question.image.url) {
                 var imageData = {
