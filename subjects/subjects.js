@@ -100,7 +100,7 @@ angular.module('myApp.subjects', ['ngRoute', 'ui.checkbox'])
                 url: apiUrl +'/subjects',
                 method: "POST",
                 data: {
-                    code: $scope.newSubjectCode,
+                    code: $scope.newSubjectCode.toUpperCase(),
                     name: $scope.newSubjectName,
                     published: 'no',
                     description: "Laget av " + $cookies.getObject('username')
